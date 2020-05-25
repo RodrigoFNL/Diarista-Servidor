@@ -14,8 +14,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * Intercepta a conex„o e verifica se o token È v·lido.
- * igora o token nos casos de inicializar o token ou mÛdulo de participar.
+ * Intercepta a conex√£o e verifica se o token √© v√°lidoo.
+ * igora o token nos casos de login ou cadastro do participar
  * @author Rodrigo
  *
  */
@@ -28,10 +28,18 @@ public class FilterRest implements Filter
 	{	
 		HttpServletRequest request = (HttpServletRequest) requestServlet;
 		HttpServletResponse response = (HttpServletResponse) responseServlet;
-		
+			
+		response.setHeader("server-header", "WildFly/19");
+		response.setHeader("x-powered-by-header", "Undertow/1");		
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT");
+		response.setHeader("Access-Control-Allow-Headers", "accept, authorization, content-type, x-requested-with");
+		response.setHeader("Access-Control-Allow-Credentials", "true");
+		response.setHeader("Access-Control-Max-Age", "1");	
+			
 		try
 		{		
-			if(request.getRequestURI().equals("/diarista-1.0/rest/participate/generate_coupon") || request.getRequestURI().equals("/diarista-1.0/rest/login/authenticate")) 
+			if(request.getRequestURI().equals("/diarista-1.0/rest/participate/send_info") || request.getRequestURI().equals("/diarista-1.0/rest/login/authenticate")) 
 			{
 				chain.doFilter(request,response);	
 				return;
