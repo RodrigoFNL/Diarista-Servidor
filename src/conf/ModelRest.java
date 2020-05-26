@@ -1,4 +1,5 @@
-package rest;
+package conf;
+
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -6,15 +7,16 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
-@Path("participar")
-public class ParticiparRestService
+@Path("model")
+public class ModelRest 
 {
 
 	@Path("html")
 	@POST
 	@GET
-	@Produces("text/html")
+	@Produces(MediaType.TEXT_HTML)
 	public String getHTML()
 	{
 		return "<h1>TEXTO HTML</h1>";
@@ -23,7 +25,7 @@ public class ParticiparRestService
 	@Path("text")
 	@POST
 	@GET
-	@Produces("text/plain")
+	@Produces(MediaType.TEXT_PLAIN)
 	public String getText()
 	{
 		return "TEXTO";
@@ -32,10 +34,11 @@ public class ParticiparRestService
 	@Path("json")
 	@POST
 	@GET
-	@Produces("application/json")
+	@Produces(MediaType.APPLICATION_JSON)
 	public String getJSON()
 	{
 		JsonObject object = Json.createObjectBuilder().add("josn", "Json message").add("message", "mensagem do texto json").build();			
 		return object.toString();
 	}
+
 }

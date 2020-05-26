@@ -4,5 +4,7 @@ import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 @ApplicationPath("rest")
-public class RestInitialize extends Application
-{}
+public class InitializeRest extends Application
+{
+
+}
