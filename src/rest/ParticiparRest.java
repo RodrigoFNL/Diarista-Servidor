@@ -2,7 +2,7 @@ package rest;
 
 import java.util.Map;
 
-import javax.json.Json;
+import javax.inject.Inject;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -11,9 +11,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import business.ParticiparBusiness;
+
 @Path("participate")
 public class ParticiparRest 
 {
+	
+	@Inject
+	private ParticiparBusiness participarBusiness;
+	
 	@POST
 	@Path("send_info")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -22,7 +28,7 @@ public class ParticiparRest
 	{
 		try
 		{
-			JsonObject object = Json.createObjectBuilder().add("josn", "Json message").add("message", "mensagem do texto json").build();			
+			JsonObject object = participarBusiness.getJson();			
 			return Response.ok(object).build();		
 		}
 		catch (Exception e)
