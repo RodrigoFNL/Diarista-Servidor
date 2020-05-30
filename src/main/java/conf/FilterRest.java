@@ -2,7 +2,6 @@ package conf;
 
 import java.io.IOException;
 
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -71,15 +70,8 @@ public class FilterRest implements Filter
 	}
 
 	@Override
-	public void init(FilterConfig filterConfig) throws ServletException
-	{		
-
-	}
+	public void init(FilterConfig filterConfig) throws ServletException	{}
 
 	@Override
-	public void destroy()
-	{
-
-	}
-
+	public void destroy(){}
 }

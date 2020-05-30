@@ -3,7 +3,6 @@ package rest;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -11,14 +10,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import business.ParticiparBusiness;
+import business.ParticipeBusiness;
 
-@Path("participate")
-public class ParticiparRest 
-{
+import javax.json.JsonObject;
+
+public class ParticipeRestService
+{	
 	
 	@Inject
-	private ParticiparBusiness participarBusiness;
+	private ParticipeBusiness particeBusiness;
 	
 	@POST
 	@Path("send_info")
@@ -28,13 +28,13 @@ public class ParticiparRest
 	{
 		try
 		{
-			JsonObject object = participarBusiness.getJson();			
+			JsonObject object = particeBusiness.getJson();			
 			return Response.ok(object).build();		
 		}
 		catch (Exception e)
 		{	
 			return Response.serverError().status(400).entity("Erro de Conexão com a Base de Dados").build();
 		}
-	}	
+	}
 
 }
