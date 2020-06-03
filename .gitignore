@@ -1,11 +1,2 @@
-.cheatsheet.xml
-.classpath
-.factorypath
-.project
-.package-lock.json
-.settings/
-target/
-/bin/
-/.metadata/
-/src/main/webapp/WEB-INF/sgs-ds.xml
-
+/build/
+/target/

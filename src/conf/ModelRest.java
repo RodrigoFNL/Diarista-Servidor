@@ -1,4 +1,5 @@
-package rest;
+package conf;
+
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -9,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 @Path("model")
-public class ModeloRestService 
+public class ModelRest 
 {
 
 	@Path("html")
