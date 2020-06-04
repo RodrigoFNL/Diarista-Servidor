@@ -3,6 +3,7 @@ package rest;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,12 +29,12 @@ public class ParticiparRest
 	{
 		try
 		{
-			JsonObject object = participarBusiness.getJson();			
-			return Response.ok(object).build();		
+			JsonObject response = participarBusiness.createCoupon();	
+			return Response.ok(response).build();				
 		}
 		catch (Exception e)
 		{	
-			return Response.serverError().status(400).entity("Erro de ConexÃ£o com a Base de Dados").build();
+			return Response.serverError().status(400).entity(Json.createObjectBuilder().add("status", "error").add("message", "Ocorreu um erro de comunicação, contate o adminstrador").build()).build();
 		}
 	}	
 

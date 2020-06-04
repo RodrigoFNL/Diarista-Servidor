@@ -7,10 +7,10 @@ import javax.json.JsonObject;
 @Stateful
 public class ParticiparBusiness 
 {
-
-	public JsonObject getJson() 
-	{	
-		return Json.createObjectBuilder().add("josn", "Json message").add("message", "mensagem do texto json").build();
+	
+	public JsonObject createCoupon()
+	{
+		return Json.createObjectBuilder().add("status", "OK").add("message", "Gerado com Coupon sucesso, acesse seu email").build();
 	}
 
 }
