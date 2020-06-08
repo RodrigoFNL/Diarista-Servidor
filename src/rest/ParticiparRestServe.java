@@ -3,8 +3,6 @@ package rest;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.json.Json;
-import javax.json.JsonObject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -13,9 +11,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import business.ParticiparBusiness;
+import conf.EmailInfo;
 
 @Path("participate")
-public class ParticiparRest 
+public class ParticiparRestServe  extends BasicRestServe
 {
 	
 	@Inject
@@ -28,13 +27,15 @@ public class ParticiparRest
 	public Response sendInfo(Map<String, Object> postObject)
 	{
 		try
-		{
-			JsonObject response = participarBusiness.createCoupon();	
-			return Response.ok(response).build();				
+		{		
+			
+			
+			String response = participarBusiness.createCoupon(postObject);						
+			return ok(response);		
 		}
 		catch (Exception e)
 		{	
-			return Response.serverError().status(400).entity(Json.createObjectBuilder().add("status", "error").add("message", "Ocorreu um erro de comunicação, contate o adminstrador").build()).build();
+			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", 400);
 		}
 	}	
 

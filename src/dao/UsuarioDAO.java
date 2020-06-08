@@ -1,8 +1,11 @@
 package dao;
 
-import conf.BasicPersistence;
 
-public class UsuarioDAO extends BasicPersistence
+import conf.BasicPersistence;
+import model.Usuario;
+
+public class UsuarioDAO extends BasicPersistence<Usuario>
 {
 
+	
 }

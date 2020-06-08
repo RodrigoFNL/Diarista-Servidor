@@ -6,14 +6,14 @@
 	<persistence-unit name="diarista">
 
 		<jta-data-source>java:jboss/datasources/diaristaDS</jta-data-source>
-		<class>model.Usuario</class>
+		  <class>model.Usuario</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect"	value="org.hibernate.dialect.PostgreSQLDialect" />
 			<property name="hibernate.jdbc.use_streams_for_binary"	value="true" />
 			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.format_sql" value="false" />
-			<property name="hibernate.use_sql_comments" value="false" />
+			<property name="hibernate.use_sql_comments" value="false" />			
 		</properties>
 
 	</persistence-unit>
