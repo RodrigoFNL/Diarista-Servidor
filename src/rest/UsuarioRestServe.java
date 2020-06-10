@@ -10,27 +10,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import business.ParticiparBusiness;
+import business.UsuarioBusiness;
 import conf.EmailInfo;
 
-@Path("participate")
-public class ParticiparRestServe  extends BasicRestServe
+@Path("usuario")
+public class UsuarioRestServe  extends BasicRestServe
 {
 	
 	@Inject
-	private ParticiparBusiness participarBusiness;
+	private UsuarioBusiness usuarioBusiness;
 	
 	@POST
-	@Path("send_info")
+	@Path("participate")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.APPLICATION_JSON)
 	public Response sendInfo(Map<String, Object> postObject)
 	{
 		try
-		{		
-			
-			
-			String response = participarBusiness.createCoupon(postObject);						
+		{	
+			String response = usuarioBusiness.createCoupon(postObject);						
 			return ok(response);		
 		}
 		catch (Exception e)

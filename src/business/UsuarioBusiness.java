@@ -12,7 +12,7 @@ import util.EmailUtil;
 import util.StringUtils;
 
 @Stateful
-public class ParticiparBusiness 
+public class UsuarioBusiness 
 {	
 	@Inject
 	private UsuarioDAO usuarioRepository;
@@ -37,8 +37,8 @@ public class ParticiparBusiness
 			user.setCpf(cpf);
 			user.setEmail(email);
 			user.setTermosCondicoes(accept);
+			Boolean persiste =  usuarioRepository.save(user);
 
-			Boolean persiste = usuarioRepository.save(user);
 			if(persiste)
 			{
 				

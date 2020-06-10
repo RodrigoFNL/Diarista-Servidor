@@ -1,5 +1,6 @@
 package util;
 
+import java.util.Date;
 import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
@@ -16,7 +17,7 @@ public class EmailUtil
 
 	public static void sendCoupon(String email, String coupon)
 	{		
-		sendEmail(email, "Número do Cupon", coupon);
+		sendEmail(email, "Número do Coupon", coupon);
 	}
 	public static void sendEmail(String email, String title, String text)
 	{	
@@ -40,69 +41,48 @@ public class EmailUtil
 			}
 		});
 		try
-		{
-		
+		{		
 			Message message = new MimeMessage(session);		
+			
+			message.setSentDate(new Date());				
 			message.setFrom(new InternetAddress(from));	
 			message.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(to));	
-			message.setSubject(title);	
-			message.setText(text);	
+			message.setSubject(title);		
+			message.setContent(templateInfoCoupon(text), "text/html; charset=utf-8");
 			Transport.send(message);
 		} 
 		catch (Exception e)
 		{
 			e.printStackTrace();
-		}
-
-		//		try 
-		//		{
-		//			//INSERE AS PROPRIEDADES DO EMAIL, COMO LOGIN, SENHA, SMTP.
-		//			Properties props = new Properties();
-		//
-		//			props.put("mail.from", EmailInfo.EMAIL_NAO_RESPONDA);
-		//			props.setProperty("mail.smtp.user", EmailInfo.EMAIL_NAO_RESPONDA);
-		//			props.setProperty("mail.smtp.password", EmailInfo.PASSWORD_EMAIL_NAO_RESPONDA);
-		//
-		//			props.put("mail.smtp.host", EmailInfo.SERVIDOR_SMTP);
-		//			props.put("mail.smtp.port", "25");
-		//			props.put("mail.smtp.starttls.enable", "true");
-		//			props.setProperty("mail.smtp.auth", "true");			
-		//		
-		//
-		//			Writer out = new StringWriter();
-		//
-		//			BodyPart body = new MimeBodyPart();					
-		//			body.setContent(out.toString(), "text/html; charset=utf-8");			
-		//
-		//			Session session = Session.getInstance(props, new Authenticator() 
-		//			{
-		//				public PasswordAuthentication getPasswordAuthentication() 
-		//				{
-		//					return new PasswordAuthentication(EmailInfo.EMAIL_NAO_RESPONDA, EmailInfo.PASSWORD_EMAIL_NAO_RESPONDA);
-		//				}				
-		//			});
-		//
-		//			Message msg = new MimeMessage(session);			
-		//
-		//			Address[] adrAddress = new Address[1];
-		//			adrAddress[0] = new InternetAddress(email);
-		//
-		//			msg.setRecipients(RecipientType.TO, adrAddress);
-		//
-		//			msg.setFrom(new InternetAddress(EmailInfo.EMAIL_NAO_RESPONDA));
-		//			msg.setSubject(title);
-		//			msg.setSentDate(new Date());
-		//			msg.setContent(text, "text/html; charset=utf-8");
-		//
-		//			Transport  transport = session.getTransport("smtp");		
-		//			transport.connect();
-		//			Transport.send(msg);
-		//			transport.close();			
-		//
-		//		} 
-		//		catch (Exception e) 
-		//		{
-		//			e.printStackTrace();			
-		//		}			
+		}		
+	}
+	
+	private static String templateInfoCoupon(String coupon)
+	{
+		StringBuilder template = new StringBuilder();	
+				 
+		 template.append("<!DOCTYPE html>");
+		 template.append("<html>");
+		 template.append("<head>");
+		 template.append("<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' />");
+		 template.append("<meta charset='utf-8'>");
+		 template.append("<title>COUPON</title>");	
+		 template.append("</head>");
+		 template.append("<body>");
+		 template.append("<header class='p-3 m-0 bg-dark text-light' mb-3>");
+		 template.append("<h1 class='text-center'>DIARISTA ONLINE</h1>");
+		 template.append("<p class='font-weight-bold'>Seja bem vindo a Comunidade DIARISTA ONLINE, é um imenso prazer, te-lo em nossa comunidade</p>");
+		 template.append("</header>");
+		 template.append("<section class='row justify-content-center mt-5 pb-5 shadow'>");
+		 template.append("<section class='col-6 text-center'>");
+		 template.append("<p>Número do seu Coupon</p>");
+		 template.append("<hr />");
+		 template.append("<p class='font-weight-bold'>").append(coupon).append("</p>");	
+		 template.append("</section>");
+		 template.append("</section>");
+		 template.append("</body>");
+		 template.append("</html>");
+		 
+		return template.toString();
 	}
 }

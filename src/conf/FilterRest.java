@@ -40,7 +40,7 @@ public class FilterRest implements Filter
 
 		try
 		{		
-			if(request.getRequestURI().equals("/diarista/rest/participate/send_info") || request.getRequestURI().equals("/diarista/rest/login/authenticate")) 
+			if(request.getRequestURI().equals("/diarista/rest/usuario/participate") || request.getRequestURI().equals("/diarista/rest/login/authenticate")) 
 			{
 				chain.doFilter(request,response);	
 				return;
