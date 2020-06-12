@@ -5,6 +5,9 @@ import javax.ws.rs.core.Response;
 
 public class BasicRestServe
 {
+	public static final int BAD_REQUEST = 400;
+	public static final int UNAUTHORIZED = 401;
+	public static final int INTERNAL_ERROR = 500;
 
 	protected Response ok(String message)
 	{		
@@ -18,8 +21,8 @@ public class BasicRestServe
 		return Response.ok(object).build();	
 	}
 	
-	protected Response error(String message, int status)
+	protected Response error(String message, int basicRestServeType)
 	{					
-		return Response.serverError().status(status).entity(Json.createObjectBuilder().add("status", true).add("message", message).build()).build();
+		return Response.serverError().status(basicRestServeType).entity(Json.createObjectBuilder().add("status", true).add("message", message).build()).build();
 	}
 }

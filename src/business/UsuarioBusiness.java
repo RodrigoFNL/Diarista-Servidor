@@ -30,15 +30,21 @@ public class UsuarioBusiness
 			else if(cpf == null)  		return "Você deve fornecer um CPF";
 			else if(email == null) 		return "Você deve fornecer um Email";
 			else if(!accept)			return "Você deve aceitar os termos e condições";
-
-			Usuario user = new Usuario();
+			
+			Usuario hasDuplicated = (Usuario) usuarioRepository.findById(cpf);
+			if(hasDuplicated != null && hasDuplicated.getLogin() != null) return "Já existe um usuário cadastrado neste CPF.";
+						
+			Usuario user = new Usuario();			
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
 			user.setName(name);
 			user.setCpf(cpf);
 			user.setEmail(email);
 			user.setTermosCondicoes(accept);
-			Boolean persiste =  usuarioRepository.save(user);
-
+			
+			Boolean persiste = false;
+			if(hasDuplicated == null) persiste =  usuarioRepository.save(user);
+			else 					  persiste =  usuarioRepository.update(user);
+			
 			if(persiste)
 			{
 				
@@ -49,8 +55,7 @@ public class UsuarioBusiness
 					{
 						EmailUtil.sendCoupon(user.getEmail(), user.getCoupon());
 					};
-				}.start();
-				
+				}.start();				
 				
 				return "id:" + user.getCpf();
 			}

@@ -42,8 +42,7 @@ public class EmailUtil
 		});
 		try
 		{		
-			Message message = new MimeMessage(session);		
-			
+			Message message = new MimeMessage(session);	
 			message.setSentDate(new Date());				
 			message.setFrom(new InternetAddress(from));	
 			message.setRecipients(Message.RecipientType.TO,	InternetAddress.parse(to));	
@@ -64,7 +63,7 @@ public class EmailUtil
 		 template.append("<!DOCTYPE html>");
 		 template.append("<html>");
 		 template.append("<head>");
-		 template.append("<link rel='stylesheet' href='https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css' />");
+		 template.append("<link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' />");
 		 template.append("<meta charset='utf-8'>");
 		 template.append("<title>COUPON</title>");	
 		 template.append("</head>");

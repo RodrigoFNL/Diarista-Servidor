@@ -28,12 +28,14 @@ public class UsuarioRestServe  extends BasicRestServe
 	{
 		try
 		{	
-			String response = usuarioBusiness.createCoupon(postObject);						
-			return ok(response);		
+			String response = usuarioBusiness.createCoupon(postObject);	
+			
+			if(response.contains("id:")) return ok(response);		
+			else return error(response, BasicRestServe.INTERNAL_ERROR);		
 		}
 		catch (Exception e)
 		{	
-			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", 400);
+			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 		}
 	}	
 
