@@ -1,12 +1,15 @@
 package conf;
 
+import java.util.List;
+
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 public abstract class BasicPersistence <T>
 {	
-	private EntityManager manager;	
-	
+	private EntityManager manager;		
+
 	@SuppressWarnings("rawtypes")
 	private Class entityClass;	
 
@@ -70,4 +73,35 @@ public abstract class BasicPersistence <T>
 	public EntityManager getManager() {
 		return manager;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public Object findByColumn(String column, Object value)
+	{					
+		try
+		{					
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT U.* FROM ").append(entityClass.getSimpleName()).append(" U WHERE ").append(column).append(" = :column");
+		
+			Query query = (Query) manager.createNativeQuery(sql.toString(), entityClass);			
+			query.setParameter("column", value);			
+			List<Object> objects = query.getResultList();			
+			Object retorno = objects != null && objects.size() > 0? objects.get(0) : null;	
+			return retorno;			
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+

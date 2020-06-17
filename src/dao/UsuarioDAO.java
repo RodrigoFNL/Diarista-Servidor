@@ -16,5 +16,7 @@ public class UsuarioDAO extends BasicPersistence<Usuario>
 		this.setEntityClass(Usuario.class);		
 	}
 
+
+
 	
 }

@@ -68,4 +68,10 @@ public class UsuarioBusiness
 		}
 	}
 
+	public Usuario getInfoUserByCodigo(String invitation) 
+	{	
+		Usuario user = (Usuario) usuarioRepository.findByColumn("coupon", invitation);	
+		return user != null && user.getLogin() == null ? user : null;
+	}
+
 }
