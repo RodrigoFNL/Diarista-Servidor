@@ -6,7 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public abstract class BasicPersistence <T>
+public abstract class BasicPersistence <E>
 {	
 	private EntityManager manager;		
 
@@ -23,10 +23,9 @@ public abstract class BasicPersistence <T>
 	public void setEntityClass(Class<?> entityClass) 
 	{
 		this.entityClass = entityClass;
-	}
-			
+	}			
 
-	public Boolean save(Object entity)
+	public Boolean save(E entity)
 	{	
 		try
 		{
@@ -40,7 +39,7 @@ public abstract class BasicPersistence <T>
 		}
 	}
 	
-	public Boolean update(Object entity)
+	public Boolean update(E entity)
 	{
 		try
 		{
@@ -55,12 +54,12 @@ public abstract class BasicPersistence <T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object findById(String cpf)
+	public E findById(String cpf)
 	{	
 		try
 		{
 			Object user = manager.find(entityClass, cpf);
-			return user;
+			return (E) user;
 		}
 		catch (Exception e) 
 		{
@@ -75,7 +74,7 @@ public abstract class BasicPersistence <T>
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Object findByColumn(String column, Object value)
+	public E findByColumn(String column, Object value)
 	{					
 		try
 		{					
@@ -86,7 +85,7 @@ public abstract class BasicPersistence <T>
 			query.setParameter("column", value);			
 			List<Object> objects = query.getResultList();			
 			Object retorno = objects != null && objects.size() > 0? objects.get(0) : null;	
-			return retorno;			
+			return (E) retorno;			
 		}
 		catch (Exception e) 
 		{

@@ -7,6 +7,7 @@ import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import dao.UsuarioDAO;
+import dto.UsuarioDTO;
 import model.Usuario;
 import util.EmailUtil;
 import util.StringUtils;
@@ -22,7 +23,7 @@ public class UsuarioBusiness
 		try
 		{
 			String name = StringUtils.notEnpty((String) postObject.get("name"))		? (String) postObject.get("name"):	null;
-			String cpf =  StringUtils.notEnpty((String) postObject.get("cpf"))		? (String) postObject.get("cpf"): 	null;
+			String cpf =  StringUtils.notEnpty((String) postObject.get("cpf"))		? StringUtils.removeCharacters((String) postObject.get("cpf")): null;
 			String email = StringUtils.notEnpty((String) postObject.get("email"))	? (String) postObject.get("email"): null;
 			Boolean accept = postObject.get("accept") != null? (Boolean) postObject.get("accept"): false;
 
@@ -31,7 +32,7 @@ public class UsuarioBusiness
 			else if(email == null) 		return "Você deve fornecer um Email";
 			else if(!accept)			return "Você deve aceitar os termos e condições";
 			
-			Usuario hasDuplicated = (Usuario) usuarioRepository.findById(cpf);
+			Usuario hasDuplicated = usuarioRepository.findById(cpf);
 			if(hasDuplicated != null && hasDuplicated.getLogin() != null) return "Já existe um usuário cadastrado neste CPF.";
 						
 			Usuario user = new Usuario();			
@@ -68,10 +69,11 @@ public class UsuarioBusiness
 		}
 	}
 
-	public Usuario getInfoUserByCodigo(String invitation) 
+	public UsuarioDTO getInfoUserByCodigo(String invitation) 
 	{	
-		Usuario user = (Usuario) usuarioRepository.findByColumn("coupon", invitation);	
-		return user != null && user.getLogin() == null ? user : null;
+		Usuario user = usuarioRepository.findByColumn("coupon", invitation);	
+		UsuarioDTO dto = user != null && user.getLogin() == null ? Usuario.convertDTO(user) : null;		
+		return dto;		
 	}
 
 }

@@ -12,7 +12,7 @@ import javax.ws.rs.core.Response;
 
 import business.UsuarioBusiness;
 import conf.EmailInfo;
-import model.Usuario;
+import dto.UsuarioDTO;
 
 @Path("usuario")
 public class UsuarioRestServe  extends BasicRestServe
@@ -51,8 +51,7 @@ public class UsuarioRestServe  extends BasicRestServe
 			String invitation = (String) postObject.get("codigo") != null ? (String) postObject.get("codigo") : null;				
 			invitation = invitation != null? invitation.trim(): null;
 
-			Usuario user = usuarioBusiness.getInfoUserByCodigo(invitation);
-
+			UsuarioDTO user = usuarioBusiness.getInfoUserByCodigo(invitation);
 			if(user != null) return ok(user);		
 			else return error("Não foi localizado o número do cupom fornecido", BasicRestServe.UNAUTHORIZED);		
 		}

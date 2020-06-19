@@ -90,4 +90,11 @@ public class StringUtils
 			return null;
 		}
 	}
+
+	public static String removeCharacters(String value)
+	{
+		if(value == null) return null;
+		value = value.replace(".", "").replace(":", "").replace("-", "").replace("/", "").replace("\\", "").replace(";.", "").replace(":", "");
+		return value.trim();
+	}
 }
