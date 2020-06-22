@@ -104,7 +104,8 @@ public class Usuario implements Serializable
 		dto.setEmail(entity.getEmail());
 		dto.setLogin(entity.getLogin());
 		dto.setCoupon(entity.getCoupon());
-		dto.setTermosCondicoes(entity.getTermosCondicoes());				
+		dto.setTermos_condicoes(entity.getTermosCondicoes());		
+	
 		return dto;
 	}
 

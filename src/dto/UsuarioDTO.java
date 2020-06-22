@@ -7,9 +7,9 @@ public class UsuarioDTO
     private String login;    
     private String email;	
     private String coupon;
-    private Boolean termosCondicoes;
+    private Boolean termos_condicoes;
     private String password;
-    private String confirmPassword;
+    private String confirm_password;
     
 	public String getCpf()
 	{
@@ -49,14 +49,6 @@ public class UsuarioDTO
 	{
 		this.coupon = coupon;
 	}
-	public Boolean getTermosCondicoes()
-	{
-		return termosCondicoes;
-	}
-	public void setTermosCondicoes(Boolean termosCondicoes) 
-	{
-		this.termosCondicoes = termosCondicoes;
-	}
 	public String getPassword() 
 	{
 		return password;
@@ -65,12 +57,17 @@ public class UsuarioDTO
 	{
 		this.password = password;
 	}
-	public String getConfirmPassword() 
-	{
-		return confirmPassword;
+	public Boolean getTermos_condicoes() {
+		return termos_condicoes;
 	}
-	public void setConfirmPassword(String confirmPassword) 
-	{
-		this.confirmPassword = confirmPassword;
+	public void setTermos_condicoes(Boolean termos_condicoes) {
+		this.termos_condicoes = termos_condicoes;
 	}
+	public String getConfirm_password() {
+		return confirm_password;
+	}
+	public void setConfirm_password(String confirm_password) {
+		this.confirm_password = confirm_password;
+	}
+
 }

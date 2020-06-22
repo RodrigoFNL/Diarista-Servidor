@@ -1,5 +1,8 @@
 package rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.json.Json;
 import javax.ws.rs.core.Response;
 
@@ -17,8 +20,20 @@ public class BasicRestServe
 	
 	protected Response ok(Object object)
 	{		
-		if(object == null) return Response.ok(Json.createObjectBuilder().add("status", false).add("message", "Erro não especificado!").build()).build();			
-		return Response.ok(object).build();	
+		Map<String, Object> send = new HashMap<String, Object>();
+		
+		if(object == null)
+		{
+			send.put("entity", null);
+			send.put("status", false);
+			send.put("message", "Erro não especificado!");		
+			return Response.ok(send).build();	
+		}
+			
+		send.put("entity", object);
+		send.put("status", true);
+		send.put("message", "Arquivo encontrado");			
+		return Response.ok(send).build();	
 	}
 	
 	protected Response error(String message, int basicRestServeType)
