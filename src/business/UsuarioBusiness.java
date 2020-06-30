@@ -1,19 +1,21 @@
 package business;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import javax.ejb.Stateful;
 import javax.inject.Inject;
 
 import dao.UsuarioDAO;
+import dto.UserDTO;
 import dto.UsuarioDTO;
 import model.Usuario;
 import util.EmailUtil;
 import util.StringUtils;
 
 @Stateful
-public class UsuarioBusiness 
+public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
 {	
 	@Inject
 	private UsuarioDAO usuarioRepository;
@@ -72,8 +74,14 @@ public class UsuarioBusiness
 	public UsuarioDTO getInfoUserByCodigo(String invitation) 
 	{	
 		Usuario user = usuarioRepository.findByColumn("coupon", invitation);	
-		UsuarioDTO dto = user != null && user.getLogin() == null ? Usuario.convertDTO(user) : null;		
+		UsuarioDTO dto = user != null && user.getLogin() == null ? user.getDTO() : null;		
 		return dto;		
+	}
+
+	@Override
+	public List<UserDTO> getAllActive() 
+	{
+		return null;
 	}
 
 }

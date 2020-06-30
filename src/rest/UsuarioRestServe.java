@@ -10,17 +10,25 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import business.BasicBusiness;
 import business.UsuarioBusiness;
 import conf.EmailInfo;
 import dto.UsuarioDTO;
+import model.Usuario;
 
 @Path("usuario")
-public class UsuarioRestServe  extends BasicRestServe
+public class UsuarioRestServe  extends BasicRestServe<Usuario, UsuarioBusiness>
 {
 
 	@Inject
 	private UsuarioBusiness usuarioBusiness;
 
+	@Override
+	protected BasicBusiness<Usuario , UsuarioBusiness> business() 
+	{	
+		return usuarioBusiness;
+	}		
+	
 	@POST
 	@Path("participate")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -59,6 +67,5 @@ public class UsuarioRestServe  extends BasicRestServe
 		{	
 			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 		}
-	}	
-
+	}
 }

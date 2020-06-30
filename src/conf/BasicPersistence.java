@@ -1,15 +1,18 @@
 package conf;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
-public abstract class BasicPersistence <E>
-{	
-	private EntityManager manager;		
+import model.BasicEntity;
 
+public abstract class BasicPersistence <E extends BasicEntity<D>, D>
+{	
+	private EntityManager manager;	
+	
 	@SuppressWarnings("rawtypes")
 	private Class entityClass;	
 
@@ -92,6 +95,45 @@ public abstract class BasicPersistence <E>
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<?> getAllDTO(Boolean status )
+	{
+		try
+		{				
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT U FROM ").append(entityClass.getSimpleName()).append(" U");
+			
+			if(status != null) sql.append(" WHERE U.status = :status");	
+			Query query = manager.createQuery(sql.toString());	
+			
+			if(status != null) query.setParameter("status", status);					
+			List<E> objects = query.getResultList();			
+						
+			List<D> list = new ArrayList<D>();
+			
+			if(objects != null && objects.size() > 0)
+			{
+				for(E item : objects)
+				{
+					list.add(item.getDTO());
+				}
+			}			
+			
+			return list;
+				
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
+	public List<?> getAllDTO( )
+	{
+		return getAllDTO(null);
 	}
 }
 

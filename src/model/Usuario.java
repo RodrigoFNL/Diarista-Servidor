@@ -1,19 +1,16 @@
 package model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import dto.UsuarioDTO;
 
-@XmlRootElement
+
 @Entity
 @Table(name = "usuario") 
-public class Usuario implements Serializable
+public class Usuario extends BasicEntity<UsuarioDTO>
 {	
 	private static final long serialVersionUID = 1L;
 	
@@ -91,27 +88,20 @@ public class Usuario implements Serializable
 	public void setEmail(String email)
 	{
 		this.email = email;
-	}
-	
+	}	
 
-	public static UsuarioDTO convertDTO(Usuario entity) 
-	{
-		if(entity == null) return null;
-		
+	@Override
+	public UsuarioDTO getDTO() 
+	{				
 		UsuarioDTO dto = new UsuarioDTO();		
-		dto.setCpf(entity.getCpf());		
-		dto.setName(entity.getName());		
-		dto.setEmail(entity.getEmail());
-		dto.setLogin(entity.getLogin());
-		dto.setCoupon(entity.getCoupon());
-		dto.setTermos_condicoes(entity.getTermosCondicoes());		
+		dto.setCpf(this.cpf);		
+		dto.setName(this.name);		
+		dto.setEmail(this.email);
+		dto.setLogin(this.login);
+		dto.setCoupon(this.coupon);
+		dto.setTermos_condicoes(this.termosCondicoes);		
 	
 		return dto;
 	}
 
-	public static Usuario convertRest(Usuario entity) 
-	{
-	
-		return null;
-	}
 }
