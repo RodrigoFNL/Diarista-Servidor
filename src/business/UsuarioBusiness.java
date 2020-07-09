@@ -16,7 +16,9 @@ import util.StringUtils;
 
 @Stateful
 public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
-{	
+{		
+	private static String token ;
+	
 	@Inject
 	private UsuarioDAO usuarioRepository;
 
@@ -74,14 +76,35 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
 	public UsuarioDTO getInfoUserByCodigo(String invitation) 
 	{	
 		Usuario user = usuarioRepository.findByColumn("coupon", invitation);	
-		UsuarioDTO dto = user != null && user.getLogin() == null ? user.getDTO() : null;		
+		UsuarioDTO dto = user != null && user.getLogin() == null ? user.getDTO() : null;	
+		
+		if(dto != null) createToken(dto);
+		
 		return dto;		
+	}
+
+	private void createToken(UsuarioDTO dto) 
+	{
+		Date date = new Date();
+		Long time = date.getTime();		
+		String token =  StringUtils.encrypt(time.toString() + dto.getCpf());
+		
+		UsuarioBusiness.setToken(token);
+		dto.setToken(token);
 	}
 
 	@Override
 	public List<UserDTO> getAllActive() 
 	{
 		return null;
+	}
+
+	public static String getToken() {
+		return token;
+	}
+
+	public static void setToken(String token) {
+		UsuarioBusiness.token = token;
 	}
 
 }

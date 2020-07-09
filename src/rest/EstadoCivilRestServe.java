@@ -18,5 +18,4 @@ public class EstadoCivilRestServe extends BasicRestServe<EstadoCivil, EstadoCivi
 	{		
 		return estadoCivilBusiness;
 	}
-
 }
