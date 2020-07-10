@@ -28,7 +28,7 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario, UsuarioBusiness>
 	{	
 		return usuarioBusiness;
 	}		
-	
+
 	@POST
 	@Path("participate")
 	@Produces(MediaType.APPLICATION_JSON)
