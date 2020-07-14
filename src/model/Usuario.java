@@ -28,8 +28,7 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	private String coupon;
 
 	@Column(name = "termos_condicoes", columnDefinition = "BOOL DEFAULT TRUE", nullable = false)
-	private Boolean termosCondicoes;	
-			
+	private Boolean termosCondicoes;				
 	
 	public Boolean getTermosCondicoes() 
 	{

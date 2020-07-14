@@ -19,8 +19,7 @@ public abstract class BasicRestServe <E, B>
 {
 	public static final int BAD_REQUEST = 400;
 	public static final int UNAUTHORIZED = 401;
-	public static final int INTERNAL_ERROR = 500;
-	
+	public static final int INTERNAL_ERROR = 500;		
 	
 	protected abstract BasicBusiness<E, B> business();
 	
@@ -47,6 +46,26 @@ public abstract class BasicRestServe <E, B>
 	{		
 		if(message == null) message = "Erro não especificado!";
 		return Response.ok(Json.createObjectBuilder().add("status", true).add("message", message).build()).build();	
+	}
+	
+	protected Response okJson(String json)
+	{		
+		Map<String, Object> send = new HashMap<String, Object>();
+		
+		if(json == null)
+		{		
+			send.put("entity", null);
+			send.put("status", false);
+			send.put("message", "Erro não especificado!");	
+		}
+		else
+		{	
+			send.put("entity", json);
+			send.put("status", true);
+			send.put("message", "Arquivo encontrado");				
+		}	
+		
+		return Response.ok(send).build();	
 	}
 	
 	protected Response ok(Object object)

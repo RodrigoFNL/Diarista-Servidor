@@ -10,6 +10,7 @@ public class UsuarioDTO
     private Boolean termos_condicoes;
     private String password;
     private String confirm_password;
+    private String token;
     
 	public String getCpf()
 	{
@@ -68,6 +69,12 @@ public class UsuarioDTO
 	}
 	public void setConfirm_password(String confirm_password) {
 		this.confirm_password = confirm_password;
+	}
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
 	}
 
 }

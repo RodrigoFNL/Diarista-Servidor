@@ -2,7 +2,6 @@ package conf;
 
 import java.io.IOException;
 
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -12,6 +11,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import business.UsuarioBusiness;
 
 
 /**
@@ -40,38 +41,44 @@ public class FilterRest implements Filter
 
 		try
 		{		
-			if(	request.getRequestURI().contains("/diarista/rest/usuario/participate") || 
-				request.getRequestURI().contains("/diarista/rest/usuario/invitation")  || 
-				request.getRequestURI().contains("/diarista/rest/login/authenticate")  ||
-				request.getRequestURI().contains("/diarista/rest/marital_status/all_active") ||	
-				request.getRequestURI().contains("/diarista/rest/model")  
-			  ) 
+			if(	request.getRequestURI().contains("/diarista/rest/usuario/participate") 	|| 
+				request.getRequestURI().contains("/diarista/rest/usuario/invitation")  	|| 
+				request.getRequestURI().contains("/diarista/rest/login/authenticate")  	||			
+				request.getRequestURI().contains("/diarista/rest/model")  				||
+				(!request.getMethod().equalsIgnoreCase("POST") && !request.getMethod().equalsIgnoreCase("GET"))) 
 			{
 				chain.doFilter(request,response);	
 				return;
 			}		
 			else
 			{
-				String token = request.getHeader("Authorization");				
-				if(token == null) 		
-				{
-					response.setStatus(401);
-					return;
-				}
-				else if(token.isEmpty()) 
-				{
+				String token = request.getHeader("Authorization");		
+
+				if(token == null)
+				{					
 					response.setStatus(401);	
 					return;
 				}
-				chain.doFilter(request,response);		
+				if(UsuarioBusiness.getToken() == null)
+				{					
+					response.setStatus(401);	
+					return;
+				}
+
+				if(!token.equals(UsuarioBusiness.getToken()))
+				{
+					response.setStatus(401);	
+					return;			
+				}
+
+				chain.doFilter(request, response);		
 			}
 
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();			
-			response.setStatus(401);
-			return;
+			response.setStatus(401);			
 		}
 	}
 
