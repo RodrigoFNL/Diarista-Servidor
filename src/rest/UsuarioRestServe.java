@@ -44,7 +44,7 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario, UsuarioBusiness>
 		}
 		catch (Exception e)
 		{	
-			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
+			return error("Ocorreu um erro de comunicaÃ§Ã£o, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 		}
 	}	
 
@@ -61,11 +61,11 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario, UsuarioBusiness>
 
 			UsuarioDTO user = usuarioBusiness.getInfoUserByCodigo(invitation);
 			if(user != null) return ok(user);		
-			else return error("Não foi localizado o número do cupom fornecido", BasicRestServe.UNAUTHORIZED);		
+			else return error("NÃ£o foi localizado o nÃºmero do cupom fornecido", BasicRestServe.UNAUTHORIZED);		
 		}
 		catch (Exception e)
 		{	
-			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
+			return error("Ocorreu um erro de comunicaÃ§Ã£o, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 		}
 	}
 }
