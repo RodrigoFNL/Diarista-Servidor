@@ -41,19 +41,19 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco, EnderecoBusines
 			cep = cep != null? cep.trim(): null;
 			if(cep == null) return null;
 
-			URL url = new URL("http://viacep.com.br/ws/" + cep + "/json");	
+			URL url = new URL("http://viacep.com.br/ws/" + cep + "/json/");	
 			url.openConnection();
 			InputStream is = url.openStream();
 
-			InputStreamReader isr = new InputStreamReader(is);
+			InputStreamReader isr = new InputStreamReader(is, "utf-8");
 			BufferedReader br = new BufferedReader(isr);
 			String linha = br.readLine();		
 
 			LocalidadeDTO dto = new LocalidadeDTO();
 
 			while (linha != null) 
-			{	
-				linha = linha.replace("\"", "").replace(",", "");		
+			{		
+				linha = linha.replace("\"", "").replace(",", "");						
 
 				if(linha.contains("bairro")) 		dto.setBairro(linha.replace("bairro:", "").trim());
 				if(linha.contains("cep")) 			dto.setCep(linha.replace("cep:", "").trim());

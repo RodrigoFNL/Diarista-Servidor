@@ -31,13 +31,13 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
 			String email = StringUtils.notEnpty((String) postObject.get("email"))	? (String) postObject.get("email"): null;
 			Boolean accept = postObject.get("accept") != null? (Boolean) postObject.get("accept"): false;
 
-			if(name == null) 			return "Você deve fornecer um Nome";
-			else if(cpf == null)  		return "Você deve fornecer um CPF";
-			else if(email == null) 		return "Você deve fornecer um Email";
-			else if(!accept)			return "Você deve aceitar os termos e condições";
+			if(name == null) 			return "VocÃª deve fornecer um Nome";
+			else if(cpf == null)  		return "VocÃª deve fornecer um CPF";
+			else if(email == null) 		return "VocÃª deve fornecer um Email";
+			else if(!accept)			return "VocÃª deve aceitar os termos e condiÃ§Ãµes";
 			
 			Usuario hasDuplicated = usuarioRepository.findById(cpf);
-			if(hasDuplicated != null && hasDuplicated.getLogin() != null) return "Já existe um usuário cadastrado neste CPF.";
+			if(hasDuplicated != null && hasDuplicated.getLogin() != null) return "JÃ¡ existe um usuÃ¡rio cadastrado neste CPF.";
 						
 			Usuario user = new Usuario();			
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
@@ -64,12 +64,12 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
 				
 				return "id:" + user.getCpf();
 			}
-			else  return "Não foi possível cadastrar o usúario";
+			else  return "NÃ£o foi possÃ­vel cadastrar o usuÃ¡rio";
 		}
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			return "Ocorreu um erro, ao tentar salvar as informações no banco";
+			return "Ocorreu um erro, ao tentar salvar as informaÃ§Ãµes no banco";
 		}
 	}
 

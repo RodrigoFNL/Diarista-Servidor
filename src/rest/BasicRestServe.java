@@ -44,7 +44,7 @@ public abstract class BasicRestServe <E, B>
 	
 	protected Response ok(String message)
 	{		
-		if(message == null) message = "Erro n„o especificado!";
+		if(message == null) message = "Erro n√£o especificado!";
 		return Response.ok(Json.createObjectBuilder().add("status", true).add("message", message).build()).build();	
 	}
 	
@@ -56,7 +56,7 @@ public abstract class BasicRestServe <E, B>
 		{		
 			send.put("entity", null);
 			send.put("status", false);
-			send.put("message", "Erro n„o especificado!");	
+			send.put("message", "Erro n√£o especificado!");	
 		}
 		else
 		{	
@@ -76,7 +76,7 @@ public abstract class BasicRestServe <E, B>
 		{
 			send.put("entity", null);
 			send.put("status", false);
-			send.put("message", "Erro n„o especificado!");		
+			send.put("message", "Erro n√£o especificado!");		
 			return Response.ok(send).build();	
 		}
 			
