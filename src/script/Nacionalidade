@@ -1,0 +1,9 @@
+insert into nacionalidade values(1, 'Argentina', true);
+insert into nacionalidade values(2, 'Brasil', true);
+insert into nacionalidade values(3, 'Chile', true);
+insert into nacionalidade values(4, 'Paraguai', true);
+insert into nacionalidade values(5, 'Uruguai', true);
+insert into nacionalidade values(6, 'Outro', true);
+
+select * from nacionalidade;
+               
