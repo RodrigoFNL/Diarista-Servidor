@@ -10,8 +10,8 @@ import dto.NacionalidadeDTO;
 import model.Nacionalidade;
 
 @Stateful
-public class NacionalidadeBusiness extends BasicBusiness<Nacionalidade, NacionalidadeBusiness> {
-
+public class NacionalidadeBusiness extends BasicBusiness<Nacionalidade, NacionalidadeBusiness>
+{
 	@Inject
 	private NacionalidadeDAO repository;
 	

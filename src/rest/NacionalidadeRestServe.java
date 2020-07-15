@@ -7,9 +7,9 @@ import business.BasicBusiness;
 import business.NacionalidadeBusiness;
 import model.Nacionalidade;
 
-@Path("nationality_status")
-public class NacionalidadeRestServe extends BasicRestServe<Nacionalidade, NacionalidadeBusiness> {
-	
+@Path("nationality")
+public class NacionalidadeRestServe extends BasicRestServe<Nacionalidade, NacionalidadeBusiness>
+{	
 	@Inject
 	private NacionalidadeBusiness nacionalidadeBusiness;
 	
