@@ -7,7 +7,7 @@ import javax.ejb.Stateful;
 import model.Endereco;
 
 @Stateful
-public class EnderecoBusiness extends BasicBusiness<Endereco, EnderecoBusiness>
+public class EnderecoBusiness extends BasicBusiness<Endereco>
 {
 
 	@Override

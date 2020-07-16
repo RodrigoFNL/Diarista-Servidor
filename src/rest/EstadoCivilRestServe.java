@@ -8,13 +8,13 @@ import business.EstadoCivilBusiness;
 import model.EstadoCivil;
 
 @Path("marital_status")
-public class EstadoCivilRestServe extends BasicRestServe<EstadoCivil, EstadoCivilBusiness> 
+public class EstadoCivilRestServe extends BasicRestServe<EstadoCivil> 
 {
 	@Inject
 	private EstadoCivilBusiness estadoCivilBusiness;
 	
 	@Override
-	protected BasicBusiness<EstadoCivil, EstadoCivilBusiness> business() 
+	protected BasicBusiness<EstadoCivil> business() 
 	{		
 		return estadoCivilBusiness;
 	}

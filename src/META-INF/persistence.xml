@@ -9,6 +9,7 @@
 		  <class>model.Usuario</class>
 		  <class>model.EstadoCivil</class>
 		  <class>model.Nacionalidade</class>
+		  <class>model.OrgaoEmissor</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect"	value="org.hibernate.dialect.PostgreSQLDialect" /> 

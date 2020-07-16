@@ -15,13 +15,13 @@ import javax.ws.rs.core.Response;
 
 import business.BasicBusiness;
 
-public abstract class BasicRestServe <E, B>
+public abstract class BasicRestServe <E>
 {
 	public static final int BAD_REQUEST = 400;
 	public static final int UNAUTHORIZED = 401;
 	public static final int INTERNAL_ERROR = 500;		
 	
-	protected abstract BasicBusiness<E, B> business();
+	protected abstract BasicBusiness<E> business();
 	
 	@GET	
 	@Path("all_active")	

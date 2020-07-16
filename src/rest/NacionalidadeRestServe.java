@@ -8,13 +8,13 @@ import business.NacionalidadeBusiness;
 import model.Nacionalidade;
 
 @Path("nationality")
-public class NacionalidadeRestServe extends BasicRestServe<Nacionalidade, NacionalidadeBusiness>
+public class NacionalidadeRestServe extends BasicRestServe<Nacionalidade>
 {	
 	@Inject
 	private NacionalidadeBusiness nacionalidadeBusiness;
 	
 	@Override
-	protected BasicBusiness<Nacionalidade, NacionalidadeBusiness> business ()
+	protected BasicBusiness<Nacionalidade> business ()
 	{
 		return nacionalidadeBusiness;
 	}

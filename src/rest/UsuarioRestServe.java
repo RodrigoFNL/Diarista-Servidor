@@ -17,14 +17,14 @@ import dto.UsuarioDTO;
 import model.Usuario;
 
 @Path("usuario")
-public class UsuarioRestServe  extends BasicRestServe<Usuario, UsuarioBusiness>
+public class UsuarioRestServe  extends BasicRestServe<Usuario>
 {
 
 	@Inject
 	private UsuarioBusiness usuarioBusiness;
 
 	@Override
-	protected BasicBusiness<Usuario , UsuarioBusiness> business() 
+	protected BasicBusiness<Usuario> business() 
 	{	
 		return usuarioBusiness;
 	}		

@@ -10,7 +10,7 @@ import dto.EstadoCivilDTO;
 import model.EstadoCivil;
 
 @Stateful
-public class EstadoCivilBusiness extends BasicBusiness<EstadoCivil, EstadoCivilBusiness>
+public class EstadoCivilBusiness extends BasicBusiness<EstadoCivil>
 {
 	@Inject
 	private EstadoCivilDAO repository;

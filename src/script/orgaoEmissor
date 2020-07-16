@@ -1,0 +1,4 @@
+insert into orgao_emissor values( 1, 'SESP', true);
+insert into orgao_emissor values( 2, 'SSP', true);
+insert into orgao_emissor values( 3, 'OUTROS', true);
+select * from orgao_emissor

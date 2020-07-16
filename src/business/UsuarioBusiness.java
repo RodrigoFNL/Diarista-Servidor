@@ -15,7 +15,7 @@ import util.EmailUtil;
 import util.StringUtils;
 
 @Stateful
-public class UsuarioBusiness  extends BasicBusiness<Usuario, UsuarioBusiness>
+public class UsuarioBusiness  extends BasicBusiness<Usuario>
 {		
 	private static String token ;
 	

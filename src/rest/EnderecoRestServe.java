@@ -18,12 +18,12 @@ import dto.LocalidadeDTO;
 import model.Endereco;
 
 @Path("adress")
-public class EnderecoRestServe  extends BasicRestServe<Endereco, EnderecoBusiness>
+public class EnderecoRestServe  extends BasicRestServe<Endereco>
 {
 	private EnderecoBusiness endBusiness;
 	
 	@Override
-	protected BasicBusiness<Endereco, EnderecoBusiness> business()
+	protected BasicBusiness<Endereco> business()
 	{	
 		return endBusiness;
 	}
