@@ -14,6 +14,7 @@ public class StringUtils
 		else return true;
 	}
 
+	//gera um número de cupom aleátorio
 	public static String generateCoupon(Long time)
 	{
 		
@@ -30,6 +31,7 @@ public class StringUtils
 		return retorno.toString();
 	}
 
+	//criptografa uma string
 	public static String encrypt(String value)
 	{
 		try
@@ -43,6 +45,7 @@ public class StringUtils
 			return null;
 		}
 	}
+	
 	
 	public enum IntString
 	{

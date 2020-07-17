@@ -22,6 +22,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	@Inject
 	private UsuarioDAO usuarioRepository;
 
+	//Salva um usuário com informações básica, cria um número de cupom, e salva no banco
 	public String createCoupon(Map<String, Object> postObject) 
 	{	
 		try
@@ -73,21 +74,24 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 	}
 
+	//busca um usuário que contém um convite, para que o mesmo termine de preencher as informações
 	public UsuarioDTO getInfoUserByCodigo(String invitation) 
 	{	
 		Usuario user = usuarioRepository.findByColumn("coupon", invitation);	
 		UsuarioDTO dto = user != null && user.getLogin() == null ? user.getDTO() : null;	
 		
-		if(dto != null) createToken(dto);
+		//cria um token de convite para finalizar cadastro
+		if(dto != null) createToken(dto, "INV-2020");
 		
 		return dto;		
 	}
 
-	private void createToken(UsuarioDTO dto) 
+	//cria um token, o preToken dirá se o usuário está logado ou está preenchendo o resto do cadastro
+	private void createToken(UsuarioDTO dto, String preToken) 
 	{
 		Date date = new Date();
 		Long time = date.getTime();		
-		String token =  StringUtils.encrypt(time.toString() + dto.getCpf());
+		String token =  preToken + StringUtils.encrypt(time.toString() + dto.getCpf());
 		
 		UsuarioBusiness.setToken(token);
 		dto.setToken(token);

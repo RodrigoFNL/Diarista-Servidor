@@ -97,15 +97,23 @@ public abstract class BasicPersistence <E extends BasicEntity<D>, D>
 		}
 	}
 	
+	/**
+	 * Busca uma Lista de DTOS no banco de dados
+	 * @param status = Busca conforme o status informado [nulo buscar todos os objetos]
+	 * @param orderby = Ordena uma lista, utilize a [ALIASE U] e o atributo conforme a ENTIDADE 
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
-	public List<?> getAllDTO(Boolean status )
+	public List<?> getAllDTO(Boolean status, String orderby )
 	{
 		try
 		{				
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT U FROM ").append(entityClass.getSimpleName()).append(" U");
 			
-			if(status != null) sql.append(" WHERE U.status = :status");	
+			if(status != null) sql.append(" WHERE U.status = :status ");				
+			if(orderby != null) sql.append(orderby);
+			
 			Query query = manager.createQuery(sql.toString());	
 			
 			if(status != null) query.setParameter("status", status);					
@@ -131,9 +139,9 @@ public abstract class BasicPersistence <E extends BasicEntity<D>, D>
 		}
 	}
 	
-	public List<?> getAllDTO( )
+	public List<?> getAllDTO(String orderby)
 	{
-		return getAllDTO(null);
+		return getAllDTO(null, orderby);
 	}
 }
 

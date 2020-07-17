@@ -20,6 +20,6 @@ public class NacionalidadeBusiness extends BasicBusiness<Nacionalidade>
 	@Override
 	public List<NacionalidadeDTO> getAllActive() {
 		
-		return (List<NacionalidadeDTO>) repository.getAllDTO(true);
+		return (List<NacionalidadeDTO>) repository.getAllDTO(true, null);
 	}
 }

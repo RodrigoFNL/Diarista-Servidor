@@ -18,7 +18,6 @@ public class OrgaoEmissorBusiness extends BasicBusiness<OrgaoEmissor>
 	@Override
 	public List<?> getAllActive() 
 	{	
-		return repository.getAllDTO();
+		return repository.getAllDTO(true, null);
 	}
-
 }

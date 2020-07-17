@@ -31,6 +31,7 @@ public class FilterRest implements Filter
 		HttpServletRequest request = (HttpServletRequest) requestServlet;
 		HttpServletResponse response = (HttpServletResponse) responseServlet;
 
+		//Adiciona cabeçario para que o Angular aceite a resposta
 		response.setHeader("server-header", "WildFly/19");
 		response.setHeader("x-powered-by-header", "Undertow/1");		
 		response.setHeader("Access-Control-Allow-Origin", "*");
@@ -41,6 +42,7 @@ public class FilterRest implements Filter
 
 		try
 		{		
+			//exceções para que o usuário inicie o cadastramento
 			if(	request.getRequestURI().contains("/diarista/rest/usuario/participate") 	|| 
 				request.getRequestURI().contains("/diarista/rest/usuario/invitation")  	|| 
 				request.getRequestURI().contains("/diarista/rest/login/authenticate")  	||			
@@ -70,8 +72,26 @@ public class FilterRest implements Filter
 					response.setStatus(401);	
 					return;			
 				}
-
-				chain.doFilter(request, response);		
+				
+				//restringe o usuário para opções do convite, para que o mesmo não tenha acesso ao sistema, visto que ele tem um token para poder realizar o resto do cadastro
+				if(token.contains("INV-2020") && (
+						request.getRequestURI().contains("/diarista/rest/nationality/all_active") 	 || 
+						request.getRequestURI().contains("/diarista/rest/marital_status/all_active") ||
+						request.getRequestURI().contains("/diarista/rest/adress/locality") 			 ||
+						request.getRequestURI().contains("/diarista/rest/issuing_department/all_active")
+						))
+				{						
+					chain.doFilter(request, response);	
+					return;			
+				}
+				
+				//vefica se o token é do login, se conter esse prefixo, ele valída o token de login
+				else if(token.contains("DIA-2020"))
+				{
+					chain.doFilter(request, response);	
+					return;			
+				}
+				response.setStatus(401);
 			}
 
 		}

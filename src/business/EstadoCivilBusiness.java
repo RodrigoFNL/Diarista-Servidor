@@ -20,7 +20,7 @@ public class EstadoCivilBusiness extends BasicBusiness<EstadoCivil>
 	@Override
 	public List<EstadoCivilDTO> getAllActive()
 	{	
-		return (List<EstadoCivilDTO>) repository.getAllDTO(true);		
+		return (List<EstadoCivilDTO>) repository.getAllDTO(true, "ORDER BY U.name");		
 	}
 
 }
