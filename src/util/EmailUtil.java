@@ -70,11 +70,11 @@ public class EmailUtil
 		 template.append("<body>");
 		 template.append("<header class='p-3 m-0 bg-dark text-light' mb-3>");
 		 template.append("<h1 class='text-center'>DIARISTA ONLINE</h1>");
-		 template.append("<p class='font-weight-bold'>Seja bem vindo a Comunidade DIARISTA ONLINE, � um imenso prazer, te-lo em nossa comunidade</p>");
+		 template.append("<p class='font-weight-bold'>Seja bem vindo a Comunidade DIARISTA ONLINE, É um imenso prazer, te-lo em nossa comunidade</p>");
 		 template.append("</header>");
 		 template.append("<section class='row justify-content-center mt-5 pb-5 shadow'>");
 		 template.append("<section class='col-6 text-center'>");
-		 template.append("<p>N�mero do seu Coupon</p>");
+		 template.append("<p>Número do seu Coupon</p>");
 		 template.append("<hr />");
 		 template.append("<p class='font-weight-bold'>").append(coupon).append("</p>");	
 		 template.append("</section>");
