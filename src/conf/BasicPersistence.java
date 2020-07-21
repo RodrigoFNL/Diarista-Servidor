@@ -109,9 +109,9 @@ public abstract class BasicPersistence <E extends BasicEntity<D>, D>
 		try
 		{				
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT U FROM ").append(entityClass.getSimpleName()).append(" U");
+			sql.append("SELECT U FROM ").append(entityClass.getSimpleName()).append(" U ");
 			
-			if(status != null) sql.append(" WHERE U.status = :status ");				
+			if(status != null) sql.append("WHERE U.status = :status ");				
 			if(orderby != null) sql.append(orderby);
 			
 			Query query = manager.createQuery(sql.toString());	

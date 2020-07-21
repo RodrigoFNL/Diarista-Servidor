@@ -2,6 +2,7 @@ package rest;
 
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -16,6 +17,7 @@ import conf.EmailInfo;
 import dto.UsuarioDTO;
 import model.Usuario;
 
+@RequestScoped
 @Path("usuario")
 public class UsuarioRestServe  extends BasicRestServe<Usuario>
 {

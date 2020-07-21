@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Map;
 
+import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,6 +18,7 @@ import business.EnderecoBusiness;
 import dto.LocalidadeDTO;
 import model.Endereco;
 
+@RequestScoped
 @Path("adress")
 public class EnderecoRestServe  extends BasicRestServe<Endereco>
 {

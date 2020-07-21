@@ -15,7 +15,7 @@ public class Nacionalidade extends BasicEntity<NacionalidadeDTO> {
 	private static final long serialVersionUID = 1L;
 	
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE)
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	private String name;
 	private Boolean status;

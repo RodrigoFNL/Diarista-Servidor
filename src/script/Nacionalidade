@@ -1,9 +1,11 @@
-insert into nacionalidade values(1, 'Argentina', true);
-insert into nacionalidade values(2, 'Brasil', true);
-insert into nacionalidade values(3, 'Chile', true);
-insert into nacionalidade values(4, 'Paraguai', true);
-insert into nacionalidade values(5, 'Uruguai', true);
-insert into nacionalidade values(6, 'Outro', true);
+--drop table nacionalidade;
+
+insert into nacionalidade (name, status) values ('Argentina', true);
+insert into nacionalidade (name, status) values ('Brasil', true);
+insert into nacionalidade (name, status) values ('Chile', true);
+insert into nacionalidade (name, status) values ('Paraguai', true);
+insert into nacionalidade (name, status) values ('Uruguai', true);
+insert into nacionalidade (name, status) values ('Outro', true);
 
 select * from nacionalidade;
                

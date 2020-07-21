@@ -1,8 +1,9 @@
-insert into estado_civil values(1, 'Solteiro(a)', true);
-insert into estado_civil values(2, 'Casado(a)', true);
-insert into estado_civil values(3, 'Separado(a)', true);
-insert into estado_civil values(4, 'Divorciado(a)', true);
-insert into estado_civil values(5, 'Viuvo(a)', true);
+--drop table estado_civil;
+
+insert into estado_civil (name, status) values('Solteiro(a)', true);
+insert into estado_civil (name, status) values ('Casado(a)', true);
+insert into estado_civil (name, status) values ('Separado(a)', true);
+insert into estado_civil (name, status) values ('Divorciado(a)', true);
+insert into estado_civil (name, status) values ('Viuvo(a)', true);
 
 select * from estado_civil;
-               
