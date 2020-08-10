@@ -11,6 +11,7 @@
 		  <class>model.Nacionalidade</class>
 		  <class>model.OrgaoEmissor</class>
 		  <class>model.UF</class>
+		  <class>model.Contrato</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect"	value="org.hibernate.dialect.PostgreSQLDialect" /> 
