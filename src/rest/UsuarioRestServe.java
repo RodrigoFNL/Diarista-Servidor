@@ -70,4 +70,32 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 		}
 	}
+	
+	@POST
+	@Path("register")
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response register(Map<String, Object> postObject)
+	{
+		
+		return ok("OK");
+		
+		
+		
+		
+		
+//		try
+//		{	
+//			String invitation = (String) postObject.get("codigo") != null ? (String) postObject.get("codigo") : null;				
+//			invitation = invitation != null? invitation.trim(): null;
+//
+//			UsuarioDTO user = usuarioBusiness.getInfoUserByCodigo(invitation);
+//			if(user != null) return ok(user);		
+//			else return error("Não foi localizado o número do cupom fornecido", BasicRestServe.UNAUTHORIZED);		
+//		}
+//		catch (Exception e)
+//		{	
+//			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
+//		}
+	}
 }
