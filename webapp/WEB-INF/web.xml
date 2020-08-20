@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
 	id="WebApp_ID" version="4.0">
 	<display-name>diarista</display-name>
-
+	
 	<filter>
 		<filter-name>FilterRest</filter-name>
 		<filter-class>conf.FilterRest</filter-class>
@@ -13,7 +13,7 @@
 	<filter-mapping>
 		<filter-name>FilterRest</filter-name>
 		<url-pattern>/rest/*</url-pattern>
-	</filter-mapping>	
+	</filter-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

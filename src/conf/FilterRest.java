@@ -36,7 +36,7 @@ public class FilterRest implements Filter
 		response.setHeader("x-powered-by-header", "Undertow/1");		
 		response.setHeader("Access-Control-Allow-Origin", "*");
 		response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT");
-		response.setHeader("Access-Control-Allow-Headers", "accept, authorization, content-type, x-requested-with");
+		response.setHeader("Access-Control-Allow-Headers", "accept, authorization, content-type, x-requested-with, enctype");
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		response.setHeader("Access-Control-Max-Age", "1");	
 
@@ -77,9 +77,10 @@ public class FilterRest implements Filter
 				
 				//restringe o usuário para opções do convite, para que o mesmo não tenha acesso ao sistema, visto que ele tem um token para poder realizar o resto do cadastro
 				if(token.contains("INV-2020") && (
-						request.getRequestURI().contains("/diarista/rest/nationality/all_active") 	 || 
-						request.getRequestURI().contains("/diarista/rest/marital_status/all_active") ||
-						request.getRequestURI().contains("/diarista/rest/adress/locality") 			 ||
+						request.getRequestURI().contains("/diarista/rest/nationality/all_active") 	 	|| 
+						request.getRequestURI().contains("/diarista/rest/marital_status/all_active") 	||
+						request.getRequestURI().contains("/diarista/rest/adress/locality") 			 	||
+						request.getRequestURI().contains("/diarista/rest/usuario/register")  			|| 
 						request.getRequestURI().contains("/diarista/rest/issuing_department/all_active")
 						))
 				{						

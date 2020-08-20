@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -71,16 +72,55 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 		}
 	}
 	
+//	  public Response register(@Context HttpServletRequest obj) 
+//	{
+//		
+//		System.out.println(obj);	
+//		return ok(obj);
+
+//	
+//	@POST
+//	@Path("register")
+//	@Produces(MediaType.APPLICATION_JSON)
+//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+//	public Response register(UserRegisterMultiFormRest object)
+//	{
+//		System.out.println(object);	
+//		return ok(object);
+	
 	@POST
 	@Path("register")
 	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	public Response register(Map<String, Object> postObject)
-	{
-		
-		return ok("OK");
-		
-		
+	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	public Response register(@FormParam("cpf") String cpf,
+			@FormParam("rg") String rg,
+			@FormParam("rne") String rne, 
+			@FormParam("name") String name, 
+			@FormParam("nickname") String nickName,
+			@FormParam("login")	String login,
+			@FormParam("email") String email,
+			@FormParam("coupon") String coupon,
+			@FormParam("termos_condicoes") String termosCondicoes,
+			@FormParam("password")	String password,
+			@FormParam("confirm_password") String confirmPassword,
+			@FormParam("nationality") String nationality,
+			@FormParam("birth_date")  String birthDate,
+			@FormParam("marital_status") String maritalStatus,
+			@FormParam("cell_phone")	String cellPhone,
+			@FormParam("andress") String andress,
+			@FormParam("token")	String token,
+			@FormParam("is_contratar")		 String isContratar,
+			@FormParam("is_prestar_servico") String isService,
+			@FormParam("frontDocument") byte[] frontDocument,
+			@FormParam("backDocument")  byte[] backDocument,
+			@FormParam("handDocument")  byte[] handDocument,
+			@FormParam("signature")	    byte[] signature )
+			{		
+			
+			
+			System.out.println(cpf);	
+			return ok("em construção");
+
 		
 		
 		
