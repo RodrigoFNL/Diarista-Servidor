@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import dto.EstadoCivilDTO;
+import util.StringUtils;
 
 
 @Entity
@@ -21,6 +22,12 @@ public class EstadoCivil extends BasicEntity<EstadoCivilDTO>
 	private String name;
 	private Boolean status;
 	
+	public EstadoCivil(){}
+	
+	public EstadoCivil(String id)
+	{
+		this.id = StringUtils.isNotNull(id)? Long.valueOf(id): null;
+	}
 	public Long getId() 
 	{
 		return id;

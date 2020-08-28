@@ -100,4 +100,12 @@ public class StringUtils
 		value = value.replace(".", "").replace(":", "").replace("-", "").replace("/", "").replace("\\", "").replace(";.", "").replace(":", "");
 		return value.trim();
 	}
+
+	public static Boolean isNotNull(String id) 
+	{
+		if(id == null) return false;
+		id = id.replace("null", "").replace("undefined", "");	
+		return id.trim().length() > 0? true: false;
+	}
+
 }

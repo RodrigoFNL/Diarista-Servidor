@@ -12,6 +12,7 @@
 		  <class>model.OrgaoEmissor</class>
 		  <class>model.UF</class>
 		  <class>model.Contrato</class>
+		  <class>model.Endereco</class>
 		<properties>
 			<property name="hibernate.hbm2ddl.auto" value="update" />
 			<property name="hibernate.dialect"	value="org.hibernate.dialect.PostgreSQLDialect" /> 

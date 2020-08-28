@@ -21,6 +21,13 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	
 	@Inject
 	private UsuarioDAO usuarioRepository;
+	
+
+	public String register(Usuario entity) 
+	{
+		boolean result = usuarioRepository.update(entity);			
+		return result? null: "Erro ao Salvar";	
+	}
 
 	//Salva um usuário com informações básica, cria um número de cupom, e salva no banco
 	public String createCoupon(Map<String, Object> postObject) 
@@ -52,8 +59,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			else 					  persiste =  usuarioRepository.update(user);
 			
 			if(persiste)
-			{
-				
+			{				
 				new Thread() 
 				{
 					@Override

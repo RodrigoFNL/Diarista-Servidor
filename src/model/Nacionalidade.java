@@ -7,11 +7,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import dto.NacionalidadeDTO;
+import util.StringUtils;
 
 @Entity
 @Table(name="nacionalidade")
-public class Nacionalidade extends BasicEntity<NacionalidadeDTO> {
-	
+public class Nacionalidade extends BasicEntity<NacionalidadeDTO> 
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -20,6 +21,11 @@ public class Nacionalidade extends BasicEntity<NacionalidadeDTO> {
 	private String name;
 	private Boolean status;
 	
+	public Nacionalidade() {}	
+	public Nacionalidade(String id) 
+	{
+		this.id = StringUtils.isNotNull(id)? Long.valueOf(id): null;
+	}
 	public Long getId() 
 	{
 		return id;

@@ -97,8 +97,11 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 		try
 		{
 			Map<String, Object> map = MultiPartUtils.multiPart(object);			
-			if(map == null) return error("Informações necessária incompleta", BasicRestServe.BAD_REQUEST);			
-			return ok("em construção");
+			if(map == null) return error("Informações necessária incompleta", BasicRestServe.BAD_REQUEST);					
+			String execute = usuarioBusiness.register(Usuario.getEntity(map));	
+			
+			if(execute == null) return ok("em construção");
+			else return error(execute, BasicRestServe.INTERNAL_ERROR);
 		}
 		catch (Exception e) 
 		{
