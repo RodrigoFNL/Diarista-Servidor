@@ -1,15 +1,20 @@
 package rest;
 
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 
 import business.BasicBusiness;
 import business.UsuarioBusiness;
@@ -72,22 +77,6 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 		}
 	}
 
-	//	  public Response register(@Context HttpServletRequest obj) 
-	//	{
-	//		
-	//		System.out.println(obj);	
-	//		return ok(obj);
-
-	//	
-	//	@POST
-	//	@Path("register")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	//	public Response register(UserRegisterMultiFormRest object)
-	//	{
-	//		System.out.println(object);	
-	//		return ok(object);
-
 	@POST
 	@Path("register")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -109,4 +98,72 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 			return error("OCORREU UM ERRO", BasicRestServe.INTERNAL_ERROR);
 		}	
 	}
+	
+	@GET
+	@Path("download/{id}")
+	//@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces("image/png")
+	public Response download(@PathParam("id") String id)
+	{		
+		try
+		{				
+			byte[] arquivo = null;
+			ResponseBuilder responseBuilder;
+			
+			if(id.equals("1"))
+			{ 
+				arquivo = usuarioBusiness.getFile(1);
+				responseBuilder = Response.ok(arquivo);	 
+				responseBuilder.header("Content-Disposition", "attachment;filename=assinatura.jpeg ");	 
+			}
+			else if(id.equals("2"))
+			{ 
+				arquivo = usuarioBusiness.getFile(2);
+			//	responseBuilder = Response.ok(arquivo);	 
+			//	responseBuilder.header("Content-Disposition", "attachment;filename=back_document.jpeg ");	
+				
+				StringBuilder title = new StringBuilder();
+	      		title.append("attachment;filename=back_document.pdf");	      		
+	      	      		
+	      		return Response.ok(arquivo).header("Content-Disposition", title).build();	
+				
+				
+			}
+			
+			else if(id.equals("3"))
+			{ 
+				arquivo = usuarioBusiness.getFile(3);
+				responseBuilder = Response.ok(arquivo);	 
+				responseBuilder.header("Content-Disposition", "attachment;filename=front_document.jpeg ");	 
+			}
+			
+			else if(id.equals("4"))
+			{ 
+				arquivo = usuarioBusiness.getFile(4);
+				responseBuilder = Response.ok(arquivo);	 
+				responseBuilder.header("Content-Disposition", "attachment;filename=hand_document.jpeg ");	 
+			}
+			else
+			{
+				responseBuilder = Response.ok();	 
+				responseBuilder.header("Content-Disposition", "attachment;filename=no_file.png ");					
+			}
+			return responseBuilder.build();					
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return error("OCORREU UM ERRO", BasicRestServe.INTERNAL_ERROR);
+		}	
+	}
 }
+
+
+
+
+
+
+
+
+
+

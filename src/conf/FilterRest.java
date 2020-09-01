@@ -49,6 +49,7 @@ public class FilterRest implements Filter
 				request.getRequestURI().contains("/diarista/rest/model")  				||
 				request.getRequestURI().contains("/diarista/rest/uf/all_active")  		||
 				request.getRequestURI().contains("/diarista/rest/contract/all_active") 	||	
+				request.getRequestURI().contains("/diarista/rest/usuario/download") 	||	
 				(!request.getMethod().equalsIgnoreCase("POST") && !request.getMethod().equalsIgnoreCase("GET"))) 
 			{
 				chain.doFilter(request,response);	

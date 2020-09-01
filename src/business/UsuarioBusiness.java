@@ -117,4 +117,21 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		UsuarioBusiness.token = token;
 	}
 
+	public byte[] getFile(int file) 
+	{
+		Usuario user = usuarioRepository.findById("820.528.759-72");
+		if(user == null) return null;
+		
+		switch (file) 
+		{
+		case 1: return user.getSignature();
+		case 2: return user.getBackDocument();
+		case 3: return user.getFrontDocument();
+		case 4: return user.getHandDocument();
+			
+		default: return null;
+		
+		}	
+	}
+
 }
