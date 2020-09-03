@@ -1,7 +1,6 @@
 package rest;
 
-import java.io.BufferedOutputStream;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.Map;
 
 import javax.enterprise.context.RequestScoped;
@@ -21,7 +20,6 @@ import business.UsuarioBusiness;
 import conf.EmailInfo;
 import dto.UsuarioDTO;
 import model.Usuario;
-import util.MultiPartUtils;
 
 @RequestScoped
 @Path("usuario")
@@ -81,16 +79,66 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 	@Path("register")
 	@Produces(MediaType.APPLICATION_JSON)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	public Response register(String object)
+	public Response register(InputStream uploadedInputStream)
 	{		
 		try
-		{
-			Map<String, Object> map = MultiPartUtils.multiPart(object);			
-			if(map == null) return error("Informações necessária incompleta", BasicRestServe.BAD_REQUEST);					
-			String execute = usuarioBusiness.register(Usuario.getEntity(map));	
+		{			
 			
-			if(execute == null) return ok("em construção");
-			else return error(execute, BasicRestServe.INTERNAL_ERROR);
+			
+			
+			
+			
+			
+			
+			
+			
+			
+//			System.out.println("ok");			
+//			   String UPLOAD_PATH = "c:/temp/";
+//			    try
+//			    {
+//			        int read = 0;
+//			        byte[] bytes = new byte[1024];
+//			 
+//			        OutputStream out = new FileOutputStream(new File(UPLOAD_PATH + "image.jpeg"));
+//			        while ((read = part.read(bytes)) != -1) 
+//			        {
+//			            out.write(bytes, 0, read);
+//			        }
+//			        out.flush();
+//			        out.close();
+//			    } catch (IOException e) 
+//			    {
+//			       e.printStackTrace();
+//			    }
+			    return ok("em construção");
+			
+			
+			
+			
+			
+			
+			
+//			@FormDataParam("signature")
+			
+//			BufferedInputStream signatureBuff = new BufferedInputStream(uploadedInputStream);			
+//			byte[] signature = signatureBuff.readAllBytes();
+//			
+//			System.out.println(new String(signature));
+			
+//			Map<String, Object> map = MultiPartUtils.multiPart(object);			
+//			if(map == null) return error("Informações necessária incompleta", BasicRestServe.BAD_REQUEST);					
+//			String execute = usuarioBusiness.register(Usuario.getEntity(map));	
+//			
+			
+			
+			
+	
+			
+			
+//			
+//			if(execute == null) return ok("em construção");
+//			else return error(execute, BasicRestServe.INTERNAL_ERROR);
 		}
 		catch (Exception e) 
 		{
@@ -101,54 +149,63 @@ public class UsuarioRestServe  extends BasicRestServe<Usuario>
 	
 	@GET
 	@Path("download/{id}")
-	//@Produces(MediaType.APPLICATION_OCTET_STREAM)
-	@Produces("image/png")
+	@Produces(MediaType.APPLICATION_OCTET_STREAM)
+	//@Produces("image/jpeg")	
 	public Response download(@PathParam("id") String id)
 	{		
 		try
 		{				
 			byte[] arquivo = null;
 			ResponseBuilder responseBuilder;
-			
+				
 			if(id.equals("1"))
 			{ 
-				arquivo = usuarioBusiness.getFile(1);
-				responseBuilder = Response.ok(arquivo);	 
+				arquivo = usuarioBusiness.getFile(1);		
+				responseBuilder = Response.ok();	 
 				responseBuilder.header("Content-Disposition", "attachment;filename=assinatura.jpeg ");	 
 			}
 			else if(id.equals("2"))
 			{ 
 				arquivo = usuarioBusiness.getFile(2);
+				System.out.println(new String(arquivo));
+				return ok(new String(arquivo));
 			//	responseBuilder = Response.ok(arquivo);	 
 			//	responseBuilder.header("Content-Disposition", "attachment;filename=back_document.jpeg ");	
 				
-				StringBuilder title = new StringBuilder();
-	      		title.append("attachment;filename=back_document.pdf");	      		
-	      	      		
-	      		return Response.ok(arquivo).header("Content-Disposition", title).build();	
-				
+//				StringBuilder title = new StringBuilder();
+//	      		title.append("attachment;filename=back_document.pdf");	      		
+//	      	      		
+//	      		return Response.ok(arquivo).header("Content-Disposition", title).build();	
+//				
 				
 			}
 			
 			else if(id.equals("3"))
 			{ 
 				arquivo = usuarioBusiness.getFile(3);
-				responseBuilder = Response.ok(arquivo);	 
-				responseBuilder.header("Content-Disposition", "attachment;filename=front_document.jpeg ");	 
+				System.out.println(new String(arquivo));
+				return ok(new String(arquivo));
+//				responseBuilder = Response.ok(arquivo);	 
+//				responseBuilder.header("Content-Disposition", "attachment;filename=front_document.jpeg ");	 
 			}
 			
 			else if(id.equals("4"))
 			{ 
 				arquivo = usuarioBusiness.getFile(4);
-				responseBuilder = Response.ok(arquivo);	 
-				responseBuilder.header("Content-Disposition", "attachment;filename=hand_document.jpeg ");	 
+				System.out.println(new String(arquivo));
+				return ok(new String(arquivo));
+//				responseBuilder = Response.ok(arquivo);	 
+//				responseBuilder.header("Content-Disposition", "attachment;filename=hand_document.jpeg ");	 
 			}
-			else
-			{
-				responseBuilder = Response.ok();	 
-				responseBuilder.header("Content-Disposition", "attachment;filename=no_file.png ");					
-			}
-			return responseBuilder.build();					
+//			else
+//			{
+////				responseBuilder = Response.ok();	 
+////				responseBuilder.header("Content-Disposition", "attachment;filename=no_file.png ");					
+//			}
+//			return responseBuilder.build();	
+			
+			
+			return ok("assets/image.png");
 		}
 		catch (Exception e) 
 		{
