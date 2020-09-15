@@ -27,8 +27,16 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	public String register(Usuario entity) 
 	{
 		try
-		{
-			usuarioRepository.save(entity);			
+		{	
+			Optional<Usuario> update = usuarioRepository.findByCpf(entity.getCpf());
+			if(update.isEmpty()) return "Usuário não encontrado!";
+						
+			Usuario userRecovery = update.get();			
+			userRecovery.setFrontDocument(entity.getFrontDocument());	
+			userRecovery.setBackDocument(entity.getBackDocument());	
+			userRecovery.setHandDocument(entity.getHandDocument());	
+			
+			usuarioRepository.save(userRecovery);			
 			return "id:" + entity.getCpf();
 		}
 		catch (Exception e) 
@@ -128,23 +136,11 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		UsuarioBusiness.token = token;
 	}
 
-	public byte[] getFile(int file) 
+	public Usuario findByCPF(String cpf) 
 	{
-		Optional<Usuario> userOptional = usuarioRepository.findByCpf("820.528.759-72");
-		Usuario user = userOptional.isPresent()? userOptional.get(): null;
-
-		if(user == null) return null;
-
-		switch (file) 
-		{
-		case 1: return user.getSignature();
-		case 2: return user.getBackDocument();
-		case 3: return user.getFrontDocument();
-		case 4: return user.getHandDocument();
-
-		default: return null;
-
-		}	
+		Optional<Usuario> userOptional = usuarioRepository.findByCpf(cpf);	
+		Usuario user = userOptional.isPresent() ? userOptional.get() : null;	
+		return user;
 	}
 
 }
