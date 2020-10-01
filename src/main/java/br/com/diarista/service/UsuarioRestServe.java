@@ -1,5 +1,6 @@
 package br.com.diarista.service;
 
+import java.util.Base64;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,12 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.thymeleaf.util.DateUtils;
 
 import br.com.diarista.business.BasicBusiness;
 import br.com.diarista.business.UsuarioBusiness;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dto.UsuarioDTO;
+import br.com.diarista.entity.EstadoCivil;
+import br.com.diarista.entity.Nacionalidade;
+import br.com.diarista.entity.RG;
 import br.com.diarista.entity.Usuario;
+import br.com.diarista.utils.StringUtils;
 
 @RestController
 @RequestMapping("/rest/usuario")
@@ -77,19 +83,64 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 
 	@RequestMapping(value="/register",  method=RequestMethod.POST, consumes = "multipart/form-data") 
 	@ResponseBody
-	public ResponseEntity<Object>  register(@RequestParam("frontDocument") MultipartFile frontdocument, 
-											@RequestParam("backDocument")  MultipartFile backDocument, 
-											@RequestParam("handDocument")  MultipartFile handDocument )
+	public ResponseEntity<Object>  register(@RequestParam("frontDocument") 	MultipartFile frontDocument, 
+											@RequestParam("backDocument")  	MultipartFile backDocument, 
+											@RequestParam("handDocument") 	MultipartFile handDocument,
+											@RequestParam("signature")  	MultipartFile signature,
+											@RequestParam("cpf")			String cpf,
+											
+											@RequestParam("rg-number")		String rgNumber,
+											@RequestParam("rg-issuer")		String rgIssuer,
+											@RequestParam("rg-uf")			String rgUF,											
+											
+											@RequestParam("rne")			String rne,			
+											@RequestParam("name")			String userName,
+											@RequestParam("nickname")		String nickName,
+											@RequestParam("login")			String login,
+											@RequestParam("email")			String email,
+											@RequestParam("coupon")			String coupon,
+											@RequestParam("termos_condicoes") String termosCondicoes,
+											@RequestParam("password") 		String password,							
+											@RequestParam("confirm_password") String confirmPassword,
+											@RequestParam("nationality") 	String nationality,
+											@RequestParam("birth_date") 	String birthDate,
+											@RequestParam("marital_status") String maritalStatus,
+											@RequestParam("cell_phone") 	String cellPhone,
+											@RequestParam("token") 			String token,
+											@RequestParam("is_prestar_servico") String isPrestarServico,
+											@RequestParam("is_contratar") 	String isContratar
+										    //data.append("andress", this._userRegister.andress? this._userRegister.andress.id.toString(): null);
+			)
 	{			
 
 		try
 		{			
-			Usuario user = new Usuario();
-
-			user.setCpf("82052875972");
-			user.setFrontDocument(frontdocument.getBytes());
-			user.setBackDocument(backDocument.getBytes());
-			user.setHandDocument(handDocument.getBytes());
+			Usuario user = new Usuario();			
+			user.setCpf(StringUtils.removeCharacters(cpf));		
+			if(StringUtils.isNotNull(rgNumber) && StringUtils.isNotNull(rgIssuer) && StringUtils.isNotNull(rgUF)) user.setRg(new RG(rgNumber, rgIssuer, rgUF));
+						
+			user.setRne(StringUtils.removeCharacters(rne));
+			user.setName(userName);
+			user.setNickname(nickName);
+			user.setLogin(login);
+			user.setEmail(email);
+			user.setCoupon(coupon);
+			user.setTermosCondicoes(Boolean.valueOf(termosCondicoes));
+			user.setConfirm_password(password);
+			user.setNationality(new Nacionalidade(nationality));
+			user.setMarital_status(new EstadoCivil(maritalStatus));
+			user.setToken(token);
+			user.setIsContratar(Boolean.valueOf(isContratar));
+			user.setIsPrestar_servico(Boolean.valueOf(isPrestarServico));
+			user.setCell_phone(StringUtils.removeCharacters(cellPhone));			
+	
+			//@RequestParam("birth_date") 	String birthDate,	
+		    //data.append("andress", this._userRegister.andress? this._userRegister.andress.id.toString(): null);					
+			
+			user.setFrontDocument(Base64.getDecoder().decode(new String(frontDocument.getBytes())));
+			user.setBackDocument(Base64.getDecoder().decode(new String(backDocument.getBytes())));
+			user.setHandDocument(Base64.getDecoder().decode(new String(handDocument.getBytes())));
+			user.setSignature(Base64.getDecoder().decode(new String(signature.getBytes())));			
 
 			String response = usuarioBusiness.register(user);
 
@@ -133,9 +184,9 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 					break;
 			}
 
-			response.setContentType("image/png;base64");
+			response.setContentType("image/png");
 			response.flushBuffer();
-			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".jpg" );
+			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".png" );
 			response.getOutputStream().flush();
 		} 
 		catch (Exception ex)

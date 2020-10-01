@@ -35,6 +35,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
 			userRecovery.setBackDocument(entity.getBackDocument());	
 			userRecovery.setHandDocument(entity.getHandDocument());	
+			userRecovery.setSignature(entity.getSignature());
 			
 			usuarioRepository.save(userRecovery);			
 			return "id:" + entity.getCpf();

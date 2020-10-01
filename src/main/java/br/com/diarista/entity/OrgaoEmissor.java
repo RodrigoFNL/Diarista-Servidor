@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.diarista.dto.OrgaoEmissorDTO;
+import br.com.diarista.utils.StringUtils;
 
 
 @Entity
@@ -22,6 +23,12 @@ public class OrgaoEmissor extends BasicEntity<OrgaoEmissorDTO>
     private String name; 
     private Boolean status;
     
+	public OrgaoEmissor() {}
+	
+	public OrgaoEmissor(String id) 
+	{
+		this.id = StringUtils.isNotNull(id)?  Long.valueOf(id) : null;
+	}
 	public Long getId() 
 	{
 		return id;

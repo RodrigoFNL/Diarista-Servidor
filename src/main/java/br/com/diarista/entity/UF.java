@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import br.com.diarista.dto.UFDTO;
+import br.com.diarista.utils.StringUtils;
 
 
 @Entity
@@ -23,6 +24,13 @@ public class UF extends BasicEntity<UFDTO>
     private String name; 
     private Boolean status;
     
+    public UF() 
+	{}
+    
+	public UF(String id) 
+	{		
+		this.id = StringUtils.isNotNull(id)?  Long.valueOf(id) : null;
+	}
 	public Long getId() 
 	{
 		return id;

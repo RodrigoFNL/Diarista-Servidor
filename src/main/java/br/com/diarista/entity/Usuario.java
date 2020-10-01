@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -25,7 +26,13 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	@Column(name = "cpf")
 	private String cpf;
 	
-	private String rg;
+	@Column(name = "rg_number")
+	private String rgNumber;
+	
+	@OneToOne
+	@JoinColumn(name = "rg_id", referencedColumnName = "number")
+	private RG rg;
+	
 	private String rne;	
 	
 	@Column(nullable = false)
@@ -42,6 +49,7 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	private Boolean termosCondicoes;	
 	
 	private byte [] password; 
+	
 	@Transient
 	private String confirm_password;
 	
@@ -186,13 +194,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	{
 		this.email = email;
 	}	
-	
-	public String getRg() {
-		return rg;
-	}
-	public void setRg(String rg) {
-		this.rg = rg;
-	}
 	public String getRne() {
 		return rne;
 	}
@@ -282,6 +283,18 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	}
 	public void setSignature(byte[] signature) {
 		this.signature = signature;
+	}
+	public String getRgNumber() {
+		return rgNumber;
+	}
+	public void setRgNumber(String rgNumber) {
+		this.rgNumber = rgNumber;
+	}
+	public RG getRg() {
+		return rg;
+	}
+	public void setRg(RG rg) {
+		this.rg = rg;
 	}
 
 }
