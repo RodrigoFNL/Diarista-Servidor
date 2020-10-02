@@ -3,7 +3,6 @@ package br.com.diarista.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import br.com.diarista.utils.StringUtils;
@@ -14,12 +13,10 @@ public class RG
 {
 	@Id
 	private String number; 
-	
-	@ManyToOne
+		
 	@JoinColumn(name = "issuer_id", referencedColumnName = "id")
 	private OrgaoEmissor issuer;
 	
-	@ManyToOne
 	@JoinColumn(name = "uf_id", referencedColumnName = "id")
 	private UF uf;
 
@@ -27,7 +24,7 @@ public class RG
 	
 	public RG(String rgNumber, String rgIssuer, String rgUF) 
 	{		
-		this.number = StringUtils.isNotNull(rgNumber)	? rgNumber : null;		
+		this.number = StringUtils.isNotNull(rgNumber)	? StringUtils.removeCharacters(rgNumber) : null;		
 		this.uf = StringUtils.isNotNull(rgUF)			? new UF(rgUF) : null;
 		this.issuer = StringUtils.isNotNull(rgIssuer)	? new OrgaoEmissor(rgIssuer) : null;				
 	}

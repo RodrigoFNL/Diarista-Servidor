@@ -18,16 +18,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.thymeleaf.util.DateUtils;
 
 import br.com.diarista.business.BasicBusiness;
 import br.com.diarista.business.UsuarioBusiness;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dto.UsuarioDTO;
+import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.EstadoCivil;
 import br.com.diarista.entity.Nacionalidade;
 import br.com.diarista.entity.RG;
 import br.com.diarista.entity.Usuario;
+import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.StringUtils;
 
 @RestController
@@ -42,7 +43,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 	{	
 		return usuarioBusiness;
 	}		
-
 
 	@PostMapping("/participate")
 	public ResponseEntity<Object> participate(@RequestBody Map<String, Object> postObject)
@@ -91,7 +91,16 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 											
 											@RequestParam("rg-number")		String rgNumber,
 											@RequestParam("rg-issuer")		String rgIssuer,
-											@RequestParam("rg-uf")			String rgUF,											
+											@RequestParam("rg-uf")			String rgUF,
+											
+											@RequestParam("andress_id") 		String andressId,
+											@RequestParam("andress_number") 	String andressNumber,
+											@RequestParam("andress_complement") String andressComplement,
+											@RequestParam("andress_cep") 		String andressCep,
+											@RequestParam("andress_localidade") String andressLocalidade,
+											@RequestParam("andress_logradouro") String andressLogradouro,
+											@RequestParam("andress_bairro") 	String andressBairro,
+											@RequestParam("andress_uf") 		String andressUf,
 											
 											@RequestParam("rne")			String rne,			
 											@RequestParam("name")			String userName,
@@ -108,9 +117,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 											@RequestParam("cell_phone") 	String cellPhone,
 											@RequestParam("token") 			String token,
 											@RequestParam("is_prestar_servico") String isPrestarServico,
-											@RequestParam("is_contratar") 	String isContratar
-										    //data.append("andress", this._userRegister.andress? this._userRegister.andress.id.toString(): null);
-			)
+											@RequestParam("is_contratar") 	String isContratar)
 	{			
 
 		try
@@ -119,6 +126,11 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setCpf(StringUtils.removeCharacters(cpf));		
 			if(StringUtils.isNotNull(rgNumber) && StringUtils.isNotNull(rgIssuer) && StringUtils.isNotNull(rgUF)) user.setRg(new RG(rgNumber, rgIssuer, rgUF));
 						
+			if(StringUtils.isNotNull(andressNumber) && StringUtils.isNotNull(andressCep) && StringUtils.isNotNull(andressLocalidade) && StringUtils.isNotNull(andressUf))
+				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, andressUf));
+									
+			user.setBirth_date(DateUtils.getDate(birthDate));
+			
 			user.setRne(StringUtils.removeCharacters(rne));
 			user.setName(userName);
 			user.setNickname(nickName);
@@ -132,11 +144,8 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setToken(token);
 			user.setIsContratar(Boolean.valueOf(isContratar));
 			user.setIsPrestar_servico(Boolean.valueOf(isPrestarServico));
-			user.setCell_phone(StringUtils.removeCharacters(cellPhone));			
-	
-			//@RequestParam("birth_date") 	String birthDate,	
-		    //data.append("andress", this._userRegister.andress? this._userRegister.andress.id.toString(): null);					
-			
+			user.setCell_phone(StringUtils.removeCharacters(cellPhone));		
+						
 			user.setFrontDocument(Base64.getDecoder().decode(new String(frontDocument.getBytes())));
 			user.setBackDocument(Base64.getDecoder().decode(new String(backDocument.getBytes())));
 			user.setHandDocument(Base64.getDecoder().decode(new String(handDocument.getBytes())));
@@ -193,70 +202,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 		{
 			ex.printStackTrace();
 		}
-
-
-
-
-
-
-
-
-
-
-		//			if(id.equals("1"))
-		//			{ 
-		//				arquivo = usuarioBusiness.getFile(1);		
-		//				responseBuilder = Response.ok();	 
-		//				responseBuilder.header("Content-Disposition", "attachment;filename=assinatura.jpeg ");	 
-		//			}
-		//			else if(id.equals("2"))
-		//			{ 
-		//				arquivo = usuarioBusiness.getFile(2);
-		//				System.out.println(new String(arquivo));
-		//				return ok(new String(arquivo));
-		//			//	responseBuilder = Response.ok(arquivo);	 
-		//			//	responseBuilder.header("Content-Disposition", "attachment;filename=back_document.jpeg ");	
-		//				
-		//				StringBuilder title = new StringBuilder();
-		//	      		title.append("attachment;filename=back_document.pdf");	      		
-		//	      	      		
-		//	      		return Response.ok(arquivo).header("Content-Disposition", title).build();	
-		//				
-		//				
-		//			}
-		//			
-		//			else if(id.equals("3"))
-		//			{ 
-		//				arquivo = usuarioBusiness.getFile(3);
-		//				System.out.println(new String(arquivo));
-		//				return ok(new String(arquivo));
-		////				responseBuilder = Response.ok(arquivo);	 
-		////				responseBuilder.header("Content-Disposition", "attachment;filename=front_document.jpeg ");	 
-		//			}
-		//			
-		//			else if(id.equals("4"))
-		//			{ 
-		//				arquivo = usuarioBusiness.getFile(4);
-		//				System.out.println(new String(arquivo));
-		//				return ok(new String(arquivo));
-		////				responseBuilder = Response.ok(arquivo);	 
-		////				responseBuilder.header("Content-Disposition", "attachment;filename=hand_document.jpeg ");	 
-		//			}
-		//			else
-		//			{
-		////				responseBuilder = Response.ok();	 
-		////				responseBuilder.header("Content-Disposition", "attachment;filename=no_file.png ");					
-		//			}
-		//			return responseBuilder.build();	
-		//			
-		//			
-		//			return ok("assets/image.png");
-		//		}
-		//		catch (Exception e) 
-		//		{
-		//			e.printStackTrace();
-		//			return error("OCORREU UM ERRO", BasicRestServe.INTERNAL_ERROR);
-		//		}	
 	}
 }
 
