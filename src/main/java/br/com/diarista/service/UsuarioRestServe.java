@@ -89,9 +89,9 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 											@RequestParam("signature")  	MultipartFile signature,
 											@RequestParam("cpf")			String cpf,
 											
-											@RequestParam("rg-number")		String rgNumber,
-											@RequestParam("rg-issuer")		String rgIssuer,
-											@RequestParam("rg-uf")			String rgUF,
+											@RequestParam("rg_number")		String rgNumber,
+											@RequestParam("rg_issuer")		String rgIssuer,
+											@RequestParam("rg_uf")			String rgUF,
 											
 											@RequestParam("andress_id") 		String andressId,
 											@RequestParam("andress_number") 	String andressNumber,
