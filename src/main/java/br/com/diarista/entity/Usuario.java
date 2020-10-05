@@ -26,9 +26,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	@Column(name = "cpf")
 	private String cpf;
 	
-	@Column(name = "rg_number")
-	private String rgNumber;
-	
 	@OneToOne
 	@JoinColumn(name = "rg_id", referencedColumnName = "number")
 	private RG rg;
@@ -283,12 +280,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	}
 	public void setSignature(byte[] signature) {
 		this.signature = signature;
-	}
-	public String getRgNumber() {
-		return rgNumber;
-	}
-	public void setRgNumber(String rgNumber) {
-		this.rgNumber = rgNumber;
 	}
 	public RG getRg() {
 		return rg;

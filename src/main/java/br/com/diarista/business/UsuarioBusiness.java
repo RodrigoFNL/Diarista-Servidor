@@ -12,6 +12,8 @@ import br.com.diarista.dao.UsuarioDAO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
 import br.com.diarista.entity.Usuario;
+import br.com.diarista.utils.DateUtils;
+import br.com.diarista.utils.DiaristaUtils;
 import br.com.diarista.utils.EmailUtil;
 import br.com.diarista.utils.StringUtils;
 
@@ -24,18 +26,71 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	private UsuarioDAO usuarioRepository;
 
 
-	public String register(Usuario entity) 
+	public String register(Usuario entity, String password) 
 	{
 		try
-		{	
+		{				
+			if(!DiaristaUtils.validCPF(entity.getCpf())) 	return "CPF é inválido!";	
+			
+			if(entity.getRg() == null && entity.getRne() == null) return "RG ou RNE obrigatório!";			
+			if(entity.getAndress() == null) 				return "O endereço é obrigatório!";				
+			if(entity.getAndress().getLocality() == null)  	return "O endereço é obrigatório!";			
+			if(entity.getAndress().getNumber() == null) 	return "O número da residência é obrigatório!";
+			if(entity.getBirth_date() == null) 				return "A data de nascimento é obrigatório!";
+			if(!DateUtils.isOfAge(entity.getBirth_date())) 	return "O usuário tem que ser maior de idade!";	
+			
+			if(StringUtils.isNull(entity.getName())) 	 return "É obrigatório o preenchimento do Nome";	
+			if(StringUtils.isNull(entity.getNickname())) return "É obrigatório o preenchimento do NickName";	
+			if(StringUtils.isNull(entity.getLogin()))	 return "É obrigatório o preenchimento do Login";				
+			if(StringUtils.isNull(entity.getEmail()))	 return "É obrigatório o preenchimento do Email";			
+			if(StringUtils.isNull(entity.getCoupon())) 	 return "É obrigatório o preenchimento do Cupom";				
+
+			if(DiaristaUtils.validTelefone(entity.getCell_phone())) return "O número telefonico é inválido";
+				
+			if(entity.getTermosCondicoes()  == null) return "Você deve aceitar os Termos e Condições para participar do App";	
+			else if(!entity.getTermosCondicoes())    return "Você deve aceitar os Termos e Condições para participar do App";				
+			if(!entity.getConfirm_password().equals(password))  return "A Senha é divergente da confirmação da senha";				
+	
+			if(entity.getNationality() == null) 				return "É obrigatório o preenchimento da Nacionalidade";	
+			else if(entity.getNationality().getId() == null)	return "É obrigatório o preenchimento da Nacionalidade";	
+						
+			if(entity.getMarital_status() == null) 				return "É obrigatório o preenchimento do Estado Civil";	
+			else if(entity.getMarital_status().getId() == null)	return "É obrigatório o preenchimento da Estado Civil";	
+		
+			if(entity.getIsContratar() == null)			return "Você não definiu se irá contratar ou não";	
+			if(entity.getIsPrestar_servico() == null)   return "Você não definiu se irá prestar serviço ou não";	
+		
+			if(entity.getFrontDocument() == null)   return "É obrigatório a foto da frente do documento!";	
+			if(entity.getBackDocument() == null)    return "É obrigatório a foto da parte de trás do documento!";	
+			if(entity.getHandDocument() == null)    return "É obrigatório a foto do usuário com o documento na mão!";	
+			if(entity.getSignature() == null)   	return "É obrigatório a assinatura do contrato!";	
+							
 			Optional<Usuario> update = usuarioRepository.findByCpf(entity.getCpf());
 			if(update.isEmpty()) return "Usuário não encontrado!";
 						
-			Usuario userRecovery = update.get();			
+			Usuario userRecovery = update.get();
+			
+			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
+			
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
 			userRecovery.setBackDocument(entity.getBackDocument());	
 			userRecovery.setHandDocument(entity.getHandDocument());	
-			userRecovery.setSignature(entity.getSignature());
+			userRecovery.setSignature(entity.getSignature());			
+			
+			userRecovery.setRg(entity.getRg());
+			userRecovery.setAndress(entity.getAndress());			
+			userRecovery.setBirth_date(entity.getBirth_date()); 	
+			userRecovery.setNickname(entity.getNickname());
+			userRecovery.setLogin(DiaristaUtils.genarateLogin( entity.getLogin()));
+			userRecovery.setEmail(entity.getEmail());			
+			userRecovery.setCell_phone(entity.getCell_phone());
+				
+			userRecovery.setTermosCondicoes(entity.getTermosCondicoes());		
+			userRecovery.setPassword(entity.getConfirm_password().getBytes());	
+			userRecovery.setNationality(entity.getNationality());						
+			userRecovery.setMarital_status(entity.getMarital_status());		
+			userRecovery.setIsContratar(entity.getIsContratar());
+			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
 			
 			usuarioRepository.save(userRecovery);			
 			return "id:" + entity.getCpf();

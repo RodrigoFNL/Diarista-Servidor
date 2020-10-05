@@ -138,7 +138,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setEmail(email);
 			user.setCoupon(coupon);
 			user.setTermosCondicoes(Boolean.valueOf(termosCondicoes));
-			user.setConfirm_password(password);
+			user.setConfirm_password(StringUtils.encrypt(password));
 			user.setNationality(new Nacionalidade(nationality));
 			user.setMarital_status(new EstadoCivil(maritalStatus));
 			user.setToken(token);
@@ -151,7 +151,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setHandDocument(Base64.getDecoder().decode(new String(handDocument.getBytes())));
 			user.setSignature(Base64.getDecoder().decode(new String(signature.getBytes())));			
 
-			String response = usuarioBusiness.register(user);
+			String response = usuarioBusiness.register(user, StringUtils.encrypt(confirmPassword));
 
 			if(response.contains("id:")) return  ok(response);	
 			else return error(response, BasicRestServe.INTERNAL_ERROR);		

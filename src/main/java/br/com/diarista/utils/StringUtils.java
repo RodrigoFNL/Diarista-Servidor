@@ -98,7 +98,7 @@ public class StringUtils
 	public static String removeCharacters(String value)
 	{
 		if(value == null) return null;
-		value = value.replace(".", "").replace(":", "").replace("-", "").replace("/", "").replace("\\", "").replace(";", "").replace(":", "").replace(" ", "").replace(")", "");
+		value = value.replace(".", "").replace(":", "").replace("-", "").replace("/", "").replace("\\", "").replace(";", "").replace(":", "").replace(" ", "").replace(")", "").replace("(", "").replace("_", "");
 		return value.trim();
 	}
 
@@ -107,6 +107,11 @@ public class StringUtils
 		if(value == null) return false;
 		value = value.replace("null", "").replace("undefined", "");	
 		return !value.trim().isEmpty()? true: false;
+	}
+
+	public static boolean isNull(String value) 
+	{
+		return !isNotNull(value);
 	}
 
 }
