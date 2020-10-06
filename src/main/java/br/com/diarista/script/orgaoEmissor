@@ -1,0 +1,7 @@
+--drop table orgao_emissor;
+
+insert into orgao_emissor (name, status) values ('SESP', true);
+insert into orgao_emissor (name, status) values ('SSP', true);
+insert into orgao_emissor (name, status) values ('OUTROS', true);
+
+select * from orgao_emissor

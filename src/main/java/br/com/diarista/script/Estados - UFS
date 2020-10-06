@@ -1,0 +1,31 @@
+--drop table uf;
+
+insert into uf (name, sigla, status) values('ACRE', 'AC',true);
+insert into uf (name, sigla, status) values('ALAGOAS', 'AP',true);
+insert into uf (name, sigla, status) values('AMAPÁ', 'AC',true);
+insert into uf (name, sigla, status) values('AMAZONAS', 'AM',true);
+insert into uf (name, sigla, status) values('BAHIA', 'BA',true);
+insert into uf (name, sigla, status) values('CEARÁ', 'CE',true);
+insert into uf (name, sigla, status) values('DESTRITO FEDERAL', 'DF',true);
+insert into uf (name, sigla, status) values('ESPÍRITO SANTO', 'ES',true);
+insert into uf (name, sigla, status) values('GOIÁS', 'GO',true);
+insert into uf (name, sigla, status) values('MARANHÃO', 'MA',true);
+insert into uf (name, sigla, status) values('MATO GROSSO', 'MT',true);
+insert into uf (name, sigla, status) values('MATO GROSSO DO SUL', 'MS',true);
+insert into uf (name, sigla, status) values('MINAS GERAIS', 'MG',true);
+insert into uf (name, sigla, status) values('PARÁ', 'PA',true);
+insert into uf (name, sigla, status) values('PARAÍBA', 'PB',true);
+insert into uf (name, sigla, status) values('PARANÁ', 'PR',true);
+insert into uf (name, sigla, status) values('PERNAMBUCO', 'PE',true);
+insert into uf (name, sigla, status) values('PIAUÍ', 'PI',true);
+insert into uf (name, sigla, status) values('RIO DE JANEIRO', 'RJ',true);
+insert into uf (name, sigla, status) values('RIO GRANDE DO NORTE', 'RN',true);
+insert into uf (name, sigla, status) values('RIO GRANDE DO SUL', 'RS',true);
+insert into uf (name, sigla, status) values('RONDÔNIA', 'RO',true);
+insert into uf (name, sigla, status) values('RORAIMA', 'RR',true);
+insert into uf (name, sigla, status) values('SANTA CATARINA', 'SC',true);
+insert into uf (name, sigla, status) values('SÃO PAULO', 'SP',true);
+insert into uf (name, sigla, status) values('SERGIPE', 'SE',true);
+insert into uf (name, sigla, status) values('TOCANTINS', 'TO',true);
+
+select * from uf
