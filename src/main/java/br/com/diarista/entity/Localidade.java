@@ -6,12 +6,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import br.com.diarista.dto.LocalidadeDTO;
 import br.com.diarista.utils.StringUtils;
 
 @Entity
 @Table(name="locality")
-public class Localidade
+public class Localidade  extends BasicEntity<LocalidadeDTO>
 {
+	private static final long serialVersionUID = 1L;
 	@Id
 	private String cep;
 	private String bairro;
@@ -82,5 +84,19 @@ public class Localidade
 	public void setUf(UF uf) {
 		this.uf = uf;
 	}
-    
+
+	@Override
+	public LocalidadeDTO getDTO() 
+	{	
+		LocalidadeDTO dto = new LocalidadeDTO();
+		
+		dto.setCep(this.cep);
+		dto.setBairro(this.bairro);
+		dto.setComplemento(this.complemento);
+		dto.setIbge(this.ibge);
+		dto.setLocalidade(this.localidade);
+		dto.setLogradouro(this.logradouro);
+		
+		return dto;		
+	}    
 }

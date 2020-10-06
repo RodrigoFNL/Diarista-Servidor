@@ -7,7 +7,11 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.diarista.dao.EnderecoDAO;
+import br.com.diarista.dao.LocalidadeDAO;
+import br.com.diarista.dao.RGDAO;
 import br.com.diarista.dao.UsuarioDAO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
@@ -24,8 +28,17 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 	@Autowired
 	private UsuarioDAO usuarioRepository;
+	
+	@Autowired
+	private RGDAO rgRepository;
 
+	@Autowired
+	private LocalidadeDAO localidadeRepository;
+	
+	@Autowired
+	private EnderecoDAO enderecoRepository;
 
+	@Transactional
 	public String register(Usuario entity, String password) 
 	{
 		try
@@ -91,6 +104,12 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setMarital_status(entity.getMarital_status());		
 			userRecovery.setIsContratar(entity.getIsContratar());
 			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
+			
+			Boolean isExist = localidadeRepository.existsByCep(entity.getAndress().getLocality().getCep());
+			if(isExist) localidadeRepository.save(entity.getAndress().getLocality());
+			
+			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());
+			if(userRecovery.getRg() != null) 		rgRepository.save(userRecovery.getRg());
 			
 			usuarioRepository.save(userRecovery);			
 			return "id:" + entity.getCpf();

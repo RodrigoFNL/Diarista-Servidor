@@ -2,7 +2,6 @@ package br.com.diarista.entity;
 
 
 import java.util.Date;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -97,41 +96,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 		dto.setTermos_condicoes(this.termosCondicoes);		
 	
 		return dto;
-	}
-	public static Usuario getEntity(Map<String, Object> map) 
-	{	
-		return null;
-//		Usuario user = new Usuario();		
-//		if(map.containsKey("cpf")) 				user.setCpf((String) map.get("cpf"));
-//		if(map.containsKey("rg")) 				user.setRg((String) map.get("rg"));
-//		if(map.containsKey("rne")) 				user.setRne((String) map.get("rne"));
-//		if(map.containsKey("name")) 			user.setName((String) map.get("name"));
-//		if(map.containsKey("nickname")) 		user.setNickname((String) map.get("nickname"));
-//		if(map.containsKey("login")) 			user.setLogin((String) map.get("login"));
-//		if(map.containsKey("email")) 			user.setEmail((String) map.get("email"));
-//		if(map.containsKey("coupon")) 			user.setCoupon((String) map.get("coupon"));		
-//		if(map.containsKey("cell_phone")) 		user.setCell_phone((String) map.get("cell_phone"));		
-//		if(map.containsKey("confirm_password")) user.setConfirm_password(StringUtils.encrypt((String) map.get("confirm_password")));
-//		
-//		if(map.containsKey("password") && StringUtils.notEnpty((String) map.get("password"))) user.setPassword( StringUtils.encrypt((String) map.get("password")).getBytes());
-//				
-//		user.setTermosCondicoes(map.containsKey("termos_condicoes") 	&& StringUtils.notEnpty((String) map.get("termos_condicoes"))	? Boolean.valueOf((String) map.get("termos_condicoes")) 	: false);
-//		user.setIsPrestar_servico(map.containsKey("is_prestar_servico") && StringUtils.notEnpty((String) map.get("is_prestar_servico"))	? Boolean.valueOf((String) map.get("is_prestar_servico")) 	: false);	
-//		user.setIsContratar(map.containsKey("is_contratar") 			&& StringUtils.notEnpty((String) map.get("is_contratar"))		? Boolean.valueOf((String) map.get("is_contratar")) 		: false);		
-//				
-//		
-//		if(map.containsKey("frontDocument") && map.get("frontDocument") != null)user.setFrontDocument(((String) map.get("frontDocument")).getBytes());
-//		if(map.containsKey("backDocument")	&& map.get("backDocument") != null) user.setBackDocument(((String) map.get("backDocument")).getBytes());
-//		if(map.containsKey("handDocument")  && map.get("handDocument") != null) user.setHandDocument(((String) map.get("handDocument")).getBytes());
-//		if(map.containsKey("signature")		&& map.get("signature") != null) 	user.setSignature(((String) map.get("signature")).getBytes());
-		
-		//if(map.containsKey("nationality")) 		user.setNationality(new Nacionalidade((String) map.get("nationality")));
-		//if(map.containsKey("marital_status")) 	user.setMarital_status(new EstadoCivil((String) map.get("marital_status")));
-
-	    //user.birth_date(new Date((String) map.get("birth_date")));		
-	    //user.setCpf((String) map.get("andress"));
-		
-//		return user;
 	}
 			
 	public Boolean getTermosCondicoes() 

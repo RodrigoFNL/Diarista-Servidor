@@ -8,7 +8,5 @@ import br.com.diarista.entity.EstadoCivil;
 
 public interface EstadoCivilDAO extends JpaRepository<EstadoCivil, Long>
 {
-
 	List<EstadoCivil> findByStatus(Boolean status);
-
 }
