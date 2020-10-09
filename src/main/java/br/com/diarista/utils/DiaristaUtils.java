@@ -6,45 +6,54 @@ public class DiaristaUtils
 	public static Boolean validCPF(String cpf)
 	{
 		if(cpf == null) return false;
-		if(cpf.isEmpty()) return false;
-		
-        cpf = StringUtils.removeCharacters(cpf);
+		if(cpf.isEmpty()) return false;		    
+	
+        if (cpf.equals("00000000000") || cpf.equals("11111111111") || cpf.equals("22222222222") || cpf.equals("33333333333") ||
+            cpf.equals("44444444444") || cpf.equals("55555555555") || cpf.equals("66666666666") || cpf.equals("77777777777") ||
+            cpf.equals("88888888888") || cpf.equals("99999999999") || (cpf.length() != 11))    return(false);
 
-        if(cpf.length() != 11)      return false;
-        if(cpf == "00000000000")    return false;
-        if(cpf == "11111111111")    return false;
-        if(cpf == "22222222222")    return false;
-        if(cpf == "33333333333")    return false;
-        if(cpf == "44444444444")    return false;
-        if(cpf == "55555555555")    return false;
-        if(cpf == "66666666666")    return false;
-        if(cpf == "77777777777")    return false;
-        if(cpf == "88888888888")    return false;
-        if(cpf == "99999999999")    return false;
-        
-        String numeros = cpf.substring(0,9);
-        String digitos = cpf.substring(9);
-        Integer soma = 0;
-
-        for (int i = 10; i > 1; i--) 
+        char dig10, dig11;
+        int sm, i, r, num, peso;
+        try 
         {
-            soma += Integer.valueOf(numeros.charAt(10 - i)) * i;
-        } 
-        
-        int  resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
-
-        if (resultado != Integer.valueOf(digitos.charAt(0))) return false;
-            
-        numeros = cpf.substring(0,10);
-        soma = 0;
-        for (int i = 11; i > 1; i--)
-        {
-            soma += Integer.valueOf(numeros.charAt(11 - i)) * i;            
-        }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;   
-        if (resultado != Integer.valueOf(digitos.charAt(1))) return false;              
    
-        return true;	
+            sm = 0;
+            peso = 10;
+            for (i=0; i<9; i++) 
+            {
+	            num = (int)(cpf.charAt(i) - 48);
+	            sm = sm + (num * peso);
+	            peso = peso - 1;
+            }
+
+            r = 11 - (sm % 11);
+            if ((r == 10) || (r == 11))
+                dig10 = '0';
+            else dig10 = (char)(r + 48); 
+ 
+            sm = 0;
+            peso = 11;
+            for(i=0; i<10; i++) 
+            {
+            num = (int)(cpf.charAt(i) - 48);
+            sm = sm + (num * peso);
+            peso = peso - 1;
+            }
+
+            r = 11 - (sm % 11);
+            if ((r == 10) || (r == 11))
+                 dig11 = '0';
+            else dig11 = (char)(r + 48);
+
+      
+            if ((dig10 == cpf.charAt(9)) && (dig11 == cpf.charAt(10)))   return(true);
+            else return(false);
+               
+        } 
+        catch (Exception erro) 
+        {
+                return(false);            
+        }
 	}
 
 	public static boolean validTelefone(String numberPhone) 
@@ -53,12 +62,6 @@ public class DiaristaUtils
 		StringUtils.removeCharacters(numberPhone);		
 		if(numberPhone.length() < 10) return false;
 		return true;
-	}
-
-	public static String genarateLogin(String login)
-	{
-		if(login == null) return null;
-		return null;
 	}
 }
 

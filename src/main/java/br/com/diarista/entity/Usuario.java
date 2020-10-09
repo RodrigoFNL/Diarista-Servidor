@@ -20,6 +20,10 @@ import br.com.diarista.dto.UsuarioDTO;
 public class Usuario extends BasicEntity<UsuarioDTO>
 {	
 	private static final long serialVersionUID = 1L;
+	public static final Short CADASTRO_INCOMPLETO = 1;
+	public static final Short CADASTRO_NAO_APROVADO = 2;
+	public static final Short CADASTRO_EM_ANALISE = 3;
+	public static final Short CADASTRO_APROVADO = 4;	
 	
 	@Id
 	@Column(name = "cpf")
@@ -34,8 +38,7 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	@Column(nullable = false)
 	private String name;	
 
-	private String nickname;	
-	private String login;	
+	private String nickname;
 	
 	@Column(nullable = false)
 	private String email;	
@@ -83,6 +86,9 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	private byte [] handDocument; 	
 
 	private byte [] signature; 
+	
+	@Column(name = "registration_situation")
+	private Short registrationSituation; 
 		
 	@Override
 	public UsuarioDTO getDTO() 
@@ -91,7 +97,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 		dto.setCpf(this.cpf);		
 		dto.setName(this.name);		
 		dto.setEmail(this.email);
-		dto.setLogin(this.login);
 		dto.setCoupon(this.coupon);
 		dto.setTermos_condicoes(this.termosCondicoes);		
 	
@@ -130,14 +135,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	public void setName(String name) 
 	{
 		this.name = name;
-	}
-	public String getLogin() 
-	{
-		return login;
-	}
-	public void setLogin(String login) 
-	{
-		this.login = login;
 	}
 	public byte[] getPassword() 
 	{
@@ -250,6 +247,14 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	}
 	public void setRg(RG rg) {
 		this.rg = rg;
+	}
+
+	public Short getRegistrationSituation() {
+		return registrationSituation;
+	}
+
+	public void setRegistrationSituation(Short registrationSituation) {
+		this.registrationSituation = registrationSituation;
 	}
 
 }

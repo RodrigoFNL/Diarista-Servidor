@@ -36,10 +36,9 @@ public class Localidade  extends BasicEntity<LocalidadeDTO>
 		if(StringUtils.isNotNull(logradouro)) 	this.logradouro = logradouro;
 		if(StringUtils.isNotNull(bairro)) 		this.bairro = bairro;
 		if(StringUtils.isNotNull(uf))
-		{			
-			 this.uf = new UF();
-			 this.uf.setSigla(uf);
-			 this.uf.setName(uf);
+		{
+			this.uf = new UF();
+			this.uf.setSigla(uf);
 		}
 	}
 	public String getCep() {
@@ -96,6 +95,7 @@ public class Localidade  extends BasicEntity<LocalidadeDTO>
 		dto.setIbge(this.ibge);
 		dto.setLocalidade(this.localidade);
 		dto.setLogradouro(this.logradouro);
+		dto.setUf(this.uf != null? this.uf.getSigla() : null);
 		
 		return dto;		
 	}    

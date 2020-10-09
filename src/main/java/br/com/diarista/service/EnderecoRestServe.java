@@ -48,7 +48,7 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 			InputStream is = url.openStream();				
 			Gson gson = new Gson();
 			
-			String response = new String(is.readAllBytes());	
+			String response = new String(is.readAllBytes(), "UTF-8");	
 			LocalidadeDTO dto = gson.fromJson(response, LocalidadeDTO.class);
 			
 			return dto != null && dto.getCep() != null? dto : null ;

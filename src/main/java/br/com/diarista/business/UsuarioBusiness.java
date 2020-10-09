@@ -12,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.diarista.dao.EnderecoDAO;
 import br.com.diarista.dao.LocalidadeDAO;
 import br.com.diarista.dao.RGDAO;
+import br.com.diarista.dao.UFDAO;
 import br.com.diarista.dao.UsuarioDAO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
+import br.com.diarista.entity.UF;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
@@ -37,6 +39,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	
 	@Autowired
 	private EnderecoDAO enderecoRepository;
+	
+	@Autowired
+	private UFDAO ufRepository;
 
 	@Transactional
 	public String register(Usuario entity, String password) 
@@ -54,14 +59,15 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			
 			if(StringUtils.isNull(entity.getName())) 	 return "É obrigatório o preenchimento do Nome";	
 			if(StringUtils.isNull(entity.getNickname())) return "É obrigatório o preenchimento do NickName";	
-			if(StringUtils.isNull(entity.getLogin()))	 return "É obrigatório o preenchimento do Login";				
+				
 			if(StringUtils.isNull(entity.getEmail()))	 return "É obrigatório o preenchimento do Email";			
 			if(StringUtils.isNull(entity.getCoupon())) 	 return "É obrigatório o preenchimento do Cupom";				
 
-			if(DiaristaUtils.validTelefone(entity.getCell_phone())) return "O número telefonico é inválido";
+			if(!DiaristaUtils.validTelefone(entity.getCell_phone())) return "O número telefonico é inválido";
 				
-			if(entity.getTermosCondicoes()  == null) return "Você deve aceitar os Termos e Condições para participar do App";	
-			else if(!entity.getTermosCondicoes())    return "Você deve aceitar os Termos e Condições para participar do App";				
+			if(entity.getTermosCondicoes()  == null) 			return "Você deve aceitar os Termos e Condições para participar do App";	
+			else if(!entity.getTermosCondicoes())    			return "Você deve aceitar os Termos e Condições para participar do App";	
+			
 			if(!entity.getConfirm_password().equals(password))  return "A Senha é divergente da confirmação da senha";				
 	
 			if(entity.getNationality() == null) 				return "É obrigatório o preenchimento da Nacionalidade";	
@@ -72,6 +78,8 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		
 			if(entity.getIsContratar() == null)			return "Você não definiu se irá contratar ou não";	
 			if(entity.getIsPrestar_servico() == null)   return "Você não definiu se irá prestar serviço ou não";	
+			
+			if(!entity.getIsContratar() && !entity.getIsPrestar_servico())   return "Você deve esolher no mínimo uma opção entre prestar serviço e ou contratar";	
 		
 			if(entity.getFrontDocument() == null)   return "É obrigatório a foto da frente do documento!";	
 			if(entity.getBackDocument() == null)    return "É obrigatório a foto da parte de trás do documento!";	
@@ -82,6 +90,8 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			if(update.isEmpty()) return "Usuário não encontrado!";
 						
 			Usuario userRecovery = update.get();
+			
+			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2)
 			
 			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
 			
@@ -94,7 +104,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setAndress(entity.getAndress());			
 			userRecovery.setBirth_date(entity.getBirth_date()); 	
 			userRecovery.setNickname(entity.getNickname());
-			userRecovery.setLogin(DiaristaUtils.genarateLogin( entity.getLogin()));
 			userRecovery.setEmail(entity.getEmail());			
 			userRecovery.setCell_phone(entity.getCell_phone());
 				
@@ -105,8 +114,15 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setIsContratar(entity.getIsContratar());
 			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
 			
-			Boolean isExist = localidadeRepository.existsByCep(entity.getAndress().getLocality().getCep());
-			if(isExist) localidadeRepository.save(entity.getAndress().getLocality());
+			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);
+			
+			if(userRecovery.getAndress().getLocality().getUf() != null && userRecovery.getAndress().getLocality().getUf().getId() == null && userRecovery.getAndress().getLocality().getUf().getSigla() != null )
+			{
+				Optional<UF> ufRecovery = ufRepository.findBySigla(userRecovery.getAndress().getLocality().getUf().getSigla());
+				if(ufRecovery != null && ufRecovery.isPresent()) userRecovery.getAndress().getLocality().setUf(ufRecovery.get());				
+			}			
+			
+			localidadeRepository.save(entity.getAndress().getLocality());
 			
 			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());
 			if(userRecovery.getRg() != null) 		rgRepository.save(userRecovery.getRg());
@@ -139,10 +155,11 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			Optional<Usuario> hasDuplic = usuarioRepository.findById(cpf);
 
 			Usuario hasDuplicated = hasDuplic.isPresent() ? hasDuplic.get() : null;			
-			if(hasDuplicated != null && hasDuplicated.getLogin() != null) return "Já existe um usuário cadastrado neste CPF.";
+			if(hasDuplicated != null && hasDuplicated.getRegistrationSituation() != null && hasDuplicated.getRegistrationSituation() > 2) return "Já existe um usuário cadastrado neste CPF.";
 
 			Usuario user = new Usuario();			
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
+			user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO);
 			user.setName(name);
 			user.setCpf(cpf);
 			user.setEmail(email);
@@ -177,9 +194,11 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	{	
 		Optional<Usuario> userOptional = usuarioRepository.findByCoupon(invitation);	
 
-		Usuario user = userOptional.isPresent() ? userOptional.get() : null;		
-		UsuarioDTO dto = user != null && user.getLogin() == null ? user.getDTO() : null;	
-
+		Usuario user = userOptional.isPresent() ? userOptional.get() : null;	
+		
+		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
+		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
+		
 		//cria um token de convite para finalizar cadastro
 		if(dto != null) createToken(dto, "INV-2020");
 

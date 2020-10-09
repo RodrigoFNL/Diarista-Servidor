@@ -78,9 +78,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 		}
 	}
 
-
-
-
 	@RequestMapping(value="/register",  method=RequestMethod.POST, consumes = "multipart/form-data") 
 	@ResponseBody
 	public ResponseEntity<Object>  register(@RequestParam("frontDocument") 	MultipartFile frontDocument, 
@@ -105,7 +102,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 											@RequestParam("rne")			String rne,			
 											@RequestParam("name")			String userName,
 											@RequestParam("nickname")		String nickName,
-											@RequestParam("login")			String login,
 											@RequestParam("email")			String email,
 											@RequestParam("coupon")			String coupon,
 											@RequestParam("termos_condicoes") String termosCondicoes,
@@ -134,7 +130,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setRne(StringUtils.removeCharacters(rne));
 			user.setName(userName);
 			user.setNickname(nickName);
-			user.setLogin(login);
 			user.setEmail(email);
 			user.setCoupon(coupon);
 			user.setTermosCondicoes(Boolean.valueOf(termosCondicoes));
