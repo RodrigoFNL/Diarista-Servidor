@@ -30,7 +30,7 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	private String cpf;
 	
 	@OneToOne
-	@JoinColumn(name = "rg_id", referencedColumnName = "number")
+	@JoinColumn(name = "rg_id", referencedColumnName = "id")
 	private RG rg;
 	
 	private String rne;	

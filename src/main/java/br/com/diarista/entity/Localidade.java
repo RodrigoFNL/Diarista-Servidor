@@ -29,17 +29,13 @@ public class Localidade  extends BasicEntity<LocalidadeDTO>
 	public Localidade() 
 	{}
     
-	public Localidade(String cep, String localidade, String logradouro, String bairro, String uf) 
+	public Localidade(String cep, String localidade, String logradouro, String bairro, UF uf) 
 	{
 		if(StringUtils.isNotNull(cep)) 			this.cep = StringUtils.removeCharacters(cep);
 		if(StringUtils.isNotNull(localidade)) 	this.localidade = localidade;
 		if(StringUtils.isNotNull(logradouro)) 	this.logradouro = logradouro;
 		if(StringUtils.isNotNull(bairro)) 		this.bairro = bairro;
-		if(StringUtils.isNotNull(uf))
-		{
-			this.uf = new UF();
-			this.uf.setSigla(uf);
-		}
+		this.uf = uf;		
 	}
 	public String getCep() {
 		return cep;

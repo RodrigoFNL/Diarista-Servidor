@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.diarista.business.BasicBusiness;
+import br.com.diarista.business.UFBusiness;
 import br.com.diarista.business.UsuarioBusiness;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dto.UsuarioDTO;
@@ -27,6 +28,7 @@ import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.EstadoCivil;
 import br.com.diarista.entity.Nacionalidade;
 import br.com.diarista.entity.RG;
+import br.com.diarista.entity.UF;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.StringUtils;
@@ -37,6 +39,10 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 {
 	@Autowired
 	private UsuarioBusiness usuarioBusiness;
+	
+	@Autowired
+	private UFBusiness ufBusiness;
+
 
 	@Override
 	protected BasicBusiness<Usuario> business() 
@@ -121,12 +127,14 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			Usuario user = new Usuario();			
 			user.setCpf(StringUtils.removeCharacters(cpf));		
 			if(StringUtils.isNotNull(rgNumber) && StringUtils.isNotNull(rgIssuer) && StringUtils.isNotNull(rgUF)) user.setRg(new RG(rgNumber, rgIssuer, rgUF));
-						
-			if(StringUtils.isNotNull(andressNumber) && StringUtils.isNotNull(andressCep) && StringUtils.isNotNull(andressLocalidade) && StringUtils.isNotNull(andressUf))
-				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, andressUf));
-									
-			user.setBirth_date(DateUtils.getDate(birthDate));
 			
+			
+			UF uf = ufBusiness.getUFbySigla(andressUf);
+			
+			if(StringUtils.isNotNull(andressNumber) && StringUtils.isNotNull(andressCep) && StringUtils.isNotNull(andressLocalidade) && StringUtils.isNotNull(andressUf))
+				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, uf));
+									
+			user.setBirth_date(DateUtils.getDate(birthDate));			
 			user.setRne(StringUtils.removeCharacters(rne));
 			user.setName(userName);
 			user.setNickname(nickName);
@@ -159,39 +167,40 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 
 	}	
 
-
-
-	//@Produces(MediaType.APPLICATION_OCTET_STREAM)	
-
-	@GetMapping("/download/{id}")
-	public void download(@PathVariable("id") String id, HttpServletResponse response)
+	@GetMapping("/download_contrato/{cpf}")
+	public void download(@PathVariable("cpf") String cpf, HttpServletResponse response)
 	{		
 		try
 		{				
-
-			Usuario user = usuarioBusiness.findByCPF("82052875972");	
+			cpf = StringUtils.removeCharacters(cpf);
+			Usuario user = usuarioBusiness.findByCPF(cpf);	
+			
+			if(user == null) return;
+			
 			String fileName = "";
-
-			switch (id)
-			{
-				case "1": 	FileCopyUtils.copy(user.getFrontDocument(), response.getOutputStream());					
-							fileName = "Front-Document";
-					break;
-				case "2": 	FileCopyUtils.copy(user.getBackDocument(), response.getOutputStream());				
-							fileName = "Back-Document";
-					break;
-				case "3": 	FileCopyUtils.copy(user.getHandDocument(), response.getOutputStream());
-						  	fileName = "Hand-Document";						 
-					break;
-				case "4": 	FileCopyUtils.copy(user.getSignature(), response.getOutputStream());
-							fileName = "Signature";
-					break;
-			}
+			FileCopyUtils.copy(user.getFrontDocument(), response.getOutputStream());		
+			fileName = "Front-Document";
 
 			response.setContentType("image/png");
 			response.flushBuffer();
 			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".png" );
 			response.getOutputStream().flush();
+		} 
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+		}
+	}
+	
+	@GetMapping("/send_mail_contrato")
+	public void sendMailContrato(@RequestBody Map<String, Object> postObject)
+	{		
+		try
+		{		
+			String cpf = StringUtils.isNotNull((String) postObject.get("cpf")) ? StringUtils.removeCharacters((String) postObject.get("cpf")) : null;			
+			if(cpf == null) return;
+			if(cpf.isEmpty()) return;			
+			usuarioBusiness.sendContratoViaEmail(cpf);		
 		} 
 		catch (Exception ex)
 		{

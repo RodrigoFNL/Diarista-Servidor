@@ -26,7 +26,7 @@ public class Endereco
 	
 	
 	public Endereco() {}	
-	public Endereco(String id, String number, String complement, String cep, String localidade, String logradouro, String bairro, String uf) 
+	public Endereco(String id, String number, String complement, String cep, String localidade, String logradouro, String bairro, UF uf) 
 	{
 		if(StringUtils.isNotNull(id)) 		this.id = Long.valueOf(id);
 		if(StringUtils.isNotNull(number)) 	this.number = number;

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.diarista.dao.UFDAO;
 import br.com.diarista.entity.UF;
+import br.com.diarista.utils.StringUtils;
 
 @Service
 public class UFBusiness extends BasicBusiness<UF>
@@ -20,4 +21,17 @@ public class UFBusiness extends BasicBusiness<UF>
 		return repository.findByStatus(true);
 	}
 
+	public UF getUFbySigla(String andressUf) 
+	{				
+		if(StringUtils.isNull(andressUf)) return null;		
+		List<UF>  ufRecovery = repository.findBySigla(andressUf);
+		if(ufRecovery != null && !ufRecovery.isEmpty()) return ufRecovery.get(0);
+			
+		UF uf = new UF();
+		uf.setSigla(andressUf);
+		uf.setName(andressUf);
+		uf.setStatus(false);		
+		repository.save(uf);
+		return uf;				
+	}
 }

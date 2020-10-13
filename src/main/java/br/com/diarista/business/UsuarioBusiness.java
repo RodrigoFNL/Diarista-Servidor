@@ -12,11 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.diarista.dao.EnderecoDAO;
 import br.com.diarista.dao.LocalidadeDAO;
 import br.com.diarista.dao.RGDAO;
-import br.com.diarista.dao.UFDAO;
 import br.com.diarista.dao.UsuarioDAO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
-import br.com.diarista.entity.UF;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
@@ -40,9 +38,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	@Autowired
 	private EnderecoDAO enderecoRepository;
 	
-	@Autowired
-	private UFDAO ufRepository;
-
 	@Transactional
 	public String register(Usuario entity, String password) 
 	{
@@ -100,7 +95,15 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setHandDocument(entity.getHandDocument());	
 			userRecovery.setSignature(entity.getSignature());			
 			
-			userRecovery.setRg(entity.getRg());
+			if(userRecovery.getRg() != null && userRecovery.getRg() != null)
+			{
+				userRecovery.getRg().setNumber(entity.getRg().getNumber());
+				userRecovery.getRg().setIssuer(entity.getRg().getIssuer());
+				userRecovery.getRg().setUf(entity.getRg().getUf());
+			}
+			else userRecovery.setRg(entity.getRg());
+			
+			userRecovery.setRne(entity.getRne());									
 			userRecovery.setAndress(entity.getAndress());			
 			userRecovery.setBirth_date(entity.getBirth_date()); 	
 			userRecovery.setNickname(entity.getNickname());
@@ -114,14 +117,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setIsContratar(entity.getIsContratar());
 			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
 			
-			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);
-			
-			if(userRecovery.getAndress().getLocality().getUf() != null && userRecovery.getAndress().getLocality().getUf().getId() == null && userRecovery.getAndress().getLocality().getUf().getSigla() != null )
-			{
-				Optional<UF> ufRecovery = ufRepository.findBySigla(userRecovery.getAndress().getLocality().getUf().getSigla());
-				if(ufRecovery != null && ufRecovery.isPresent()) userRecovery.getAndress().getLocality().setUf(ufRecovery.get());				
-			}			
-			
+			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);			
 			localidadeRepository.save(entity.getAndress().getLocality());
 			
 			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());
@@ -237,4 +233,26 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return user;
 	}
 
+	public void sendContratoViaEmail(String cpf) 
+	{
+		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
+		Usuario user = optional.isPresent() ? optional.get() : null;
+		if(user == null) return;
+		
+		EmailUtil email = new EmailUtil();
+		
+		email.sendEmail(user.getEmail(), "Contrato FaxiNex", textContrato(user.getNickname()) , user.getBackDocument());
+		
+		
+	}
+
+	private String textContrato(String nickname) 
+	{
+		StringBuilder text = new StringBuilder();
+		text.append("Olá ").append(nickname).append("/n");
+		text.append("Segue em anexo, o contrato que você solicitou ");
+		
+		
+		return text.toString();
+	}
 }

@@ -1,6 +1,8 @@
 package br.com.diarista.entity;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
@@ -10,8 +12,11 @@ import br.com.diarista.utils.StringUtils;
 @Entity
 @Table(name = "rg") 
 public class RG 
-{
+{	
 	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id; 	
+	
 	private String number; 
 		
 	@JoinColumn(name = "issuer_id", referencedColumnName = "id")
@@ -57,6 +62,14 @@ public class RG
 	public void setUf(UF uf) 
 	{
 		this.uf = uf;
+	}
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
     
 }
