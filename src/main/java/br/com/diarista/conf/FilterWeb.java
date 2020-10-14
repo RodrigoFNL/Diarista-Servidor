@@ -39,8 +39,7 @@ public class FilterWeb implements Filter
 				request.getRequestURI().contains("/diarista/rest/usuario/invitation")  	|| 
 				request.getRequestURI().contains("/diarista/rest/login/authenticate")  	||			
 				request.getRequestURI().contains("/diarista/rest/model")  				||
-				request.getRequestURI().contains("/diarista/rest/contract/all_active") 	||	
-				request.getRequestURI().contains("/diarista/rest/usuario/download") 	||				
+				request.getRequestURI().contains("/diarista/rest/contract/all_active") 	||						
 				(!request.getMethod().equalsIgnoreCase("POST") && !request.getMethod().equalsIgnoreCase("GET"))) 
 			{
 				chain.doFilter(request,response);	
@@ -73,7 +72,9 @@ public class FilterWeb implements Filter
 						request.getRequestURI().contains("/diarista/rest/marital_status/all_active") 	||
 						request.getRequestURI().contains("/diarista/rest/adress/locality") 			 	||
 						request.getRequestURI().contains("/diarista/rest/usuario/register")  			|| 
+						request.getRequestURI().contains("/diarista/rest/usuario/send_mail_contrato") 	|| 
 						request.getRequestURI().contains("/diarista/rest/uf/all_active")  				||
+						request.getRequestURI().contains("/diarista/rest/usuario/download_contrato") 	||	
 						request.getRequestURI().contains("/diarista/rest/issuing_department/all_active")
 						))
 				{						

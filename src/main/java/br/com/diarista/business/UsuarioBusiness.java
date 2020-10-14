@@ -28,73 +28,73 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 	@Autowired
 	private UsuarioDAO usuarioRepository;
-	
+
 	@Autowired
 	private RGDAO rgRepository;
 
 	@Autowired
 	private LocalidadeDAO localidadeRepository;
-	
+
 	@Autowired
 	private EnderecoDAO enderecoRepository;
-	
+
 	@Transactional
 	public String register(Usuario entity, String password) 
 	{
 		try
 		{				
 			if(!DiaristaUtils.validCPF(entity.getCpf())) 	return "CPF é inválido!";	
-			
+
 			if(entity.getRg() == null && entity.getRne() == null) return "RG ou RNE obrigatório!";			
 			if(entity.getAndress() == null) 				return "O endereço é obrigatório!";				
 			if(entity.getAndress().getLocality() == null)  	return "O endereço é obrigatório!";			
 			if(entity.getAndress().getNumber() == null) 	return "O número da residência é obrigatório!";
 			if(entity.getBirth_date() == null) 				return "A data de nascimento é obrigatório!";
 			if(!DateUtils.isOfAge(entity.getBirth_date())) 	return "O usuário tem que ser maior de idade!";	
-			
+
 			if(StringUtils.isNull(entity.getName())) 	 return "É obrigatório o preenchimento do Nome";	
 			if(StringUtils.isNull(entity.getNickname())) return "É obrigatório o preenchimento do NickName";	
-				
+
 			if(StringUtils.isNull(entity.getEmail()))	 return "É obrigatório o preenchimento do Email";			
 			if(StringUtils.isNull(entity.getCoupon())) 	 return "É obrigatório o preenchimento do Cupom";				
 
 			if(!DiaristaUtils.validTelefone(entity.getCell_phone())) return "O número telefonico é inválido";
-				
+
 			if(entity.getTermosCondicoes()  == null) 			return "Você deve aceitar os Termos e Condições para participar do App";	
 			else if(!entity.getTermosCondicoes())    			return "Você deve aceitar os Termos e Condições para participar do App";	
-			
+
 			if(!entity.getConfirm_password().equals(password))  return "A Senha é divergente da confirmação da senha";				
-	
+
 			if(entity.getNationality() == null) 				return "É obrigatório o preenchimento da Nacionalidade";	
 			else if(entity.getNationality().getId() == null)	return "É obrigatório o preenchimento da Nacionalidade";	
-						
+
 			if(entity.getMarital_status() == null) 				return "É obrigatório o preenchimento do Estado Civil";	
 			else if(entity.getMarital_status().getId() == null)	return "É obrigatório o preenchimento da Estado Civil";	
-		
+
 			if(entity.getIsContratar() == null)			return "Você não definiu se irá contratar ou não";	
 			if(entity.getIsPrestar_servico() == null)   return "Você não definiu se irá prestar serviço ou não";	
-			
+
 			if(!entity.getIsContratar() && !entity.getIsPrestar_servico())   return "Você deve esolher no mínimo uma opção entre prestar serviço e ou contratar";	
-		
+
 			if(entity.getFrontDocument() == null)   return "É obrigatório a foto da frente do documento!";	
 			if(entity.getBackDocument() == null)    return "É obrigatório a foto da parte de trás do documento!";	
 			if(entity.getHandDocument() == null)    return "É obrigatório a foto do usuário com o documento na mão!";	
 			if(entity.getSignature() == null)   	return "É obrigatório a assinatura do contrato!";	
-							
+
 			Optional<Usuario> update = usuarioRepository.findByCpf(entity.getCpf());
 			if(update.isEmpty()) return "Usuário não encontrado!";
-						
+
 			Usuario userRecovery = update.get();
-			
+
 			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2)
-			
-			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
-			
+
+				if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
+
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
 			userRecovery.setBackDocument(entity.getBackDocument());	
 			userRecovery.setHandDocument(entity.getHandDocument());	
 			userRecovery.setSignature(entity.getSignature());			
-			
+
 			if(userRecovery.getRg() != null && userRecovery.getRg() != null)
 			{
 				userRecovery.getRg().setNumber(entity.getRg().getNumber());
@@ -102,27 +102,27 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 				userRecovery.getRg().setUf(entity.getRg().getUf());
 			}
 			else userRecovery.setRg(entity.getRg());
-			
+
 			userRecovery.setRne(entity.getRne());									
 			userRecovery.setAndress(entity.getAndress());			
 			userRecovery.setBirth_date(entity.getBirth_date()); 	
-			userRecovery.setNickname(entity.getNickname());
+			userRecovery.setNickname(entity.getNickname().toUpperCase());
 			userRecovery.setEmail(entity.getEmail());			
 			userRecovery.setCell_phone(entity.getCell_phone());
-				
+
 			userRecovery.setTermosCondicoes(entity.getTermosCondicoes());		
 			userRecovery.setPassword(entity.getConfirm_password().getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
 			userRecovery.setIsContratar(entity.getIsContratar());
 			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
-			
+
 			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);			
 			localidadeRepository.save(entity.getAndress().getLocality());
-			
+
 			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());
 			if(userRecovery.getRg() != null) 		rgRepository.save(userRecovery.getRg());
-			
+
 			usuarioRepository.save(userRecovery);			
 			return "id:" + entity.getCpf();
 		}
@@ -191,10 +191,10 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		Optional<Usuario> userOptional = usuarioRepository.findByCoupon(invitation);	
 
 		Usuario user = userOptional.isPresent() ? userOptional.get() : null;	
-		
+
 		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
 		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
-		
+
 		//cria um token de convite para finalizar cadastro
 		if(dto != null) createToken(dto, "INV-2020");
 
@@ -207,7 +207,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		Date date = new Date();
 		Long time = date.getTime();		
 		String token =  preToken + StringUtils.encrypt(time.toString() + dto.getCpf());
-		
+
 		UsuarioBusiness.setToken(token);
 		dto.setToken(token);
 	}
@@ -218,11 +218,13 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return null;
 	}
 
-	public static String getToken() {
+	public static String getToken()
+	{
 		return token;
 	}
 
-	public static void setToken(String token) {
+	public static void setToken(String token) 
+	{
 		UsuarioBusiness.token = token;
 	}
 
@@ -233,26 +235,29 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return user;
 	}
 
-	public void sendContratoViaEmail(String cpf) 
+	public Boolean sendContratoViaEmail(String cpf) 
 	{
-		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
-		Usuario user = optional.isPresent() ? optional.get() : null;
-		if(user == null) return;
-		
-		EmailUtil email = new EmailUtil();
-		
-		email.sendEmail(user.getEmail(), "Contrato FaxiNex", textContrato(user.getNickname()) , user.getBackDocument());
-		
-		
+		try
+		{
+			Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
+			Usuario user = optional.isPresent() ? optional.get() : null;
+			if(user == null) return false;
+			EmailUtil email = new EmailUtil();
+			 email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , user.getBackDocument());	
+			return true;
+		}
+		catch (Exception e) 
+		{
+			return false;
+		}
 	}
 
 	private String textContrato(String nickname) 
 	{
 		StringBuilder text = new StringBuilder();
-		text.append("Olá ").append(nickname).append("/n");
-		text.append("Segue em anexo, o contrato que você solicitou ");
-		
-		
+		text.append("Olá ").append(nickname).append("\n");
+		text.append("Segue em anexo, o contrato que você solicitou ");		
+
 		return text.toString();
 	}
 }

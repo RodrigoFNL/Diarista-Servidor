@@ -192,19 +192,22 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 		}
 	}
 	
-	@GetMapping("/send_mail_contrato")
-	public void sendMailContrato(@RequestBody Map<String, Object> postObject)
+	@PostMapping("/send_mail_contrato")
+	public  ResponseEntity<Object> sendMailContrato(@RequestBody Map<String, Object> postObject)
 	{		
 		try
 		{		
 			String cpf = StringUtils.isNotNull((String) postObject.get("cpf")) ? StringUtils.removeCharacters((String) postObject.get("cpf")) : null;			
-			if(cpf == null) return;
-			if(cpf.isEmpty()) return;			
-			usuarioBusiness.sendContratoViaEmail(cpf);		
+			if(cpf == null)   return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(cpf.isEmpty()) return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			Boolean isOk = usuarioBusiness.sendContratoViaEmail(cpf);	
+			if(isOk) return ok("OK!");	
+			else  	 return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);	
 		} 
 		catch (Exception ex)
 		{
 			ex.printStackTrace();
+			return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);		
 		}
 	}
 }
