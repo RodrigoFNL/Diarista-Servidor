@@ -177,13 +177,17 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			
 			if(user == null) return;
 			
+			
+			byte [] pdf = usuarioBusiness.getContrato(user);		
+			if(pdf == null) return;
+			
 			String fileName = "";
 			FileCopyUtils.copy(user.getFrontDocument(), response.getOutputStream());		
 			fileName = "Front-Document";
 
-			response.setContentType("image/png");
+			response.setContentType("application/pdf");
 			response.flushBuffer();
-			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".png" );
+			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf" );
 			response.getOutputStream().flush();
 		} 
 		catch (Exception ex)

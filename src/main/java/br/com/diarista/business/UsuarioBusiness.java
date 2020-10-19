@@ -1,5 +1,6 @@
 package br.com.diarista.business;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +20,9 @@ import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
 import br.com.diarista.utils.EmailUtil;
+import br.com.diarista.utils.PDFUtils;
 import br.com.diarista.utils.StringUtils;
+import net.sf.jasperreports.engine.JRException;
 
 @Service
 public class UsuarioBusiness  extends BasicBusiness<Usuario>
@@ -260,4 +263,26 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 		return text.toString();
 	}
+
+	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException 
+	{			
+		byte [] pdf = PDFUtils.getPDF("Contrato.jasper", user);						
+		return pdf;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
