@@ -167,28 +167,30 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 
 	}	
 
-	@GetMapping("/download_contrato/{cpf}")
-	public void download(@PathVariable("cpf") String cpf, HttpServletResponse response)
+	@GetMapping("/download_contrato/{cpf}/{token}")
+	public void download(@PathVariable("cpf") String cpf,@PathVariable("token") String token,  HttpServletResponse response)
 	{		
 		try
-		{				
-			cpf = StringUtils.removeCharacters(cpf);
-			Usuario user = usuarioBusiness.findByCPF(cpf);	
-			
-			if(user == null) return;
-			
-			
-			byte [] pdf = usuarioBusiness.getContrato(user);		
-			if(pdf == null) return;
-			
-			String fileName = "";
-			FileCopyUtils.copy(user.getFrontDocument(), response.getOutputStream());		
-			fileName = "Front-Document";
-
-			response.setContentType("application/pdf");
-			response.flushBuffer();
-			response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf" );
-			response.getOutputStream().flush();
+		{			
+			if(token.equals(UsuarioBusiness.getToken()))
+			{			
+				cpf = StringUtils.removeCharacters(cpf);
+				Usuario user = usuarioBusiness.findByCPF(cpf);	
+				
+				if(user == null) return;			
+				
+				byte [] pdf = usuarioBusiness.getContrato(user);		
+				if(pdf == null) return;
+				
+				String fileName = "";
+				FileCopyUtils.copy(pdf, response.getOutputStream());		
+				fileName = "Contrato";
+	
+				response.setContentType("application/pdf");
+				response.flushBuffer();
+				response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf" );
+				response.getOutputStream().flush();
+			}
 		} 
 		catch (Exception ex)
 		{

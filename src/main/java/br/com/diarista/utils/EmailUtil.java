@@ -53,7 +53,7 @@ public class EmailUtil
 
 	}
 
-	public void sendEmail(String emailAdress, String emailTitle, String emailText, byte[] backDocument) throws MessagingException, IOException 
+	public void sendEmail(String emailAdress, String emailTitle, String emailText, byte[] pdf) throws MessagingException, IOException 
 	{
 		JavaMailSenderImpl sendMail = new JavaMailSenderImpl();		
 
@@ -71,15 +71,15 @@ public class EmailUtil
 		message.setSubject(emailTitle);				
 		message.setText(emailText);	
 
-		File temp = File.createTempFile("Contrato", "png");
+		File temp = File.createTempFile("Contrato", "pdf");
 
 		FileOutputStream str = new FileOutputStream(temp);		
-		str.write(backDocument);
+		str.write(pdf);
 		str.flush();
 		str.close();
 
 
-		message.addAttachment("Contrato.png", temp);
+		message.addAttachment("Contrato.pdf", temp);
 
 		Properties props = sendMail.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");
@@ -87,6 +87,7 @@ public class EmailUtil
 		props.put("mail.smtp.starttls.enable", "true");
 		props.put("mail.debug", "true");   	    
 
-		sendMail.send(mineMessage);			
+		sendMail.send(mineMessage);	
+		temp.delete();
 	}
 }

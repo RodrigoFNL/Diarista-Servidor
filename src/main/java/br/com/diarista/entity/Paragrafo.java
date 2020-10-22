@@ -7,10 +7,14 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import br.com.diarista.dto.ParagrafoDTO;
+
 @Entity
 @Table(name = "paragrafo") 
-public class Paragrafo
+public class Paragrafo extends BasicEntity<ParagrafoDTO>
 {
+	private static final long serialVersionUID = 1L;
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -48,5 +52,15 @@ public class Paragrafo
 	public void setStatus(Boolean status)
 	{
 		this.status = status;
+	}
+
+	@Override
+	public ParagrafoDTO getDTO() 
+	{
+		ParagrafoDTO dto = new ParagrafoDTO();		
+		dto.setId(id);
+		dto.setParagrafo(paragrafo);
+		dto.setStatus(status);		
+		return dto;
 	}
 }

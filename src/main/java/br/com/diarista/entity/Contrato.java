@@ -1,5 +1,6 @@
 package br.com.diarista.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import br.com.diarista.dto.ContratoDTO;
+import br.com.diarista.dto.ParagrafoDTO;
 
 
 @Entity
@@ -34,9 +36,16 @@ public class Contrato extends BasicEntity<ContratoDTO>
 	@Override
 	public ContratoDTO getDTO()
 	{
-		ContratoDTO dto = new ContratoDTO();
-		dto.setId(this.id);
-		dto.setStatus(this.status);		
+		ContratoDTO dto = new ContratoDTO();	
+		dto.setId(id);
+		dto.setClausula(clausula);
+		dto.setIndex(index);
+		dto.setStatus(status);
+		dto.setParagrafo(new ArrayList<ParagrafoDTO>());		
+		for (Paragrafo para : paragrafo)
+		{
+			dto.getParagrafo().add(para.getDTO());
+		}		
 		return dto;
 	}
 

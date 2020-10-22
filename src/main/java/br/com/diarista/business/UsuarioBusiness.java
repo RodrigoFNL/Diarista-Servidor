@@ -1,5 +1,6 @@
 package br.com.diarista.business;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +17,7 @@ import br.com.diarista.dao.RGDAO;
 import br.com.diarista.dao.UsuarioDAO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
+import br.com.diarista.entity.RG;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
@@ -41,11 +43,16 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	@Autowired
 	private EnderecoDAO enderecoRepository;
 
+	@Autowired
+	PDFUtils utils;
+
 	@Transactional
 	public String register(Usuario entity, String password) 
 	{
 		try
-		{				
+		{		
+			RG removeRG = null;
+			
 			if(!DiaristaUtils.validCPF(entity.getCpf())) 	return "CPF é inválido!";	
 
 			if(entity.getRg() == null && entity.getRne() == null) return "RG ou RNE obrigatório!";			
@@ -98,13 +105,17 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setHandDocument(entity.getHandDocument());	
 			userRecovery.setSignature(entity.getSignature());			
 
-			if(userRecovery.getRg() != null && userRecovery.getRg() != null)
-			{
+			if(userRecovery.getRg() != null && userRecovery.getRg() != null && entity.getRg() != null)
+			{								
 				userRecovery.getRg().setNumber(entity.getRg().getNumber());
 				userRecovery.getRg().setIssuer(entity.getRg().getIssuer());
-				userRecovery.getRg().setUf(entity.getRg().getUf());
+				userRecovery.getRg().setUf(entity.getRg().getUf());				
 			}
-			else userRecovery.setRg(entity.getRg());
+			else 
+			{
+				if(userRecovery.getRg() != null) removeRG = userRecovery.getRg();
+				userRecovery.setRg(entity.getRg());
+			}
 
 			userRecovery.setRne(entity.getRne());									
 			userRecovery.setAndress(entity.getAndress());			
@@ -126,7 +137,10 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());
 			if(userRecovery.getRg() != null) 		rgRepository.save(userRecovery.getRg());
 
-			usuarioRepository.save(userRecovery);			
+			usuarioRepository.save(userRecovery);	
+			
+			if(removeRG != null) rgRepository.delete(removeRG);
+			
 			return "id:" + entity.getCpf();
 		}
 		catch (Exception e) 
@@ -246,7 +260,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			Usuario user = optional.isPresent() ? optional.get() : null;
 			if(user == null) return false;
 			EmailUtil email = new EmailUtil();
-			 email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , user.getBackDocument());	
+			email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , getContrato(user));	
 			return true;
 		}
 		catch (Exception e) 
@@ -264,9 +278,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return text.toString();
 	}
 
-	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException 
-	{			
-		byte [] pdf = PDFUtils.getPDF("Contrato.jasper", user);						
+	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException, IOException 
+	{	
+		byte [] pdf = utils.getPDF("Contrato.jasper", user);						
 		return pdf;
 	}
 }

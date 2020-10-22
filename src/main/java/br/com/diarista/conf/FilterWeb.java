@@ -75,7 +75,6 @@ public class FilterWeb implements Filter
 						request.getRequestURI().contains("/diarista/rest/usuario/register")  			|| 
 						request.getRequestURI().contains("/diarista/rest/usuario/send_mail_contrato") 	|| 
 						request.getRequestURI().contains("/diarista/rest/uf/all_active")  				||
-						request.getRequestURI().contains("/diarista/rest/usuario/download_contrato") 	||	
 						request.getRequestURI().contains("/diarista/rest/issuing_department/all_active")
 						))
 				{						

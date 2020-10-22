@@ -1,65 +1,64 @@
 package br.com.diarista.utils;
 
-import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.hibernate.mapping.Subclass;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import br.com.diarista.entity.Usuario;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRResultSetDataSource;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.JasperReport;
-import net.sf.jasperreports.engine.design.JasperDesign;
-import net.sf.jasperreports.engine.xml.JRXmlLoader;
+import net.sf.jasperreports.engine.JasperRunManager;
 
-
+@Service
 public class PDFUtils 
-{
+{	
+	@Autowired
+	private DataSource dataSource;		
 
-	private static String dba = "org.postgresql.Driver";
-	
+	public  byte[] getPDF(String jasper, Usuario usuario) throws JRException, ClassNotFoundException, SQLException, IOException
+	{		
+		File signature = File.createTempFile("Contrato", "png");
 
-	private static String url = "jdbc:postgresql://127.0.0.1:5432/diaristaDBA"; 
-	
-
-	private static String user = "adm_diarista";
-	
-
-	private static String password = "diarista@2020#";
-
-	public static byte[] getPDF(String jasper, Usuario usuario) throws JRException, ClassNotFoundException, SQLException
-	{	
-		URL arquivo = Subclass.class.getResource("/ireport/" + jasper);		
+		FileOutputStream str = new FileOutputStream(signature);		
+		str.write(usuario.getSignature());
+		str.flush();
+		str.close();
 		
-		JasperDesign designer = JRXmlLoader.load(arquivo.getPath());		
-		JasperReport relatorio = JasperCompileManager.compileReport(designer);
-				
-		Class.forName(dba);		
-		Connection con = DriverManager.getConnection( url , user , password );
-				
-		Statement stm = con.createStatement();
-		String query = "select * from estado_civil";
-		ResultSet rs = stm.executeQuery( query );
-		
-		JRResultSetDataSource jrRS = new JRResultSetDataSource( rs );
-		
-		Map<String, Object> parametros = new HashMap<String, Object> ();
-		
+		Map<String, Object> parametros = new HashMap<>();
 		parametros.put("nome", usuario.getName());
-		parametros.put("CPF", usuario.getCpf());		
-		JasperPrint jasperPrint = JasperFillManager.fillReport( relatorio , parametros,    jrRS );		
-		
-		byte [] pdf = JasperExportManager.exportReportToPdf(jasperPrint);
+		parametros.put("CPF", StringUtils.formatCPF(usuario.getCpf()));			
+		parametros.put("image", signature);	
+			
+		InputStream jasperStream = Subclass.class.getResourceAsStream("/ireport/" + jasper);		
+		byte [] pdf = JasperRunManager.runReportToPdf(jasperStream, parametros, dataSource.getConnection());			
+		signature.delete();
 		return pdf;
 	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

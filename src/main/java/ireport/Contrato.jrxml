@@ -6,6 +6,7 @@
 	<property name="ireport.callouts" value="##Fri Oct 16 04:47:50 BRT 2020"/>
 	<parameter name="nome" class="java.lang.String"/>
 	<parameter name="CPF" class="java.lang.String"/>
+	<parameter name="image" class="java.io.File"/>
 	<queryString>
 		<![CDATA[SELECT  C.clausula, P.paragrafo, C.index FROM contrato C
 INNER JOIN contrato_paragrafo CP ON CP.contrato_id = C.id
@@ -110,9 +111,9 @@ ORDER BY C.index]]>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{CPF}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Middle">
-				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="345" y="0" width="200" height="60" uuid="01a5fdbc-6141-44a4-8465-64041f2201b8"/>
-				<imageExpression><![CDATA["C:\\Users\\Rodrigo\\git\\Diarista-Servidor\\src\\main\\java\\ireport\\signature.png"]]></imageExpression>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Icon">
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="345" y="0" width="200" height="60" uuid="ad83d182-3d44-4ff7-9751-1cac0881139d"/>
+				<imageExpression><![CDATA[$P{image}]]></imageExpression>
 			</image>
 		</band>
 	</lastPageFooter>

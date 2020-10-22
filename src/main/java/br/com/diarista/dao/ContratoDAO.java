@@ -8,5 +8,5 @@ import br.com.diarista.entity.Contrato;
 
 public interface ContratoDAO extends JpaRepository<Contrato, Long>
 {
-	List<Contrato> findByStatus(Boolean status);
+	List<Contrato> findByStatusOrderByIndexAsc(Boolean status);
 }
