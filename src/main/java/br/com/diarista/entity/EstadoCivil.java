@@ -1,19 +1,20 @@
 package br.com.diarista.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.diarista.dto.EstadoCivilDTO;
 import br.com.diarista.utils.StringUtils;
 
 
 @Entity
 @Table(name = "estado_civil") 
-public class EstadoCivil extends BasicEntity<EstadoCivilDTO>
-{
+public class EstadoCivil implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	
 	@Id
@@ -51,18 +52,6 @@ public class EstadoCivil extends BasicEntity<EstadoCivilDTO>
 	public void setStatus(Boolean status) 
 	{
 		this.status = status;
-	}
-	
-	@Override
-	public EstadoCivilDTO getDTO() 
-	{
-		EstadoCivilDTO dto = new EstadoCivilDTO();
-		
-		dto.setId(this.id);
-		dto.setName(this.name);
-		dto.setStatus(this.status);		
-		
-		return dto;
 	}
 
 }

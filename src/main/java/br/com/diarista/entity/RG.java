@@ -1,5 +1,7 @@
 package br.com.diarista.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,8 +13,9 @@ import br.com.diarista.utils.StringUtils;
 
 @Entity
 @Table(name = "rg") 
-public class RG 
+public class RG  implements Serializable
 {	
+	private static final long serialVersionUID = 1L;	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id; 	

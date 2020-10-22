@@ -1,6 +1,6 @@
 package br.com.diarista.entity;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -10,16 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import br.com.diarista.dto.ContratoDTO;
-import br.com.diarista.dto.ParagrafoDTO;
-
 
 @Entity
 @Table(name = "contrato") 
-public class Contrato extends BasicEntity<ContratoDTO>
-{
+public class Contrato implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
-	
+
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -31,23 +28,7 @@ public class Contrato extends BasicEntity<ContratoDTO>
 	@OneToMany
 	private List<Paragrafo> paragrafo;
 	
-	private Boolean status;
-		
-	@Override
-	public ContratoDTO getDTO()
-	{
-		ContratoDTO dto = new ContratoDTO();	
-		dto.setId(id);
-		dto.setClausula(clausula);
-		dto.setIndex(index);
-		dto.setStatus(status);
-		dto.setParagrafo(new ArrayList<ParagrafoDTO>());		
-		for (Paragrafo para : paragrafo)
-		{
-			dto.getParagrafo().add(para.getDTO());
-		}		
-		return dto;
-	}
+	private Boolean status;	
 
 	public Long getId() 
 	{

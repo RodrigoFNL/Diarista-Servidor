@@ -1,6 +1,7 @@
 package br.com.diarista.entity;
 
 
+import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,9 +18,9 @@ import br.com.diarista.dto.UsuarioDTO;
 
 @Entity
 @Table(name = "usuario") 
-public class Usuario extends BasicEntity<UsuarioDTO>
+public class Usuario implements Serializable
 {	
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	
 	public static final Short CADASTRO_INCOMPLETO = 1;
 	public static final Short CADASTRO_NAO_APROVADO = 2;
 	public static final Short CADASTRO_EM_ANALISE = 3;
@@ -89,8 +90,7 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 	
 	@Column(name = "registration_situation")
 	private Short registrationSituation; 
-		
-	@Override
+	
 	public UsuarioDTO getDTO() 
 	{				
 		UsuarioDTO dto = new UsuarioDTO();		
@@ -99,7 +99,6 @@ public class Usuario extends BasicEntity<UsuarioDTO>
 		dto.setEmail(this.email);
 		dto.setCoupon(this.coupon);
 		dto.setTermos_condicoes(this.termosCondicoes);		
-	
 		return dto;
 	}
 			

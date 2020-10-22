@@ -13,7 +13,6 @@ import com.google.gson.Gson;
 
 import br.com.diarista.business.BasicBusiness;
 import br.com.diarista.business.EnderecoBusiness;
-import br.com.diarista.dto.LocalidadeDTO;
 import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.Localidade;
 
@@ -31,7 +30,7 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 	}
 
 	@RequestMapping("/locality")
-	public LocalidadeDTO getLocality(@RequestBody Map<String, Object> postObject)
+	public Localidade getLocality(@RequestBody Map<String, Object> postObject)
 	{
 		try
 		{	
@@ -40,7 +39,7 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 			if(cep == null) return null;
 			
 			Localidade localidade = endBusiness.getLocalityfindByCep(cep);			
-			if(localidade != null) return  localidade.getDTO();
+			if(localidade != null) return  localidade;
 								
 			URL url = new URL("http://viacep.com.br/ws/" + cep + "/json/");	
 			url.openConnection();
@@ -49,7 +48,7 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 			Gson gson = new Gson();
 			
 			String response = new String(is.readAllBytes(), "UTF-8");	
-			LocalidadeDTO dto = gson.fromJson(response, LocalidadeDTO.class);
+			Localidade dto = gson.fromJson(response, Localidade.class);
 			
 			return dto != null && dto.getCep() != null? dto : null ;
 		}
@@ -57,8 +56,6 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 		{	
 			e.printStackTrace();
 			return null;
-		}		
-		
-	}
-	
+		}	
+	}	
 }

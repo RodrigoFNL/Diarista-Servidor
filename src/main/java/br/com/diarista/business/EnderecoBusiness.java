@@ -14,7 +14,7 @@ import br.com.diarista.entity.Localidade;
 public class EnderecoBusiness extends BasicBusiness<Endereco>
 {
 	@Autowired
-	LocalidadeDAO localityRepository;
+	private LocalidadeDAO localityRepository;
 	
 	@Override
 	public List<?> getAllActive()
