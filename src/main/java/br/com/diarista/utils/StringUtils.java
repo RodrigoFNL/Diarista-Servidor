@@ -114,4 +114,21 @@ public class StringUtils
 		return !isNotNull(value);
 	}
 
+	public static String formatCPF(String cpf) 
+	{
+		if(cpf == null)   return null;
+		cpf = cpf.trim();		
+		if(cpf.isEmpty()) return null;
+		if(cpf.length() != 11) return null;
+		
+		String block01 = cpf.substring(0, 3);
+		String block02 = cpf.substring(3, 6);
+		String block03 = cpf.substring(6, 9);	
+		String block04 = cpf.substring(9);
+		
+		StringBuilder cpfFormat = new StringBuilder().append(block01).append(".").append(block02).append(".").append(block03).append("-").append(block04);
+		return cpfFormat.toString();
+	}
+
+
 }

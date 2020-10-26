@@ -17,6 +17,6 @@ public class ContratoBusiness extends BasicBusiness<Contrato>
 	@Override
 	public List<Contrato> getAllActive() 
 	{		
-		return repository.findByStatus(true); 
+		return repository.findByStatusOrderByIndexAsc(true); 
 	}	
 }

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Contrato" pageWidth="595" pageHeight="850" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="67e53340-9c17-468b-bb69-fa2f399a802b">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.callouts" value="##Fri Oct 16 04:47:50 BRT 2020"/>
+	<parameter name="nome" class="java.lang.String"/>
+	<parameter name="CPF" class="java.lang.String"/>
+	<parameter name="image" class="java.io.File"/>
+	<queryString>
+		<![CDATA[SELECT  C.clausula, P.paragrafo, C.index FROM contrato C
+INNER JOIN contrato_paragrafo CP ON CP.contrato_id = C.id
+INNER JOIN paragrafo P ON P.id = CP.paragrafo_id AND P.status = true
+WHERE C.status = true
+GROUP BY C.clausula, p.paragrafo,  C.index
+ORDER BY C.index]]>
+	</queryString>
+	<field name="clausula" class="java.lang.String"/>
+	<field name="paragrafo" class="java.lang.String"/>
+	<field name="index" class="java.lang.Integer"/>
+	<group name="PARAGRAFO">
+		<groupExpression><![CDATA[$F{clausula}]]></groupExpression>
+		<groupHeader>
+			<band/>
+			<band height="62">
+				<line>
+					<reportElement x="0" y="3" width="555" height="1" forecolor="#999999" uuid="6a505d28-e828-4b38-b518-c61b6c1bacbf"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+				<textField>
+					<reportElement mode="Opaque" x="0" y="6" width="555" height="51" backcolor="#CCCCCC" uuid="c1352c97-8245-41d2-baf3-92b9db0144c9"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Calibri" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{clausula}]]></textFieldExpression>
+				</textField>
+				<line>
+					<reportElement x="0" y="59" width="555" height="1" forecolor="#999999" uuid="df091e36-6e79-4a8c-9ef2-71fe2333d38e"/>
+					<graphicElement>
+						<pen lineStyle="Solid"/>
+					</graphicElement>
+				</line>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band/>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="80" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="80" height="72" uuid="7e0fb002-c7f4-42c5-aa65-6c11a6b3d137"/>
+				<imageExpression><![CDATA["C:\\Users\\Rodrigo\\git\\Diarista-Servidor\\src\\main\\java\\ireport\\icone.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="80" y="2" width="435" height="70" uuid="854d6480-23dd-4add-a324-5711220618a7"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Comic Sans MS" size="36"/>
+				</textElement>
+				<text><![CDATA[FAXINEX]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="77" width="555" height="1" forecolor="#000000" uuid="499ca444-748d-488c-8179-f55b643d8243"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement x="0" y="74" width="555" height="1" forecolor="#000000" uuid="8c834ffd-e63e-4bb1-806c-da73f4d2968d"/>
+				<graphicElement>
+					<pen lineStyle="Solid"/>
+				</graphicElement>
+			</line>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="10" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="150" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="150" uuid="2997b2cb-7511-4b34-8e9d-d0b9095d7fae"/>
+				<textElement>
+					<font size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{paragrafo}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="100">
+			<line>
+				<reportElement x="345" y="60" width="200" height="1" uuid="08795b0b-85cf-4257-8b6f-599f1706b387"/>
+			</line>
+			<textField>
+				<reportElement x="345" y="65" width="200" height="15" uuid="52bb9042-ac15-4cbf-a7c3-f41e61a565c5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nome}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="345" y="80" width="200" height="15" uuid="861aa26d-d9d1-44d7-ad75-7686b0264ebc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{CPF}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle" onErrorType="Icon">
+				<reportElement positionType="FixRelativeToBottom" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="345" y="0" width="200" height="60" uuid="ad83d182-3d44-4ff7-9751-1cac0881139d"/>
+				<imageExpression><![CDATA[$P{image}]]></imageExpression>
+			</image>
+		</band>
+	</lastPageFooter>
+</jasperReport>

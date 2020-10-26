@@ -9,4 +9,5 @@ import br.com.diarista.entity.UF;
 public interface UFDAO extends JpaRepository<UF, Long>
 {
 	List<UF> findByStatus(Boolean status);
+	List<UF> findBySigla(String sigla);
 }

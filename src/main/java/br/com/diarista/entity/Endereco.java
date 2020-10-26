@@ -1,5 +1,7 @@
 package br.com.diarista.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +14,10 @@ import br.com.diarista.utils.StringUtils;
 
 @Entity
 @Table(name="andress")
-public class Endereco
-{
+public class Endereco implements Serializable
+{	
+	private static final long serialVersionUID = 1L;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)	
 	private Long id;
@@ -26,7 +30,7 @@ public class Endereco
 	
 	
 	public Endereco() {}	
-	public Endereco(String id, String number, String complement, String cep, String localidade, String logradouro, String bairro, String uf) 
+	public Endereco(String id, String number, String complement, String cep, String localidade, String logradouro, String bairro, UF uf) 
 	{
 		if(StringUtils.isNotNull(id)) 		this.id = Long.valueOf(id);
 		if(StringUtils.isNotNull(number)) 	this.number = number;

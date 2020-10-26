@@ -2,66 +2,54 @@ package br.com.diarista.entity;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import br.com.diarista.utils.StringUtils;
-
-
 @Entity
-@Table(name = "estado_civil") 
-public class EstadoCivil implements Serializable
+@Table(name = "paragrafo") 
+public class Paragrafo implements Serializable
 {	
 	private static final long serialVersionUID = 1L;
-	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
-	private String name;
+	
+	@Column(columnDefinition = "TEXT")
+	private String paragrafo;
+	
 	private Boolean status;
-	
-	public EstadoCivil(){}
-	
-	public EstadoCivil(String id)
-	{
-		this.id = StringUtils.isNotNull(id)? Long.valueOf(id): null;
-	}
+
 	public Long getId() 
 	{
 		return id;
 	}
-	public void setId(Long id) 
+
+	public void setId(Long id)
 	{
 		this.id = id;
 	}
-	public String getName()
+
+	public String getParagrafo()
 	{
-		return name;
+		return paragrafo;
 	}
-	public void setName(String name)
+
+	public void setParagrafo(String paragrafo) 
 	{
-		this.name = name;
+		this.paragrafo = paragrafo;
 	}
-	public Boolean getStatus()
+
+	public Boolean getStatus() 
 	{
 		return status;
 	}
-	public void setStatus(Boolean status) 
+
+	public void setStatus(Boolean status)
 	{
 		this.status = status;
 	}
-
 }
-
-
-
-
-
-
-
-
-
-

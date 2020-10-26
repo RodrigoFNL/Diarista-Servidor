@@ -2,21 +2,20 @@ package br.com.diarista.entity;
 
 
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import br.com.diarista.dto.NacionalidadeDTO;
 import br.com.diarista.utils.StringUtils;
 
 @Entity
 @Table(name="nacionalidade")
-public class Nacionalidade extends BasicEntity<NacionalidadeDTO> 
+public class Nacionalidade implements Serializable
 {	
-	private static final long serialVersionUID = 1L;
-	
+	private static final long serialVersionUID = 1L;		
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -51,18 +50,5 @@ public class Nacionalidade extends BasicEntity<NacionalidadeDTO>
 	public void setStatus(Boolean status) 
 	{
 		this.status = status;
-	}
-	
-	@Override
-	public NacionalidadeDTO getDTO() 
-	{
-		NacionalidadeDTO dto = new NacionalidadeDTO();
-		
-		dto.setId(this.id);
-		dto.setName(this.name);
-		dto.setStatus(this.status);		
-		
-		return dto;
-	}
-	
+	}	
 }

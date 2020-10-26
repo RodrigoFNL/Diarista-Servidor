@@ -1,18 +1,19 @@
 package br.com.diarista.entity;
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import br.com.diarista.dto.LocalidadeDTO;
 import br.com.diarista.utils.StringUtils;
 
 @Entity
 @Table(name="locality")
-public class Localidade  extends BasicEntity<LocalidadeDTO>
-{
+public class Localidade implements Serializable
+{	
 	private static final long serialVersionUID = 1L;
 	@Id
 	private String cep;
@@ -29,18 +30,13 @@ public class Localidade  extends BasicEntity<LocalidadeDTO>
 	public Localidade() 
 	{}
     
-	public Localidade(String cep, String localidade, String logradouro, String bairro, String uf) 
+	public Localidade(String cep, String localidade, String logradouro, String bairro, UF uf) 
 	{
 		if(StringUtils.isNotNull(cep)) 			this.cep = StringUtils.removeCharacters(cep);
 		if(StringUtils.isNotNull(localidade)) 	this.localidade = localidade;
 		if(StringUtils.isNotNull(logradouro)) 	this.logradouro = logradouro;
 		if(StringUtils.isNotNull(bairro)) 		this.bairro = bairro;
-		if(StringUtils.isNotNull(uf))
-		{			
-			 this.uf = new UF();
-			 this.uf.setSigla(uf);
-			 this.uf.setName(uf);
-		}
+		this.uf = uf;		
 	}
 	public String getCep() {
 		return cep;
@@ -83,20 +79,5 @@ public class Localidade  extends BasicEntity<LocalidadeDTO>
 	}
 	public void setUf(UF uf) {
 		this.uf = uf;
-	}
-
-	@Override
-	public LocalidadeDTO getDTO() 
-	{	
-		LocalidadeDTO dto = new LocalidadeDTO();
-		
-		dto.setCep(this.cep);
-		dto.setBairro(this.bairro);
-		dto.setComplemento(this.complemento);
-		dto.setIbge(this.ibge);
-		dto.setLocalidade(this.localidade);
-		dto.setLogradouro(this.logradouro);
-		
-		return dto;		
-	}    
+	}  
 }
