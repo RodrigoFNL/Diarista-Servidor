@@ -96,9 +96,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 			Usuario userRecovery = update.get();
 
-			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2)
-
-				if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
+			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2) return "Usuário Já Cadastrado";	
+				
+			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
 
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
 			userRecovery.setBackDocument(entity.getBackDocument());	

@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import br.com.diarista.business.BasicBusiness;
 import br.com.diarista.business.EnderecoBusiness;
+import br.com.diarista.dto.LocalidadeDTO;
 import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.Localidade;
 
@@ -48,9 +49,11 @@ public class EnderecoRestServe  extends BasicRestServe<Endereco>
 			Gson gson = new Gson();
 			
 			String response = new String(is.readAllBytes(), "UTF-8");	
-			Localidade dto = gson.fromJson(response, Localidade.class);
+			LocalidadeDTO dto = gson.fromJson(response, LocalidadeDTO.class);
 			
-			return dto != null && dto.getCep() != null? dto : null ;
+			Localidade entity = endBusiness.getEntity(dto);	
+			
+			return entity != null && entity.getCep() != null? entity : null ;
 		}
 		catch (Exception e)
 		{	

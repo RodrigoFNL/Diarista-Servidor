@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.diarista.business.BasicBusiness;
-import br.com.diarista.business.UFBusiness;
 import br.com.diarista.business.UsuarioBusiness;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dto.UsuarioDTO;
@@ -28,7 +27,6 @@ import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.EstadoCivil;
 import br.com.diarista.entity.Nacionalidade;
 import br.com.diarista.entity.RG;
-import br.com.diarista.entity.UF;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.StringUtils;
@@ -40,10 +38,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 	@Autowired
 	private UsuarioBusiness usuarioBusiness;
 	
-	@Autowired
-	private UFBusiness ufBusiness;
-
-
 	@Override
 	protected BasicBusiness<Usuario> business() 
 	{	
@@ -127,12 +121,9 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			Usuario user = new Usuario();			
 			user.setCpf(StringUtils.removeCharacters(cpf));		
 			if(StringUtils.isNotNull(rgNumber) && StringUtils.isNotNull(rgIssuer) && StringUtils.isNotNull(rgUF)) user.setRg(new RG(rgNumber, rgIssuer, rgUF));
-			
-			
-			UF uf = ufBusiness.getUFbySigla(andressUf);
-			
+						
 			if(StringUtils.isNotNull(andressNumber) && StringUtils.isNotNull(andressCep) && StringUtils.isNotNull(andressLocalidade) && StringUtils.isNotNull(andressUf))
-				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, uf));
+				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, andressUf));
 									
 			user.setBirth_date(DateUtils.getDate(birthDate));			
 			user.setRne(StringUtils.removeCharacters(rne));

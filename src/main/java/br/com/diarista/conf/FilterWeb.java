@@ -2,7 +2,6 @@ package br.com.diarista.conf;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -11,11 +10,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
 import br.com.diarista.business.UsuarioBusiness;
 
 @Component
-public class FilterWeb implements Filter
+public class FilterWeb extends GenericFilterBean 
 {
 	@Override
 	public void doFilter(ServletRequest requestServlet, ServletResponse responseServlet, FilterChain chain)	throws IOException, ServletException 
@@ -32,6 +32,12 @@ public class FilterWeb implements Filter
 		response.setHeader("Access-Control-Allow-Credentials", "true");
 		response.setHeader("Access-Control-Max-Age", "1");	
 
+		
+		if(true) 
+		{
+			chain.doFilter(request,response);	
+			return;
+		}
 		try
 		{		
 			//exceções para que o usuário inicie o cadastramento
