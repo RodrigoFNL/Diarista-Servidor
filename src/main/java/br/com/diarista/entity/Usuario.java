@@ -25,6 +25,7 @@ public class Usuario implements Serializable
 	public static final Short CADASTRO_NAO_APROVADO = 2;
 	public static final Short CADASTRO_EM_ANALISE = 3;
 	public static final Short CADASTRO_APROVADO = 4;	
+	public static final Short USUARIO_ADMINISTRADOR = 5;	
 	
 	@Id
 	@Column(name = "cpf")

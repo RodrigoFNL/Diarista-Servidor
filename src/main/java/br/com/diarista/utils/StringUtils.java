@@ -1,9 +1,9 @@
 package br.com.diarista.utils;
 
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
 import java.util.Random;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class StringUtils 
 {
@@ -37,9 +37,8 @@ public class StringUtils
 	{
 		try
 		{
-			MessageDigest md = MessageDigest.getInstance("MD5");
-			BigInteger hash = new BigInteger(1, md.digest(value.getBytes()));
-			return hash.toString(15);
+			BCryptPasswordEncoder pass = new BCryptPasswordEncoder();
+			return pass.encode(value);
 		}
 		catch (Exception e)
 		{
