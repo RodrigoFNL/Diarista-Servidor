@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import br.com.diarista.entity.Usuario;
 
-public interface UsuarioDAO extends JpaRepository<Usuario, String> 
+public interface UsuarioDAO extends JpaRepository<Usuario, Long> 
 {
 	Optional<Usuario> findByCpf(String cpf);	
 	Optional<Usuario> findByCoupon(String coupon);

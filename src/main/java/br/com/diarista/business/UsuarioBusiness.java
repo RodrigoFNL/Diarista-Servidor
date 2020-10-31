@@ -51,8 +51,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	{
 		try
 		{		
-			RG removeRG = null;
-			
+			RG removeRG = null;			
 			if(!DiaristaUtils.validCPF(entity.getCpf())) 	return "CPF é inválido!";	
 
 			if(entity.getRg() == null && entity.getRne() == null) return "RG ou RNE obrigatório!";			
@@ -165,7 +164,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			else if(email == null) 		return "Você deve fornecer um Email";
 			else if(!accept)			return "Você deve aceitar os termos e condições";
 
-			Optional<Usuario> hasDuplic = usuarioRepository.findById(cpf);
+			Optional<Usuario> hasDuplic = usuarioRepository.findByCpf(cpf);
 
 			Usuario hasDuplicated = hasDuplic.isPresent() ? hasDuplic.get() : null;			
 			if(hasDuplicated != null && hasDuplicated.getRegistrationSituation() != null && hasDuplicated.getRegistrationSituation() > 2) return "Já existe um usuário cadastrado neste CPF.";
