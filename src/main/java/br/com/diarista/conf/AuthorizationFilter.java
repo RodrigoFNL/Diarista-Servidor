@@ -19,6 +19,7 @@ import io.jsonwebtoken.Jwts;
 public class AuthorizationFilter extends BasicAuthenticationFilter
 {	
 	private final CustomUserDetailService userDetailService;
+	
 	public AuthorizationFilter(AuthenticationManager authenticationManager, CustomUserDetailService userDetailService) 
 	{
 		super(authenticationManager);	

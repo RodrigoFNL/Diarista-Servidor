@@ -28,9 +28,7 @@ import net.sf.jasperreports.engine.JRException;
 
 @Service
 public class UsuarioBusiness  extends BasicBusiness<Usuario>
-{		
-	private static String token ;
-
+{			
 	@Autowired
 	private UsuarioDAO usuarioRepository;
 
@@ -169,7 +167,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			Usuario hasDuplicated = hasDuplic.isPresent() ? hasDuplic.get() : null;			
 			if(hasDuplicated != null && hasDuplicated.getRegistrationSituation() != null && hasDuplicated.getRegistrationSituation() > 2) return "Já existe um usuário cadastrado neste CPF.";
 
-			Usuario user = new Usuario();			
+			Usuario user = new Usuario();	
+			
+			user.setId(hasDuplicated != null? hasDuplicated.getId(): null);			
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
 			user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO);
 			user.setName(name);
@@ -211,37 +211,16 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
 		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
 
-		//cria um token de convite para finalizar cadastro
-		if(dto != null) createToken(dto, "INV-2020");
+
 
 		return dto;		
 	}
 
-	//cria um token, o preToken dirá se o usuário está logado ou está preenchendo o resto do cadastro
-	private void createToken(UsuarioDTO dto, String preToken) 
-	{
-		Date date = new Date();
-		Long time = date.getTime();		
-		String token =  preToken + StringUtils.encrypt(time.toString() + dto.getCpf());
-
-		UsuarioBusiness.setToken(token);
-		dto.setToken(token);
-	}
 
 	@Override
 	public List<UserDTO> getAllActive() 
 	{
 		return null;
-	}
-
-	public static String getToken()
-	{
-		return token;
-	}
-
-	public static void setToken(String token) 
-	{
-		UsuarioBusiness.token = token;
 	}
 
 	public Usuario findByCPF(String cpf) 

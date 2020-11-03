@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.diarista.dto.UserDTO;
+import br.com.diarista.utils.StringUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -36,7 +37,9 @@ public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFil
 		try 
 		{
 			UserDTO dto = new ObjectMapper().readValue(request.getInputStream(), UserDTO.class);				
-			return authManager.authenticate(new UsernamePasswordAuthenticationToken(dto.getUserName(), dto.getPassword()));
+			UsernamePasswordAuthenticationToken userAuthenticate = new UsernamePasswordAuthenticationToken(dto.getUserName(), StringUtils.encrypt(dto.getPassword()));		
+			Authentication auth = authManager.authenticate(userAuthenticate);			
+			return auth;			
 		}
 		catch (Exception e) 
 		{
@@ -53,8 +56,9 @@ public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFil
 		String token = Jwts.builder().setSubject(((User) authResult.getPrincipal())
 									 .getUsername())
 									 .setExpiration(new Date(System.currentTimeMillis() + ConstantsSecurity.EXPIRATION_TIME)) 
-									 .signWith(SignatureAlgorithm.HS512, ConstantsSecurity.SECRET).compact();	
-		
-		response.addHeader(ConstantsSecurity.HEADER, ConstantsSecurity.TOKE_PREFIX_INVITE + token);
+									 .signWith(SignatureAlgorithm.HS512, ConstantsSecurity.SECRET).compact();			
+		token = ConstantsSecurity.TOKE_PREFIX_INVITE + token;
+		response.getWriter().write(token);
+		response.addHeader(ConstantsSecurity.HEADER, token);
 	}	
 }

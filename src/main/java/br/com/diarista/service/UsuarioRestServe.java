@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -159,12 +160,12 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 	}	
 
 	@GetMapping("/download_contrato/{cpf}/{token}")
-	public void download(@PathVariable("cpf") String cpf,@PathVariable("token") String token,  HttpServletResponse response)
+	public void download(@PathVariable("cpf") String cpf,@PathVariable("token") String token,  HttpServletResponse response, Authentication authentication)
 	{		
 		try
 		{			
-			if(token.equals(UsuarioBusiness.getToken()))
-			{			
+//			if(token.equals(UsuarioBusiness.getToken()))
+//			{			
 				cpf = StringUtils.removeCharacters(cpf);
 				Usuario user = usuarioBusiness.findByCPF(cpf);	
 				
@@ -181,7 +182,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 				response.flushBuffer();
 				response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf" );
 				response.getOutputStream().flush();
-			}
+//			}
 		} 
 		catch (Exception ex)
 		{

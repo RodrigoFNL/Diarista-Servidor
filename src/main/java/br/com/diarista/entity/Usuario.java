@@ -33,7 +33,7 @@ public class Usuario implements Serializable
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(name = "cpf")
+	@Column(name = "cpf", unique = true)
 	private String cpf;
 	
 	@OneToOne

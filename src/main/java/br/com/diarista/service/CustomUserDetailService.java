@@ -21,7 +21,6 @@ public class CustomUserDetailService implements UserDetailsService
 {
 	@Autowired
 	private UsuarioDAO userRepository;
-	
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException 
@@ -36,7 +35,7 @@ public class CustomUserDetailService implements UserDetailsService
 		
 		Usuario userLoading = user.get();	
 				
-		String password = userLoading.getPassword() != null? new String(userLoading.getPassword()) : "";	
+		String password = userLoading.getPassword() != null? new String(userLoading.getPassword()) : "1";	
 		
 		List<GrantedAuthority> granted = null;
 		
@@ -46,7 +45,8 @@ public class CustomUserDetailService implements UserDetailsService
 		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsPrestar_servico()) 				granted = AuthorityUtils.createAuthorityList("CORE", "TOHIRE");
 		else if(userLoading.getRegistrationSituation() == 5) 													granted = AuthorityUtils.createAuthorityList("CORE", "ADMIN");
 		
-		User userReading = new User(userLoading.getEmail(), StringUtils.encrypt(password), granted);
+	//	User userReading = new User(userLoading.getCoupon(), StringUtils.encrypt(password), granted);
+		User userReading = new User(userLoading.getCoupon(), password, granted);
 		return userReading;		
 	}
 }
