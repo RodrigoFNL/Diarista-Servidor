@@ -18,7 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.com.diarista.dto.UserDTO;
-import br.com.diarista.utils.StringUtils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 
@@ -37,7 +36,7 @@ public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFil
 		try 
 		{
 			UserDTO dto = new ObjectMapper().readValue(request.getInputStream(), UserDTO.class);				
-			UsernamePasswordAuthenticationToken userAuthenticate = new UsernamePasswordAuthenticationToken(dto.getUserName(), StringUtils.encrypt(dto.getPassword()));		
+			UsernamePasswordAuthenticationToken userAuthenticate = new UsernamePasswordAuthenticationToken(dto.getUserName(), dto.getPassword());		
 			Authentication auth = authManager.authenticate(userAuthenticate);			
 			return auth;			
 		}
@@ -51,10 +50,9 @@ public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFil
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException 
 	{	
-		((User) authResult).getUsername() ;
+		String userName = ((User) authResult.getPrincipal()).getUsername();	
 		
-		String token = Jwts.builder().setSubject(((User) authResult.getPrincipal())
-									 .getUsername())
+		String token = Jwts.builder().setSubject(userName)
 									 .setExpiration(new Date(System.currentTimeMillis() + ConstantsSecurity.EXPIRATION_TIME)) 
 									 .signWith(SignatureAlgorithm.HS512, ConstantsSecurity.SECRET).compact();			
 		token = ConstantsSecurity.TOKE_PREFIX_INVITE + token;

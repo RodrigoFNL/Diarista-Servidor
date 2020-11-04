@@ -33,10 +33,8 @@ public class CustomUserDetailService implements UserDetailsService
 			 if(!(user != null && !user.isEmpty()) && !(user.get().getRegistrationSituation() != null &&  user.get().getRegistrationSituation() > 2)) throw new UsernameNotFoundException("USUÁRIO NÃO ENCONTRADO");	
 		}			
 		
-		Usuario userLoading = user.get();	
-				
-		String password = userLoading.getPassword() != null? new String(userLoading.getPassword()) : "1";	
-		
+		Usuario userLoading = user.get();					
+		String password = userLoading.getPassword() != null? new String(userLoading.getPassword()) : "faxinex1818";			
 		List<GrantedAuthority> granted = null;
 		
 		if(!(userLoading.getRegistrationSituation() != null &&  userLoading.getRegistrationSituation() > 2)) 	granted = AuthorityUtils.createAuthorityList("CORE", "REGISTER");	
@@ -44,9 +42,8 @@ public class CustomUserDetailService implements UserDetailsService
 		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsContratar()) 					granted = AuthorityUtils.createAuthorityList("CORE", "HIRED");
 		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsPrestar_servico()) 				granted = AuthorityUtils.createAuthorityList("CORE", "TOHIRE");
 		else if(userLoading.getRegistrationSituation() == 5) 													granted = AuthorityUtils.createAuthorityList("CORE", "ADMIN");
-		
-	//	User userReading = new User(userLoading.getCoupon(), StringUtils.encrypt(password), granted);
-		User userReading = new User(userLoading.getCoupon(), password, granted);
+		User userReading = new User(userLoading.getCoupon(), StringUtils.encrypt(password), granted);
+
 		return userReading;		
 	}
 }

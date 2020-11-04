@@ -36,7 +36,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter
 			chain.doFilter(request, response);
 			return;		
 		}
-				
+			
+		HttpServletRequest requestServlet = (HttpServletRequest) request;
 		String userName = null;
 				
 		if(token.contains(ConstantsSecurity.TOKE_PREFIX_CPF)) 	 		userName = Jwts.parser().setSigningKey(ConstantsSecurity.SECRET).parseClaimsJws(token.replace(ConstantsSecurity.TOKE_PREFIX_CPF, "")).getBody().getSubject();
@@ -50,10 +51,37 @@ public class AuthorizationFilter extends BasicAuthenticationFilter
 			if (user == null) throw new ServletException("Usuário Não encontrado!");
 			
 			UsernamePasswordAuthenticationToken userAuthenticationToken = new UsernamePasswordAuthenticationToken(userName, null, user.getAuthorities());
-			SecurityContextHolder.getContext().setAuthentication(userAuthenticationToken);
-			chain.doFilter(request, response);	
+			SecurityContextHolder.getContext().setAuthentication(userAuthenticationToken);			
+			
+			if(token.contains(ConstantsSecurity.TOKE_PREFIX_INVITE) && 
+					(	requestServlet.getRequestURI().contains("/diarista/rest/usuario/register") 				||			
+						requestServlet.getRequestURI().contains("/diarista/rest/usuario/participate") 			|| 
+						requestServlet.getRequestURI().contains("/diarista/rest/usuario/invitation")  			|| 			
+						requestServlet.getRequestURI().contains("/diarista/rest/model")  						||
+						requestServlet.getRequestURI().contains("/diarista/rest/contract/all_active") 			||	
+						requestServlet.getRequestURI().contains("/diarista/rest/nationality/all_active") 	 	|| 
+						requestServlet.getRequestURI().contains("/diarista/rest/marital_status/all_active") 	||
+						requestServlet.getRequestURI().contains("/diarista/rest/adress/locality") 			 	||
+						requestServlet.getRequestURI().contains("/diarista/rest/usuario/register")  			|| 
+						requestServlet.getRequestURI().contains("/diarista/rest/usuario/send_mail_contrato") 	|| 
+						requestServlet.getRequestURI().contains("/diarista/rest/uf/all_active")  				||
+						requestServlet.getRequestURI().contains("/diarista/rest/issuing_department/all_active") ||
+						requestServlet.getRequestURI().contains("/diarista/rest/usuario/download_contrato")
+					))				
+				   						
+			{						
+				chain.doFilter(request, response);	
+				return;			
+			}	
+			
+			if((token.contains(ConstantsSecurity.TOKE_PREFIX_CPF) || token.contains(ConstantsSecurity.TOKE_PREFIX_EMAIL) && !requestServlet.getRequestURI().contains("/diarista/rest/usuario/register")))
+			{		
+				chain.doFilter(request, response);	
+				return;			
+			}			
+			
 		}
-		throw new ServletException("Usuário Não encontrado!");
+		else throw new ServletException("Usuário Não encontrado!");
 	}
 }
 
