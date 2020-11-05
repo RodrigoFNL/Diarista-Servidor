@@ -30,13 +30,13 @@ public class Localidade implements Serializable
 	public Localidade() 
 	{}
     
-	public Localidade(String cep, String localidade, String logradouro, String bairro, UF uf) 
+	public Localidade(String cep, String localidade, String logradouro, String bairro, String uf) 
 	{
 		if(StringUtils.isNotNull(cep)) 			this.cep = StringUtils.removeCharacters(cep);
 		if(StringUtils.isNotNull(localidade)) 	this.localidade = localidade;
 		if(StringUtils.isNotNull(logradouro)) 	this.logradouro = logradouro;
 		if(StringUtils.isNotNull(bairro)) 		this.bairro = bairro;
-		this.uf = uf;		
+		this.uf = new UF(uf);		
 	}
 	public String getCep() {
 		return cep;

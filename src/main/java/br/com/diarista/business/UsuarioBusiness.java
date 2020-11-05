@@ -28,9 +28,7 @@ import net.sf.jasperreports.engine.JRException;
 
 @Service
 public class UsuarioBusiness  extends BasicBusiness<Usuario>
-{		
-	private static String token ;
-
+{			
 	@Autowired
 	private UsuarioDAO usuarioRepository;
 
@@ -51,8 +49,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	{
 		try
 		{		
-			RG removeRG = null;
-			
+			RG removeRG = null;			
 			if(!DiaristaUtils.validCPF(entity.getCpf())) 	return "CPF é inválido!";	
 
 			if(entity.getRg() == null && entity.getRne() == null) return "RG ou RNE obrigatório!";			
@@ -96,9 +93,8 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 			Usuario userRecovery = update.get();
 
-			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2)
-
-				if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
+			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2) return "Usuário Já Cadastrado";					
+			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
 
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
 			userRecovery.setBackDocument(entity.getBackDocument());	
@@ -125,7 +121,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setCell_phone(entity.getCell_phone());
 
 			userRecovery.setTermosCondicoes(entity.getTermosCondicoes());		
-			userRecovery.setPassword(entity.getConfirm_password().getBytes());	
+			userRecovery.setPassword(StringUtils.encrypt(entity.getConfirm_password()).getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
 			userRecovery.setIsContratar(entity.getIsContratar());
@@ -165,12 +161,11 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			else if(email == null) 		return "Você deve fornecer um Email";
 			else if(!accept)			return "Você deve aceitar os termos e condições";
 
-			Optional<Usuario> hasDuplic = usuarioRepository.findById(cpf);
-
+			Optional<Usuario> hasDuplic = usuarioRepository.findByCpf(cpf);
 			Usuario hasDuplicated = hasDuplic.isPresent() ? hasDuplic.get() : null;			
 			if(hasDuplicated != null && hasDuplicated.getRegistrationSituation() != null && hasDuplicated.getRegistrationSituation() > 2) return "Já existe um usuário cadastrado neste CPF.";
 
-			Usuario user = new Usuario();			
+			Usuario user = new Usuario();	
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
 			user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO);
 			user.setName(name);
@@ -211,38 +206,15 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
 		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
-
-		//cria um token de convite para finalizar cadastro
-		if(dto != null) createToken(dto, "INV-2020");
-
+		
 		return dto;		
 	}
 
-	//cria um token, o preToken dirá se o usuário está logado ou está preenchendo o resto do cadastro
-	private void createToken(UsuarioDTO dto, String preToken) 
-	{
-		Date date = new Date();
-		Long time = date.getTime();		
-		String token =  preToken + StringUtils.encrypt(time.toString() + dto.getCpf());
-
-		UsuarioBusiness.setToken(token);
-		dto.setToken(token);
-	}
 
 	@Override
 	public List<UserDTO> getAllActive() 
 	{
 		return null;
-	}
-
-	public static String getToken()
-	{
-		return token;
-	}
-
-	public static void setToken(String token) 
-	{
-		UsuarioBusiness.token = token;
 	}
 
 	public Usuario findByCPF(String cpf) 

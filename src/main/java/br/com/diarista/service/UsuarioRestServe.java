@@ -7,6 +7,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,18 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.diarista.business.BasicBusiness;
-import br.com.diarista.business.UFBusiness;
 import br.com.diarista.business.UsuarioBusiness;
+import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dto.UsuarioDTO;
 import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.EstadoCivil;
 import br.com.diarista.entity.Nacionalidade;
 import br.com.diarista.entity.RG;
-import br.com.diarista.entity.UF;
 import br.com.diarista.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.StringUtils;
+import io.jsonwebtoken.Jwts;
 
 @RestController
 @RequestMapping("/rest/usuario")
@@ -41,9 +43,8 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 	private UsuarioBusiness usuarioBusiness;
 	
 	@Autowired
-	private UFBusiness ufBusiness;
-
-
+	private CustomUserDetailService userDetailService;
+	
 	@Override
 	protected BasicBusiness<Usuario> business() 
 	{	
@@ -127,12 +128,9 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			Usuario user = new Usuario();			
 			user.setCpf(StringUtils.removeCharacters(cpf));		
 			if(StringUtils.isNotNull(rgNumber) && StringUtils.isNotNull(rgIssuer) && StringUtils.isNotNull(rgUF)) user.setRg(new RG(rgNumber, rgIssuer, rgUF));
-			
-			
-			UF uf = ufBusiness.getUFbySigla(andressUf);
-			
+						
 			if(StringUtils.isNotNull(andressNumber) && StringUtils.isNotNull(andressCep) && StringUtils.isNotNull(andressLocalidade) && StringUtils.isNotNull(andressUf))
-				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, uf));
+				user.setAndress(new Endereco(andressId, andressNumber, andressComplement, andressCep, andressLocalidade, andressLogradouro, andressBairro, andressUf));
 									
 			user.setBirth_date(DateUtils.getDate(birthDate));			
 			user.setRne(StringUtils.removeCharacters(rne));
@@ -141,20 +139,19 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setEmail(email);
 			user.setCoupon(coupon);
 			user.setTermosCondicoes(Boolean.valueOf(termosCondicoes));
-			user.setConfirm_password(StringUtils.encrypt(password));
+			user.setConfirm_password(password);
 			user.setNationality(new Nacionalidade(nationality));
 			user.setMarital_status(new EstadoCivil(maritalStatus));
 			user.setToken(token);
 			user.setIsContratar(Boolean.valueOf(isContratar));
 			user.setIsPrestar_servico(Boolean.valueOf(isPrestarServico));
-			user.setCell_phone(StringUtils.removeCharacters(cellPhone));		
-						
+			user.setCell_phone(StringUtils.removeCharacters(cellPhone));	
 			user.setFrontDocument(Base64.getDecoder().decode(new String(frontDocument.getBytes())));
 			user.setBackDocument(Base64.getDecoder().decode(new String(backDocument.getBytes())));
 			user.setHandDocument(Base64.getDecoder().decode(new String(handDocument.getBytes())));
 			user.setSignature(Base64.getDecoder().decode(new String(signature.getBytes())));			
 
-			String response = usuarioBusiness.register(user, StringUtils.encrypt(confirmPassword));
+			String response = usuarioBusiness.register(user, confirmPassword);
 
 			if(response.contains("id:")) return  ok(response);	
 			else return error(response, BasicRestServe.INTERNAL_ERROR);		
@@ -167,12 +164,15 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 
 	}	
 
-	@GetMapping("/download_contrato/{cpf}/{token}")
-	public void download(@PathVariable("cpf") String cpf,@PathVariable("token") String token,  HttpServletResponse response)
+	@GetMapping("/download_contrato/{cpf}/{coupon}/{token}")
+	public void download(@PathVariable("cpf") String cpf, @PathVariable("token") String token, @PathVariable("coupon") String coupon,  HttpServletResponse response)
 	{		
 		try
-		{			
-			if(token.equals(UsuarioBusiness.getToken()))
+		{	
+			 String userName = Jwts.parser().setSigningKey(ConstantsSecurity.SECRET).parseClaimsJws(token.replace(ConstantsSecurity.TOKE_PREFIX_INVITE, "")).getBody().getSubject();			
+			 UserDetails userToken = userDetailService.loadUserByUsername(userName);						
+			
+			if(userToken.getUsername().equals(coupon))
 			{			
 				cpf = StringUtils.removeCharacters(cpf);
 				Usuario user = usuarioBusiness.findByCPF(cpf);	
