@@ -24,17 +24,21 @@ public class CustomUserDetailService implements UserDetailsService
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException 
-	{
+	{		
 		Optional<Usuario>  user = userRepository.findByEmail(username);		
+		
+		boolean isCoupon = false;
+		
 		if(!(user != null && !user.isEmpty())) user = userRepository.findByCpf(StringUtils.removeCharacters(username));		
 		if(!(user != null && !user.isEmpty()))
 		{
 			 user = userRepository.findByCoupon(username);		
 			 if(!(user != null && !user.isEmpty()) && !(user.get().getRegistrationSituation() != null &&  user.get().getRegistrationSituation() > 2)) throw new UsernameNotFoundException("USUÁRIO NÃO ENCONTRADO");	
+			 isCoupon = true;
 		}			
 		
 		Usuario userLoading = user.get();					
-		String password = userLoading.getPassword() != null? new String(userLoading.getPassword()) : "faxinex1818";			
+		String password = userLoading.getPassword() != null && !isCoupon? new String(userLoading.getPassword()) : "faxinex1818";			
 		List<GrantedAuthority> granted = null;
 		
 		if(!(userLoading.getRegistrationSituation() != null &&  userLoading.getRegistrationSituation() > 2)) 	granted = AuthorityUtils.createAuthorityList("CORE", "REGISTER");	

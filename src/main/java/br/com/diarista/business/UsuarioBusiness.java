@@ -93,8 +93,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 			Usuario userRecovery = update.get();
 
-			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2) return "Usuário Já Cadastrado";	
-				
+			if(userRecovery.getRegistrationSituation() != null && userRecovery.getRegistrationSituation() > 2) return "Usuário Já Cadastrado";					
 			if(!userRecovery.getCoupon().equals(entity.getCoupon())) return "O coupon é diferente do registrado no banco de dados!";			
 
 			userRecovery.setFrontDocument(entity.getFrontDocument());	
@@ -122,7 +121,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setCell_phone(entity.getCell_phone());
 
 			userRecovery.setTermosCondicoes(entity.getTermosCondicoes());		
-			userRecovery.setPassword(entity.getConfirm_password().getBytes());	
+			userRecovery.setPassword(StringUtils.encrypt(entity.getConfirm_password()).getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
 			userRecovery.setIsContratar(entity.getIsContratar());
@@ -163,13 +162,10 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			else if(!accept)			return "Você deve aceitar os termos e condições";
 
 			Optional<Usuario> hasDuplic = usuarioRepository.findByCpf(cpf);
-
 			Usuario hasDuplicated = hasDuplic.isPresent() ? hasDuplic.get() : null;			
 			if(hasDuplicated != null && hasDuplicated.getRegistrationSituation() != null && hasDuplicated.getRegistrationSituation() > 2) return "Já existe um usuário cadastrado neste CPF.";
 
 			Usuario user = new Usuario();	
-			
-			user.setId(hasDuplicated != null? hasDuplicated.getId(): null);			
 			user.setCoupon(StringUtils.generateCoupon(new Date().getTime()));
 			user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO);
 			user.setName(name);
@@ -210,9 +206,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
 		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
-
-
-
+		
 		return dto;		
 	}
 
