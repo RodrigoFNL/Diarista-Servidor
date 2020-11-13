@@ -128,6 +128,4 @@ public class StringUtils
 		StringBuilder cpfFormat = new StringBuilder().append(block01).append(".").append(block02).append(".").append(block03).append("-").append(block04);
 		return cpfFormat.toString();
 	}
-
-
 }

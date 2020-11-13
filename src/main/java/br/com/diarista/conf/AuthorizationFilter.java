@@ -78,7 +78,8 @@ public class AuthorizationFilter extends BasicAuthenticationFilter
 			{		
 				chain.doFilter(request, response);	
 				return;			
-			}			
+			}	
+			else throw new ServletException("Token sem permissão!");
 			
 		}
 		else throw new ServletException("Usuário Não encontrado!");
