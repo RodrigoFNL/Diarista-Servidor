@@ -71,16 +71,7 @@ public class Usuario implements Serializable
 	@ManyToOne
 	@JoinColumn(name = "andress_id", referencedColumnName = "id")
 	private Endereco andress;
-	
-	@Transient
-	private String token;
-	
-//	@Column(name = "is_prestar_servico", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
-//	private Boolean isPrestar_servico;
-//	
-//	@Column(name = "is_contratar", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
-//	private Boolean isContratar;
-	
+		
 	@Column(name = "alter_password", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
 	private Boolean isAlterPassword = false;
 		
@@ -208,24 +199,6 @@ public class Usuario implements Serializable
 	public void setAndress(Endereco andress) {
 		this.andress = andress;
 	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-//	public Boolean getIsPrestar_servico() {
-//		return isPrestar_servico;
-//	}
-//	public void setIsPrestar_servico(Boolean isPrestar_servico) {
-//		this.isPrestar_servico = isPrestar_servico;
-//	}
-//	public Boolean getIsContratar() {
-//		return isContratar;
-//	}
-//	public void setIsContratar(Boolean isContratar) {
-//		this.isContratar = isContratar;
-//	}
 	public byte[] getFrontDocument() {
 		return frontDocument;
 	}

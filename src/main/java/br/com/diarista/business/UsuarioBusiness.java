@@ -83,11 +83,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			if(entity.getMarital_status() == null) 				return "É obrigatório o preenchimento do Estado Civil";	
 			else if(entity.getMarital_status().getId() == null)	return "É obrigatório o preenchimento da Estado Civil";	
 
-//			if(entity.getIsContratar() == null)			return "Você não definiu se irá contratar ou não";	
-//			if(entity.getIsPrestar_servico() == null)   return "Você não definiu se irá prestar serviço ou não";	
-//
-//			if(!entity.getIsContratar() && !entity.getIsPrestar_servico())   return "Você deve esolher no mínimo uma opção entre prestar serviço e ou contratar";	
-
 			if(entity.getFrontDocument() == null)   return "É obrigatório a foto da frente do documento!";	
 			if(entity.getBackDocument() == null)    return "É obrigatório a foto da parte de trás do documento!";	
 			if(entity.getHandDocument() == null)    return "É obrigatório a foto do usuário com o documento na mão!";	
@@ -129,9 +124,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setPassword(StringUtils.encrypt(entity.getConfirm_password()).getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
-//			userRecovery.setIsContratar(entity.getIsContratar());
-//			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
-
 			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);			
 			localidadeRepository.save(entity.getAndress().getLocality());
 
@@ -177,8 +169,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			user.setCpf(cpf);
 			user.setEmail(email);
 			user.setTermosCondicoes(accept);	
-//			user.setIsContratar(false);
-//			user.setIsPrestar_servico(false);
 			usuarioRepository.save(user);		
 
 			new Thread() 
@@ -369,20 +359,47 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			return null;
 		}
 	}
+
+	public String alterPassword(String cpf, String password, String confirmPassword, String oldPassword) 
+	{	
+		if(cpf == null) 				return "Usuário não foi Informado!";	
+		if(password == null) 			return "O Campo Senha é obrigatório";	
+		if(confirmPassword == null) 	return "O Campo Confirme Senha é obrigatório";	
+		if(oldPassword == null) 		return "Você deve infomar a senha Antiga!";	
+				
+		if(!confirmPassword.equals(password)) return "Os campos Senha e Confirme Senha são diferentes";
+		if(password.length() < 8) 		return "A senha deve ter no mínimo 8 dígitos";
+				
+		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
+		
+		if(!(optional != null && !optional.isEmpty())) return "Usuário não encontrado!";		
+		Usuario user = optional.get();	
+			
+		
+		if(!StringUtils.validPassword(oldPassword, new String(user.getPassword()))) return "A senha Antiga está incorreta!";				
+		if( user.getRegistrationSituation() == Usuario.USUARIO_BLOQUEADO) return "Este usuário está bloqueado temporariamente, Dúvidas, nos contacte! " + EmailInfo.EMAIL_ADMINISTRADOR;
+		if( user.getRegistrationSituation() < Usuario.CADASTRO_APROVADO) return "Cadastro do usuário não está aprovado ainda! Dúvidas, nos conatecte!"  + EmailInfo.EMAIL_ADMINISTRADOR;
+		
+		user.setPassword(StringUtils.encrypt(password).getBytes());
+		
+		usuarioRepository.save(user);		
+		return null;
+	}
+
+	public String updatePicture(String cpf, byte[] image)
+	{
+		if(cpf == null) 			return "Usuário não foi Informado!";	
+		if(image == null) 			return "É Necessário enviar uma imagem";		
+		
+		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);		
+		if(!(optional != null && !optional.isEmpty())) return "Usuário não encontrado!";		
+		Usuario user = optional.get();	
+				
+		if( user.getRegistrationSituation() == Usuario.USUARIO_BLOQUEADO) return "Este usuário está bloqueado temporariamente, Dúvidas, nos contacte! " + EmailInfo.EMAIL_ADMINISTRADOR;
+		if( user.getRegistrationSituation() < Usuario.CADASTRO_APROVADO) return "Cadastro do usuário não está aprovado ainda! Dúvidas, nos conatecte!"  + EmailInfo.EMAIL_ADMINISTRADOR;		
+		user.setImagePortifile(image);
+		
+		usuarioRepository.save(user);		
+		return null;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

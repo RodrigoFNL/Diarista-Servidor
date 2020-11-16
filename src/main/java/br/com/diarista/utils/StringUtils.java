@@ -38,7 +38,7 @@ public class StringUtils
 		try
 		{
 			BCryptPasswordEncoder pass = new BCryptPasswordEncoder();
-			return pass.encode(value);
+			return pass.encode(value);		
 		}
 		catch (Exception e)
 		{
@@ -128,4 +128,30 @@ public class StringUtils
 		StringBuilder cpfFormat = new StringBuilder().append(block01).append(".").append(block02).append(".").append(block03).append("-").append(block04);
 		return cpfFormat.toString();
 	}
+
+	public static boolean validPassword(String oldPassword, String password) 
+	{		
+		try
+		{
+			BCryptPasswordEncoder pass = new BCryptPasswordEncoder();
+			return pass.matches(oldPassword, password);
+		}
+		catch (Exception e)
+		{
+			return false;
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
