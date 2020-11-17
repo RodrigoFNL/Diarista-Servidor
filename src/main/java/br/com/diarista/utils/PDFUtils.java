@@ -14,7 +14,7 @@ import org.hibernate.mapping.Subclass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import br.com.diarista.entity.Usuario;
+import br.com.diarista.folks.entity.Usuario;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 
