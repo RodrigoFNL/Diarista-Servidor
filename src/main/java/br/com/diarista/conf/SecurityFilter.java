@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.cors.CorsConfiguration;
 
-import br.com.diarista.service.CustomUserDetailService;
+import br.com.diarista.folks.rest.CustomUserDetailService;
 
 @EnableWebSecurity
 public class SecurityFilter extends WebSecurityConfigurerAdapter
