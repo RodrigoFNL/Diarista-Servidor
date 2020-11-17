@@ -24,6 +24,7 @@ import br.com.diarista.business.BasicBusiness;
 import br.com.diarista.business.UsuarioBusiness;
 import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
+import br.com.diarista.dto.InfoUserDTO;
 import br.com.diarista.dto.UsuarioDTO;
 import br.com.diarista.entity.Endereco;
 import br.com.diarista.entity.EstadoCivil;
@@ -116,10 +117,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 											@RequestParam("nationality") 	String nationality,
 											@RequestParam("birth_date") 	String birthDate,
 											@RequestParam("marital_status") String maritalStatus,
-											@RequestParam("cell_phone") 	String cellPhone,
-											@RequestParam("token") 			String token,
-											@RequestParam("is_prestar_servico") String isPrestarServico,
-											@RequestParam("is_contratar") 	String isContratar)
+											@RequestParam("cell_phone") 	String cellPhone)
 	{			
 
 		try
@@ -140,10 +138,7 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			user.setTermosCondicoes(Boolean.valueOf(termosCondicoes));
 			user.setConfirm_password(password);
 			user.setNationality(new Nacionalidade(nationality));
-			user.setMarital_status(new EstadoCivil(maritalStatus));
-			user.setToken(token);
-			user.setIsContratar(Boolean.valueOf(isContratar));
-			user.setIsPrestar_servico(Boolean.valueOf(isPrestarServico));
+			user.setMarital_status(new EstadoCivil(maritalStatus));		
 			user.setCell_phone(StringUtils.removeCharacters(cellPhone));	
 			user.setFrontDocument(Base64.getDecoder().decode(new String(frontDocument.getBytes())));
 			user.setBackDocument(Base64.getDecoder().decode(new String(backDocument.getBytes())));
@@ -215,6 +210,133 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 			return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);		
 		}
 	}
+	
+	@PostMapping("/resend_coupon")
+	public  ResponseEntity<Object> resendCoupon(@RequestBody Map<String, Object> postObject)
+	{		
+		try
+		{		
+			String cpf = StringUtils.isNotNull((String) postObject.get("cpf")) ? StringUtils.removeCharacters((String) postObject.get("cpf")) : null;	
+			String email = StringUtils.isNotNull((String) postObject.get("email")) ? (String) postObject.get("email") : null;
+			
+			if(cpf == null)   return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(cpf.isEmpty()) return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			
+			if(email == null)   return error("EMAIL INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(email.isEmpty()) return error("EMAIL INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+									
+			 Map<Boolean, String> resend = usuarioBusiness.resendCoupon(cpf, email);	
+			
+			 if(resend.containsKey(false))  return error(resend.get(false) , BasicRestServe.INTERNAL_ERROR);	
+			 else  return ok(resend.get(true));
+		} 
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);		
+		}
+	}
+	
+	@PostMapping("/reset_password")
+	public  ResponseEntity<Object> resetPassword(@RequestBody Map<String, Object> postObject)
+	{		
+		try
+		{		
+			String cpf = StringUtils.isNotNull((String) postObject.get("cpf")) ? StringUtils.removeCharacters((String) postObject.get("cpf")) : null;	
+			String email = StringUtils.isNotNull((String) postObject.get("email")) ? (String) postObject.get("email") : null;
+			String coupon = StringUtils.isNotNull((String) postObject.get("coupon")) ? (String) postObject.get("coupon") : null;
+			
+			
+			if(cpf == null)   return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(cpf.isEmpty()) return error("CPF INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			
+			if(email == null)   return error("EMAIL INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(email.isEmpty()) return error("EMAIL INVÁLIDO", BasicRestServe.INTERNAL_ERROR);
+			
+			if(coupon == null)   return error("CUPOM INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(coupon.isEmpty()) return error("CUPOM INVÁLIDO", BasicRestServe.INTERNAL_ERROR);	
+									
+			 Map<Boolean, String> resend = usuarioBusiness.resetPassword(cpf, email, coupon);	
+			
+			 if(resend.containsKey(false))  return error(resend.get(false) , BasicRestServe.INTERNAL_ERROR);	
+			 else  return ok(resend.get(true));
+		} 
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);		
+		}
+	}
+	
+	
+	@PostMapping("/get_info_user")
+	public  ResponseEntity<Object> getInfoUser(@RequestBody Map<String, Object> postObject)
+	{		
+		try
+		{		
+			String userName = StringUtils.isNotNull((String) postObject.get("userName")) ? StringUtils.removeCharacters((String) postObject.get("userName")) : null;			
+			
+			if(userName == null)   return error("USERNAME INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
+			if(userName.isEmpty()) return error("USERNAME INVÁLIDO", BasicRestServe.INTERNAL_ERROR);	
+			InfoUserDTO dto = usuarioBusiness.getInfoUser(userName);
+			
+			if(dto == null) return error("USERNAME INVÁLIDO" , BasicRestServe.INTERNAL_ERROR);				
+			else  return ok(dto);
+		} 
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return error("Erro ao tentar enviar o Email", BasicRestServe.INTERNAL_ERROR);		
+		}
+	}
+	
+	
+	@PostMapping("/alter_password")
+	public  ResponseEntity<Object> getAlterPassword(@RequestBody Map<String, Object> postObject)
+	{		
+		try
+		{		
+			String cpf 				= StringUtils.isNotNull((String) postObject.get("cpf")) 			? (String) postObject.get("cpf") 			: null;		
+			String password 		= StringUtils.isNotNull((String) postObject.get("password")) 		? (String) postObject.get("password") 		: null;			
+			String confirmPassword 	= StringUtils.isNotNull((String) postObject.get("confirmPassword")) ? (String) postObject.get("confirmPassword"): null;	
+			String oldPassword 		= StringUtils.isNotNull((String) postObject.get("oldPassword")) 	? (String) postObject.get("oldPassword")	: null;	
+			
+			if(cpf == null)   return error("USERNAME INVÁLIDO", BasicRestServe.INTERNAL_ERROR);				
+			String msg = usuarioBusiness.alterPassword(cpf, password, confirmPassword, oldPassword);
+			
+			if(msg == null)  return ok("OK");
+			else return error(msg, BasicRestServe.INTERNAL_ERROR);	
+		} 
+		catch (Exception ex)
+		{
+			ex.printStackTrace();
+			return error("Erro ao tentar alterar a senha", BasicRestServe.INTERNAL_ERROR);		
+		}
+	}
+	
+	
+	@RequestMapping(value="/update_picture",  method=RequestMethod.POST, consumes = "multipart/form-data") 
+	@ResponseBody
+	public ResponseEntity<Object>  updatePicture(	@RequestParam("cpf")		String cpf,
+													@RequestParam("picture") 	MultipartFile picture)
+	{	
+		try
+		{		
+			byte[] image 	= Base64.getDecoder().decode(new String(picture.getBytes()));			
+			String msg = usuarioBusiness.updatePicture(cpf, image);
+			
+			if(msg == null)  return ok("OK");
+			else return error(msg, BasicRestServe.INTERNAL_ERROR);	
+			
+
+		}
+		catch (Exception e) 
+		{	
+			e.printStackTrace();
+			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
+		}	
+
+	}	
 }
 
 

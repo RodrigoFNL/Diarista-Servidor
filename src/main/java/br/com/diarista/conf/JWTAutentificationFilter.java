@@ -1,6 +1,7 @@
 package br.com.diarista.conf;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Date;
 
 import javax.servlet.FilterChain;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -23,11 +25,10 @@ import io.jsonwebtoken.SignatureAlgorithm;
 
 public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFilter
 {
-	private AuthenticationManager authManager;
-	
+	private AuthenticationManager authManager;		
 	public JWTAutentificationFilter(AuthenticationManager authManager) 
 	{
-		this.authManager = authManager;
+		this.authManager = authManager;	
 	}
 	
 	@Override
@@ -50,11 +51,17 @@ public class JWTAutentificationFilter  extends UsernamePasswordAuthenticationFil
 	@Override
 	protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException 
 	{	
-		String userName = ((User) authResult.getPrincipal()).getUsername();			
+		String userName = ((User) authResult.getPrincipal()).getUsername();				
+		Collection<GrantedAuthority> authority = ((User) authResult.getPrincipal()).getAuthorities();		
+		
 		String token = Jwts.builder().setSubject(userName)
 									 .setExpiration(new Date(System.currentTimeMillis() + ConstantsSecurity.EXPIRATION_TIME)) 
-									 .signWith(SignatureAlgorithm.HS512, ConstantsSecurity.SECRET).compact();			
-		token = ConstantsSecurity.TOKE_PREFIX_INVITE + token;
+									 .signWith(SignatureAlgorithm.HS512, ConstantsSecurity.SECRET).compact();
+		
+		if(authority.toString().contains("INVITE")) 	token = ConstantsSecurity.TOKE_PREFIX_INVITE + token;
+		else if(authority.toString().contains("CPF")) 	token = ConstantsSecurity.TOKE_PREFIX_CPF + token;
+		else if(authority.toString().contains("EMAIL")) token = ConstantsSecurity.TOKE_PREFIX_EMAIL + token;
+		
 		response.getWriter().write(token);
 		response.addHeader(ConstantsSecurity.HEADER, token);
 	}	

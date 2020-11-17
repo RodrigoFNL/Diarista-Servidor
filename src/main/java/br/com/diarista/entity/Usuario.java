@@ -2,6 +2,7 @@ package br.com.diarista.entity;
 
 
 import java.io.Serializable;
+import java.util.Base64;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -13,6 +14,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import br.com.diarista.dto.InfoUserDTO;
 import br.com.diarista.dto.UsuarioDTO;
 
 
@@ -26,6 +28,7 @@ public class Usuario implements Serializable
 	public static final Short CADASTRO_EM_ANALISE = 3;
 	public static final Short CADASTRO_APROVADO = 4;	
 	public static final Short USUARIO_ADMINISTRADOR = 5;	
+	public static final Short USUARIO_BLOQUEADO= 6;	
 
 	@Id
 	@Column(name = "cpf", unique = true)
@@ -68,15 +71,9 @@ public class Usuario implements Serializable
 	@ManyToOne
 	@JoinColumn(name = "andress_id", referencedColumnName = "id")
 	private Endereco andress;
-	
-	@Transient
-	private String token;
-	
-	@Column(name = "is_prestar_servico", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
-	private Boolean isPrestar_servico;
-	
-	@Column(name = "is_contratar", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
-	private Boolean isContratar;
+		
+	@Column(name = "alter_password", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
+	private Boolean isAlterPassword = false;
 		
 	@Column(name = "front_document")
 	private byte [] frontDocument; 
@@ -88,6 +85,8 @@ public class Usuario implements Serializable
 	private byte [] handDocument; 	
 
 	private byte [] signature; 
+	
+	private byte [] imagePortifile; 
 	
 	@Column(name = "registration_situation")
 	private Short registrationSituation; 
@@ -200,24 +199,6 @@ public class Usuario implements Serializable
 	public void setAndress(Endereco andress) {
 		this.andress = andress;
 	}
-	public String getToken() {
-		return token;
-	}
-	public void setToken(String token) {
-		this.token = token;
-	}
-	public Boolean getIsPrestar_servico() {
-		return isPrestar_servico;
-	}
-	public void setIsPrestar_servico(Boolean isPrestar_servico) {
-		this.isPrestar_servico = isPrestar_servico;
-	}
-	public Boolean getIsContratar() {
-		return isContratar;
-	}
-	public void setIsContratar(Boolean isContratar) {
-		this.isContratar = isContratar;
-	}
 	public byte[] getFrontDocument() {
 		return frontDocument;
 	}
@@ -257,4 +238,49 @@ public class Usuario implements Serializable
 		this.registrationSituation = registrationSituation;
 	}
 
+	public Boolean getIsAlterPassword() {
+		return isAlterPassword;
+	}
+
+	public void setIsAlterPassword(Boolean isAlterPassword) {
+		this.isAlterPassword = isAlterPassword;
+	}
+
+	public InfoUserDTO getInfoUserDTO() 
+	{		
+		InfoUserDTO dto = new InfoUserDTO();
+	
+		dto.setNickName(this.nickname);
+		dto.setCpf(this.cpf);
+		dto.setEmail(this.email);
+		dto.setRegistrationSituation(this.registrationSituation);
+		dto.setIsAlterPassword(this.isAlterPassword);
+				
+		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
+		else dto.setImage("");
+		return dto;
+	}
+
+	public byte[] getImagePortifile() {
+		return imagePortifile;
+	}
+
+	public void setImagePortifile(byte[] imagePortifile) {
+		this.imagePortifile = imagePortifile;
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -3,18 +3,22 @@ package br.com.diarista.business;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.dao.EnderecoDAO;
 import br.com.diarista.dao.LocalidadeDAO;
 import br.com.diarista.dao.RGDAO;
 import br.com.diarista.dao.UsuarioDAO;
+import br.com.diarista.dto.InfoUserDTO;
 import br.com.diarista.dto.UserDTO;
 import br.com.diarista.dto.UsuarioDTO;
 import br.com.diarista.entity.RG;
@@ -24,6 +28,7 @@ import br.com.diarista.utils.DiaristaUtils;
 import br.com.diarista.utils.EmailUtil;
 import br.com.diarista.utils.PDFUtils;
 import br.com.diarista.utils.StringUtils;
+import br.com.diarista.utils.StringUtils.IntString;
 import net.sf.jasperreports.engine.JRException;
 
 @Service
@@ -78,11 +83,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			if(entity.getMarital_status() == null) 				return "É obrigatório o preenchimento do Estado Civil";	
 			else if(entity.getMarital_status().getId() == null)	return "É obrigatório o preenchimento da Estado Civil";	
 
-			if(entity.getIsContratar() == null)			return "Você não definiu se irá contratar ou não";	
-			if(entity.getIsPrestar_servico() == null)   return "Você não definiu se irá prestar serviço ou não";	
-
-			if(!entity.getIsContratar() && !entity.getIsPrestar_servico())   return "Você deve esolher no mínimo uma opção entre prestar serviço e ou contratar";	
-
 			if(entity.getFrontDocument() == null)   return "É obrigatório a foto da frente do documento!";	
 			if(entity.getBackDocument() == null)    return "É obrigatório a foto da parte de trás do documento!";	
 			if(entity.getHandDocument() == null)    return "É obrigatório a foto do usuário com o documento na mão!";	
@@ -124,9 +124,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setPassword(StringUtils.encrypt(entity.getConfirm_password()).getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
-			userRecovery.setIsContratar(entity.getIsContratar());
-			userRecovery.setIsPrestar_servico(entity.getIsPrestar_servico());
-
 			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);			
 			localidadeRepository.save(entity.getAndress().getLocality());
 
@@ -172,9 +169,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			user.setCpf(cpf);
 			user.setEmail(email);
 			user.setTermosCondicoes(accept);	
-			user.setIsContratar(false);
-			user.setIsPrestar_servico(false);
-
 			usuarioRepository.save(user);		
 
 			new Thread() 
@@ -183,7 +177,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 				public void run() 
 				{	
 					EmailUtil email = new EmailUtil();
-					email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Coupon: " + user.getCoupon());
+					email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon());
 				};
 			}.start();				
 
@@ -255,20 +249,157 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		byte [] pdf = utils.getPDF("Contrato.jasper", user);						
 		return pdf;
 	}
+
+	public Map<Boolean, String> resendCoupon(String cpf, String email) 
+	{		
+		Map<Boolean, String> response = new HashMap<Boolean, String>();
+				
+		Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
+		if(!(userOption != null && !userOption.isEmpty())) 
+		{
+			response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+			return response;
+		}
+				
+		Usuario user = userOption.get();
+		
+		if(!user.getEmail().equals(email))
+		{
+			response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
+			return response;			
+		}
+		
+		new Thread() 
+		{				
+			@Override
+			public void run() 
+			{	
+				EmailUtil email = new EmailUtil();
+				email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
+			};
+		}.start();	
+		
+
+		response.put(true, "CUPOM ENVIADO COM SUCESSO!");
+		return response;
+	}
+
+	public Map<Boolean, String> resetPassword(String cpf, String email, String coupon) 
+	{
+		
+		
+		Map<Boolean, String> response = new HashMap<Boolean, String>();
+		
+		Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
+		if(!(userOption != null && !userOption.isEmpty())) 
+		{
+			response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+			return response;
+		}
+				
+		Usuario user = userOption.get();		
+		if(!user.getEmail().equals(email))
+		{
+			response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
+			return response;			
+		}
+		if(!user.getCoupon().equals(coupon))
+		{
+			response.put(false, "O NUMERO DO CUPOM É DIFERENTE AO CADASTRADO! PEÇA O REENVIOU DO CUPOM SE NECESSÁRIO!");
+			return response;			
+		}
+		
+		String newPassword = getNewPassword();
+		String emailPassword = String.valueOf(newPassword);
+		
+		newPassword = StringUtils.encrypt(newPassword);		
+		user.setPassword(newPassword.getBytes());
+		user.setIsAlterPassword(true);
+		usuarioRepository.save(user);
+		
+		new Thread() 
+		{				
+			@Override
+			public void run() 
+			{	
+				EmailUtil email = new EmailUtil();
+				email.sendEmail(user.getEmail(), "REDIFINIÇÃO DA SENHA", "Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
+			};
+		}.start();			
+
+		response.put(true, "SENHA REDIFINIDA E ENVIADA POR EMAIL!");
+		return response;		
+	}
+
+	private String getNewPassword()
+	{	
+		Random random = new Random();		
+		StringBuilder password = new StringBuilder();		
+		for (int i = 0; i < 8; i++) 
+		{
+			password.append(random.nextInt(8));			
+			if(i > 0 && (i % 2) == 0) password.append(IntString.valueOff(random.nextInt(8)).toLowerCase());
+		}				
+		return password.toString();
+	}
+
+	public InfoUserDTO getInfoUser(String userName)
+	{		
+		try
+		{
+			Optional<Usuario> userOption = usuarioRepository.findByCpf(userName);		
+			if(!(userOption != null && !userOption.isEmpty())) userOption = usuarioRepository.findByEmail(userName);			
+			if(!(userOption != null && !userOption.isEmpty())) return null;
+			
+			Usuario user = userOption.get();			
+			return user.getInfoUserDTO();
+		}
+		catch (Exception e) 
+		{
+			return null;
+		}
+	}
+
+	public String alterPassword(String cpf, String password, String confirmPassword, String oldPassword) 
+	{	
+		if(cpf == null) 				return "Usuário não foi Informado!";	
+		if(password == null) 			return "O Campo Senha é obrigatório";	
+		if(confirmPassword == null) 	return "O Campo Confirme Senha é obrigatório";	
+		if(oldPassword == null) 		return "Você deve infomar a senha Antiga!";	
+				
+		if(!confirmPassword.equals(password)) return "Os campos Senha e Confirme Senha são diferentes";
+		if(password.length() < 8) 		return "A senha deve ter no mínimo 8 dígitos";
+				
+		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
+		
+		if(!(optional != null && !optional.isEmpty())) return "Usuário não encontrado!";		
+		Usuario user = optional.get();	
+			
+		
+		if(!StringUtils.validPassword(oldPassword, new String(user.getPassword()))) return "A senha Antiga está incorreta!";				
+		if( user.getRegistrationSituation() == Usuario.USUARIO_BLOQUEADO) return "Este usuário está bloqueado temporariamente, Dúvidas, nos contacte! " + EmailInfo.EMAIL_ADMINISTRADOR;
+		if( user.getRegistrationSituation() < Usuario.CADASTRO_APROVADO) return "Cadastro do usuário não está aprovado ainda! Dúvidas, nos conatecte!"  + EmailInfo.EMAIL_ADMINISTRADOR;
+		
+		user.setPassword(StringUtils.encrypt(password).getBytes());
+		
+		usuarioRepository.save(user);		
+		return null;
+	}
+
+	public String updatePicture(String cpf, byte[] image)
+	{
+		if(cpf == null) 			return "Usuário não foi Informado!";	
+		if(image == null) 			return "É Necessário enviar uma imagem";		
+		
+		Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);		
+		if(!(optional != null && !optional.isEmpty())) return "Usuário não encontrado!";		
+		Usuario user = optional.get();	
+				
+		if( user.getRegistrationSituation() == Usuario.USUARIO_BLOQUEADO) return "Este usuário está bloqueado temporariamente, Dúvidas, nos contacte! " + EmailInfo.EMAIL_ADMINISTRADOR;
+		if( user.getRegistrationSituation() < Usuario.CADASTRO_APROVADO) return "Cadastro do usuário não está aprovado ainda! Dúvidas, nos conatecte!"  + EmailInfo.EMAIL_ADMINISTRADOR;		
+		user.setImagePortifile(image);
+		
+		usuarioRepository.save(user);		
+		return null;
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

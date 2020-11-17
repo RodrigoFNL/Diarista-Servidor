@@ -1,10 +1,8 @@
 package br.com.diarista.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,29 +23,31 @@ public class CustomUserDetailService implements UserDetailsService
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException 
 	{		
+		boolean isCoupon = false;	
 		Optional<Usuario>  user = userRepository.findByEmail(username);		
+		Usuario userLoading = null;
 		
-		boolean isCoupon = false;
-		
-		if(!(user != null && !user.isEmpty())) user = userRepository.findByCpf(StringUtils.removeCharacters(username));		
+		if(!(user != null && !user.isEmpty()))	user = userRepository.findByCpf(StringUtils.removeCharacters(username));			
 		if(!(user != null && !user.isEmpty()))
 		{
 			 user = userRepository.findByCoupon(username);		
 			 if(!(user != null && !user.isEmpty()) && !(user.get().getRegistrationSituation() != null &&  user.get().getRegistrationSituation() > 2)) throw new UsernameNotFoundException("USUÁRIO NÃO ENCONTRADO");	
 			 isCoupon = true;
-		}			
+			 userLoading = user.get();	
+		}	
+		else
+		{
+			userLoading = user.get();	
+			if(userLoading.getRegistrationSituation() < 4) throw new UsernameNotFoundException("USUÁRIO NÃO APROVADO OU EM ANALISE");	
+			else if(userLoading.getRegistrationSituation() == 6) throw new UsernameNotFoundException("USUÁRIO BLOQUEADO");				
+		}
+				
+		String password = userLoading.getPassword() != null && !isCoupon? new String(userLoading.getPassword()) : StringUtils.encrypt("faxinex1818");			
 		
-		Usuario userLoading = user.get();					
-		String password = userLoading.getPassword() != null && !isCoupon? new String(userLoading.getPassword()) : "faxinex1818";			
-		List<GrantedAuthority> granted = null;
-		
-		if(!(userLoading.getRegistrationSituation() != null &&  userLoading.getRegistrationSituation() > 2)) 	granted = AuthorityUtils.createAuthorityList("CORE", "REGISTER");	
-		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsContratar() && userLoading.getIsPrestar_servico()) 	granted = AuthorityUtils.createAuthorityList("CORE", "HIRED", "TOHIRE");
-		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsContratar()) 					granted = AuthorityUtils.createAuthorityList("CORE", "HIRED");
-		else if(userLoading.getRegistrationSituation() > 2 && userLoading.getIsPrestar_servico()) 				granted = AuthorityUtils.createAuthorityList("CORE", "TOHIRE");
-		else if(userLoading.getRegistrationSituation() == 5) 													granted = AuthorityUtils.createAuthorityList("CORE", "ADMIN");
-		User userReading = new User(userLoading.getCoupon(), StringUtils.encrypt(password), granted);
-
+		User userReading = null;
+		if(isCoupon) 						userReading = new User(userLoading.getCoupon(), password, 	AuthorityUtils.createAuthorityList("INVITE"));
+		else if (username.contains("@"))  	userReading = new User(userLoading.getEmail(), password,  	AuthorityUtils.createAuthorityList("EMAIL"));
+		else 		 						userReading = new User(userLoading.getCpf(), password, 		AuthorityUtils.createAuthorityList("CPF"));
 		return userReading;		
 	}
 }
