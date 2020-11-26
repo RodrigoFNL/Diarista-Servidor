@@ -256,6 +256,7 @@ public class Usuario implements Serializable
 		dto.setEmail(this.email);
 		dto.setRegistrationSituation(this.registrationSituation);
 		dto.setIsAlterPassword(this.isAlterPassword);
+		dto.setAdress(this.andress);	
 				
 		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
 		else dto.setImage("");

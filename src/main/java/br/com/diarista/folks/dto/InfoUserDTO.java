@@ -1,5 +1,7 @@
 package br.com.diarista.folks.dto;
 
+import br.com.diarista.adress.entity.Endereco;
+
 public class InfoUserDTO 
 {
 	private String nickName;
@@ -8,6 +10,7 @@ public class InfoUserDTO
 	private Short registrationSituation;
 	private String image;
 	private Boolean isAlterPassword;
+	private Endereco adress;
 			
 	public String getCpf() 
 	{
@@ -56,5 +59,11 @@ public class InfoUserDTO
 	public void setIsAlterPassword(Boolean isAlterPassword)
 	{
 		this.isAlterPassword = isAlterPassword;
+	}
+	public Endereco getAdress() {
+		return adress;
+	}
+	public void setAdress(Endereco adress) {
+		this.adress = adress;
 	} 	
 }
