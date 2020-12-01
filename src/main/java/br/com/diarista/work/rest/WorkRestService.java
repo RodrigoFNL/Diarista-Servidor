@@ -20,5 +20,5 @@ public class WorkRestService extends BasicRestServe<Work>
 	protected BasicBusiness<Work> business()
 	{		
 		return business;
-	}
+	}	
 }

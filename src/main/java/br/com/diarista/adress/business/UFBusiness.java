@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import br.com.diarista.adress.dao.UFDAO;
 import br.com.diarista.adress.entity.UF;
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.utils.StringUtils;
 
 @Service
@@ -34,5 +35,11 @@ public class UFBusiness extends BasicBusiness<UF>
 		uf.setStatus(false);		
 		repository.save(uf);
 		return uf;				
+	}
+
+	@Override
+	public String register(UF object, Usuario user)
+	{
+		return null;
 	}
 }

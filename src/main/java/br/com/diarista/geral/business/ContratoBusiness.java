@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.geral.dao.ContratoDAO;
 import br.com.diarista.geral.entity.Contrato;
 
@@ -19,5 +20,11 @@ public class ContratoBusiness extends BasicBusiness<Contrato>
 	public List<Contrato> getAllActive() 
 	{		
 		return repository.findByStatusOrderByIndexAsc(true); 
+	}
+
+	@Override
+	public String register(Contrato object, Usuario user)
+	{
+		return null;
 	}	
 }

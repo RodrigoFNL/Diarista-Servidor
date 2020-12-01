@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import br.com.diarista.folks.dao.EstadoCivilDAO;
 import br.com.diarista.folks.entity.EstadoCivil;
+import br.com.diarista.folks.entity.Usuario;
 
 @Service
 public class EstadoCivilBusiness extends BasicBusiness<EstadoCivil>
@@ -19,6 +20,12 @@ public class EstadoCivilBusiness extends BasicBusiness<EstadoCivil>
 	public List<EstadoCivil> getAllActive()
 	{	
 		return repository.findByStatus(true);
+	}
+
+	@Override
+	public String register(EstadoCivil object, Usuario user)
+	{	
+		return null;
 	}
 
 }

@@ -13,6 +13,7 @@ import br.com.diarista.adress.entity.Endereco;
 import br.com.diarista.adress.entity.Localidade;
 import br.com.diarista.adress.entity.UF;
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.entity.Usuario;
 
 @Service
 public class EnderecoBusiness extends BasicBusiness<Endereco>
@@ -63,5 +64,11 @@ public class EnderecoBusiness extends BasicBusiness<Endereco>
 		entity.setLogradouro(dto.getLogradouro());
 		entity.setUf(uf);		
 		return entity;
+	}
+
+	@Override
+	public String register(Endereco object, Usuario user) 
+	{
+		return null;
 	}
 }

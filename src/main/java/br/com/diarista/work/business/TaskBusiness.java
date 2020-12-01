@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.work.dao.TaskDAO;
 import br.com.diarista.work.entity.Task;
 
@@ -26,5 +27,11 @@ public class TaskBusiness extends BasicBusiness<Task>
 		List<Task> tasks = taskRepository.findBytypeAndStatus(type, true);		
 		tasks.forEach(element -> element.setAmmount(0));		
 		return tasks;
+	}
+
+	@Override
+	public String register(Task object, Usuario user)
+	{	
+		return null;
 	}
 }

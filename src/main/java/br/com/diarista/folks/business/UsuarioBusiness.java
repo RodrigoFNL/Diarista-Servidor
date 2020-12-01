@@ -402,4 +402,10 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		usuarioRepository.save(user);		
 		return null;
 	}
+
+	@Override
+	public String register(Usuario object, Usuario user) 
+	{
+		return null;
+	}
 }
