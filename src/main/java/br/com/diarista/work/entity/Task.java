@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 @Entity
 @Table(name = "task") 
@@ -29,9 +28,6 @@ public class Task implements Serializable
     @Column(columnDefinition = "BOOL DEFAULT TRUE")
     private Boolean status;
     
-    @Transient
-    private Integer ammount;
-
 	public Long getId() {
 		return id;
 	}
@@ -62,14 +58,6 @@ public class Task implements Serializable
 
 	public void setValue(Double value) {
 		this.value = value;
-	}
-
-	public Integer getAmmount() {
-		return ammount;
-	}
-
-	public void setAmmount(Integer ammount) {
-		this.ammount = ammount;
 	}
 
 	public Boolean getStatus() {

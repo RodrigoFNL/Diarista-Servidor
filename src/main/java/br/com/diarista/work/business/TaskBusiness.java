@@ -24,8 +24,7 @@ public class TaskBusiness extends BasicBusiness<Task>
 
 	public List<Task> getAllActive(Short type) 
 	{		
-		List<Task> tasks = taskRepository.findBytypeAndStatus(type, true);		
-		tasks.forEach(element -> element.setAmmount(0));		
+		List<Task> tasks = taskRepository.findBytypeAndStatus(type, true);				
 		return tasks;
 	}
 

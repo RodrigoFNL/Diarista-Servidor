@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ public abstract class BasicRestServe <E>
 	
 	@Autowired UsuarioDAO userRepository;
 	
+	@Transient
 	@PostMapping("/register")
 	public  ResponseEntity<Object> register(@RequestBody E object, HttpServletRequest request)
 	{		
@@ -61,7 +63,8 @@ public abstract class BasicRestServe <E>
 			if(user == null) 	return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);
 			if(user.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) return error("Situação do Usuário irregular, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
 							
-			String response = business().register(object, user);			
+			String response = business().register(object, user);		
+			
 			if(response.contains("id:")) 	return ok(response.replace("id:", ""));		
 			else 							return error(response, BasicRestServe.INTERNAL_ERROR);		
 		} 

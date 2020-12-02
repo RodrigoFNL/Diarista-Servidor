@@ -92,6 +92,9 @@ public class Usuario implements Serializable
 	@Column(name = "registration_situation")
 	private Short registrationSituation; 
 	
+	@Column(name = "ammount_register", columnDefinition = "INT8 DEFAULT 3")
+	private Long ammountRegister; 	
+	
 	public UsuarioDTO getDTO() 
 	{				
 		UsuarioDTO dto = new UsuarioDTO();		
@@ -269,6 +272,14 @@ public class Usuario implements Serializable
 
 	public void setImagePortifile(byte[] imagePortifile) {
 		this.imagePortifile = imagePortifile;
+	}
+
+	public Long getAmmountRegister() {
+		return ammountRegister;
+	}
+
+	public void setAmmountRegister(Long ammountRegister) {
+		this.ammountRegister = ammountRegister;
 	}
 }
 

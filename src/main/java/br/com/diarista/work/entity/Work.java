@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -38,9 +39,9 @@ public class Work  implements Serializable
 	@JoinColumn(name = "adress_id", referencedColumnName = "id")
 	private Endereco adress;
 	
-	@ManyToMany
-	@JoinTable(name = "work_task", joinColumns=@JoinColumn(name="work_id", referencedColumnName="id"), inverseJoinColumns=@JoinColumn(name="task_id", referencedColumnName="id"))				
-	private List<Task> tasks;	
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "work_task_ammount", joinColumns = @JoinColumn(name = "work_id",  referencedColumnName = "id"),  inverseJoinColumns = @JoinColumn(name = "task_ammount_id", referencedColumnName = "id"))
+	private List<TaskAmmount> tasks;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_cpf", referencedColumnName = "cpf")
@@ -80,17 +81,22 @@ public class Work  implements Serializable
 	{
 		this.adress = adress;
 	}
-	public List<Task> getTasks() {
-		return tasks;
-	}
-	public void setTasks(List<Task> tasks) 
-	{
-		this.tasks = tasks;
-	}
 	public Usuario getUsuario() {
 		return usuario;
 	}
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	public Boolean getStatus() {
+		return status;
+	}
+	public void setStatus(Boolean status) {
+		this.status = status;
+	}
+	public List<TaskAmmount> getTasks() {
+		return tasks;
+	}
+	public void setTasks(List<TaskAmmount> tasks) {
+		this.tasks = tasks;
 	}
 }
