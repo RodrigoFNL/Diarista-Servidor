@@ -1,5 +1,8 @@
 package br.com.diarista.utils;
 
+import java.util.Calendar;
+import java.util.Date;
+
 public class DiaristaUtils 
 {
 
@@ -62,6 +65,15 @@ public class DiaristaUtils
 		StringUtils.removeCharacters(numberPhone);		
 		if(numberPhone.length() < 10) return false;
 		return true;
+	}
+
+	public static Date addHour(Date date, int hours)
+	{
+		if(date == null) return null;
+		Calendar calendar = Calendar.getInstance();		
+		calendar.setTime(date);		
+		calendar.add(Calendar.HOUR_OF_DAY, hours);			
+		return calendar.getTime();
 	}
 }
 

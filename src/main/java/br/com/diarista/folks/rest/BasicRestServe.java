@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.persistence.Transient;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.business.UsuarioBusiness;
 import br.com.diarista.folks.dao.UsuarioDAO;
 import br.com.diarista.folks.entity.Usuario;
-import io.jsonwebtoken.Jwts;
 
 public abstract class BasicRestServe <E>
 {
@@ -31,34 +30,18 @@ public abstract class BasicRestServe <E>
 	
 	@Autowired UsuarioDAO userRepository;
 	
+	@Autowired
+	private UsuarioBusiness userBusiness;
+	
 	@Transient
 	@PostMapping("/register")
 	public  ResponseEntity<Object> register(@RequestBody E object, HttpServletRequest request)
 	{		
 		try
 		{		
-			String token = request.getHeader(ConstantsSecurity.HEADER);		
-			boolean isCpf = false;
-			
-			if(token.toString().contains(ConstantsSecurity.TOKE_PREFIX_CPF)) 
-			{
-				token = token.replace(ConstantsSecurity.TOKE_PREFIX_CPF, "").trim();
-				isCpf = true;
-			}
-			else if(token.toString().contains(ConstantsSecurity.TOKE_PREFIX_EMAIL)) token = token.replace(ConstantsSecurity.TOKE_PREFIX_EMAIL, "").trim(); 
-						
-			String usertoken = Jwts.parser()
-					.setSigningKey(ConstantsSecurity.SECRET)
-					.parseClaimsJws(token)
-					.getBody()
-					.getSubject();			
-			
-			Optional<Usuario> usuario = null;
-			if(isCpf) 	usuario = userRepository.findByCpf(usertoken);
-			else		usuario = userRepository.findByEmail(usertoken);					
-			
-			Usuario user = usuario != null  && !usuario.isEmpty()? usuario.get() : null;	
-			
+			String token = request.getHeader(ConstantsSecurity.HEADER);	
+			Usuario user = userBusiness.findUserByToken(token);
+		
 			if(object == null) 	return error("As informações estão nulas", BasicRestServe.BAD_REQUEST);
 			if(user == null) 	return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);
 			if(user.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) return error("Situação do Usuário irregular, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
@@ -139,7 +122,6 @@ public abstract class BasicRestServe <E>
 	
 	protected ResponseEntity<Object> error(String message, int basicRestServeType)
 	{	
-
 		Map<String, Object> mapMessage = new HashMap<String, Object>();
 		mapMessage.put("status", true);
 		mapMessage.put("message", message);

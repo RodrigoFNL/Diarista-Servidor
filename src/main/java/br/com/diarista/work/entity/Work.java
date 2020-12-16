@@ -47,6 +47,10 @@ public class Work  implements Serializable
 	@JoinColumn(name = "user_cpf", referencedColumnName = "cpf")
 	private Usuario usuario;
 	
+	@ManyToMany
+	@JoinTable(name = "work_cleaning_lady", joinColumns = @JoinColumn(name="work_id"), inverseJoinColumns = @JoinColumn(name="user_id"))
+	private List<Usuario> cleaningLadies;
+	
     @Column(columnDefinition = "BOOL DEFAULT TRUE")
     private Boolean status;
 	
@@ -98,5 +102,11 @@ public class Work  implements Serializable
 	}
 	public void setTasks(List<TaskAmmount> tasks) {
 		this.tasks = tasks;
+	}
+	public List<Usuario> getCleaningLadies() {
+		return cleaningLadies;
+	}
+	public void setCleaningLadies(List<Usuario> cleaningLadies) {
+		this.cleaningLadies = cleaningLadies;
 	}
 }

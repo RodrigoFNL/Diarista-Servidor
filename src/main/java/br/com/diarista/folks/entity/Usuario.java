@@ -94,18 +94,7 @@ public class Usuario implements Serializable
 	
 	@Column(name = "ammount_register", columnDefinition = "INT8 DEFAULT 3")
 	private Long ammountRegister; 	
-	
-	public UsuarioDTO getDTO() 
-	{				
-		UsuarioDTO dto = new UsuarioDTO();		
-		dto.setCpf(this.cpf);		
-		dto.setName(this.name);		
-		dto.setEmail(this.email);
-		dto.setCoupon(this.coupon);
-		dto.setTermos_condicoes(this.termosCondicoes);		
-		return dto;
-	}
-			
+				
 	public Boolean getTermosCondicoes() 
 	{
 		return termosCondicoes;
@@ -250,10 +239,27 @@ public class Usuario implements Serializable
 		this.isAlterPassword = isAlterPassword;
 	}
 
+	public UsuarioDTO getDTO() 
+	{				
+		UsuarioDTO dto = new UsuarioDTO();		
+		dto.setCpf(this.cpf);		
+		dto.setName(this.name);		
+		dto.setEmail(this.email);
+		dto.setCoupon(this.coupon);
+		dto.setTermos_condicoes(this.termosCondicoes);		
+		return dto;
+	}
+	public InfoUserDTO getSimpleDTO()
+	{
+		InfoUserDTO dto = new InfoUserDTO();	
+		dto.setNickName(this.nickname);
+		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
+		else dto.setImage("");
+		return dto;
+	}
 	public InfoUserDTO getInfoUserDTO() 
 	{		
-		InfoUserDTO dto = new InfoUserDTO();
-	
+		InfoUserDTO dto = new InfoUserDTO();	
 		dto.setNickName(this.nickname);
 		dto.setCpf(this.cpf);
 		dto.setEmail(this.email);
@@ -280,7 +286,7 @@ public class Usuario implements Serializable
 
 	public void setAmmountRegister(Long ammountRegister) {
 		this.ammountRegister = ammountRegister;
-	}
+	}	
 }
 
 

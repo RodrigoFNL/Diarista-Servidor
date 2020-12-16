@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
+import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.dao.RGDAO;
 import br.com.diarista.folks.dao.UsuarioDAO;
@@ -29,6 +30,7 @@ import br.com.diarista.utils.EmailUtil;
 import br.com.diarista.utils.PDFUtils;
 import br.com.diarista.utils.StringUtils;
 import br.com.diarista.utils.StringUtils.IntString;
+import io.jsonwebtoken.Jwts;
 import net.sf.jasperreports.engine.JRException;
 
 @Service
@@ -407,5 +409,28 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	public String register(Usuario object, Usuario user) 
 	{
 		return null;
+	}
+
+	public Usuario findUserByToken(String token) 
+	{		
+		boolean isCpf = false;
+		if(token.toString().contains(ConstantsSecurity.TOKE_PREFIX_CPF)) 
+		{
+			token = token.replace(ConstantsSecurity.TOKE_PREFIX_CPF, "").trim();
+			isCpf = true;
+		}
+		else if(token.toString().contains(ConstantsSecurity.TOKE_PREFIX_EMAIL)) token = token.replace(ConstantsSecurity.TOKE_PREFIX_EMAIL, "").trim(); 
+					
+		String usertoken = Jwts.parser()
+				.setSigningKey(ConstantsSecurity.SECRET)
+				.parseClaimsJws(token)
+				.getBody()
+				.getSubject();			
+		
+		Optional<Usuario> usuario = null;
+		if(isCpf) 	usuario = usuarioRepository.findByCpf(usertoken);
+		else		usuario = usuarioRepository.findByEmail(usertoken);					
+		
+		return usuario != null  && !usuario.isEmpty()? usuario.get() : null;			
 	}
 }
