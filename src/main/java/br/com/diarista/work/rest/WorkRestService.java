@@ -1,5 +1,6 @@
 package br.com.diarista.work.rest;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ public class WorkRestService extends BasicRestServe<Work>
 	}	
 	
 	@PostMapping("/get_all_opportunities")
-	public List<WorkDTO> participate(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
+	public Map<String, Object> participate(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
 	{
 		try
 		{				
@@ -52,8 +53,15 @@ public class WorkRestService extends BasicRestServe<Work>
 			int page = postObject.get("page") != null? (int) postObject.get("page") : 0;
 			int size = postObject.get("size") != null? (int) postObject.get("size") : 10;
 			
+			Map<String, Object> map = new HashMap<String, Object>();
+			
 			List<WorkDTO> works = business.getAllActive(user, page, size);
-			return works;		
+			List<Long> lengths =  business.countAllActive(user);
+	
+			map.put("works", works);
+			map.put("lengths", lengths);
+			
+			return map;		
 		}
 		catch (Exception e)
 		{	

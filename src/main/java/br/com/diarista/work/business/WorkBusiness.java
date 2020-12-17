@@ -139,6 +139,15 @@ public class WorkBusiness extends BasicBusiness<Work>
 		workRepository.save(work);
 		return null;	
 	}
+
+	public List<Long> countAllActive(Usuario user)
+	{			
+		List<Long> totals = new ArrayList<Long>();		
+		totals.add(workRepository.countAllWorkBairroNative(new Date(), user.getCpf()));	
+		totals.add(workRepository.countAllWorkCityNative(new Date(), user.getCpf()));	
+		totals.add(workRepository.countAllWorkUFNative(new Date(), user.getCpf()));		
+		return totals;
+	}
 }
 
 
