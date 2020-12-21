@@ -1,6 +1,5 @@
 package br.com.diarista.folks.dto;
 
-
 public class UsuarioDTO
 {
     private String cpf;

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class DateUtils
 {
@@ -22,5 +23,13 @@ public class DateUtils
 		calendar.add(Calendar.YEAR, -18);		
 		Date lessDate = calendar.getTime();
 		return date.before(lessDate);	
+	}
+
+	public static Date getRemoveDaysInDate(Date date,  int days) 
+	{
+	    GregorianCalendar gc = new GregorianCalendar();
+        gc.setTime(date);
+        gc.set(Calendar.DATE, gc.get(Calendar.DATE) - days);
+        return gc.getTime();	
 	}
 }

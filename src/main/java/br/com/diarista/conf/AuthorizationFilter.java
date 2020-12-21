@@ -26,7 +26,7 @@ public class AuthorizationFilter extends BasicAuthenticationFilter
 		this.userDetailService = userDetailService;
 	}
 
-	@Override
+
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException 
 	{
 		String token = request.getHeader(ConstantsSecurity.HEADER);

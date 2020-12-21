@@ -2,14 +2,17 @@ package br.com.diarista.folks.entity;
 
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -17,6 +20,7 @@ import javax.persistence.Transient;
 import br.com.diarista.adress.entity.Endereco;
 import br.com.diarista.folks.dto.InfoUserDTO;
 import br.com.diarista.folks.dto.UsuarioDTO;
+import br.com.diarista.utils.DateUtils;
 
 
 @Entity
@@ -75,6 +79,9 @@ public class Usuario implements Serializable
 		
 	@Column(name = "alter_password", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
 	private Boolean isAlterPassword = false;
+	
+	@OneToMany	
+	private List<Assessment> assessments;
 		
 	@Column(name = "front_document")
 	private byte [] frontDocument; 
@@ -265,7 +272,13 @@ public class Usuario implements Serializable
 		dto.setEmail(this.email);
 		dto.setRegistrationSituation(this.registrationSituation);
 		dto.setIsAlterPassword(this.isAlterPassword);
-		dto.setAdress(this.andress);	
+		dto.setAdress(this.andress);
+		
+		dto.setAssessments(new ArrayList<Assessment>());	
+		for(Assessment ass : assessments )
+		{
+			if(ass.getDate().after(DateUtils.getRemoveDaysInDate(new Date(), 60))) dto.getAssessments().add(ass);
+		}		
 				
 		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
 		else dto.setImage("");
