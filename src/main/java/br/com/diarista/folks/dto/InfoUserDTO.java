@@ -3,7 +3,6 @@ package br.com.diarista.folks.dto;
 import java.util.List;
 
 import br.com.diarista.adress.entity.Endereco;
-import br.com.diarista.folks.entity.Assessment;
 
 public class InfoUserDTO 
 {
@@ -14,8 +13,8 @@ public class InfoUserDTO
 	private String image;
 	private Boolean isAlterPassword;
 	private Endereco adress;
-    private List<Assessment> assessments;
-			
+    private List<AssessmentDTO> assessments;	
+
 	public String getCpf() 
 	{
 		return cpf;
@@ -64,16 +63,20 @@ public class InfoUserDTO
 	{
 		this.isAlterPassword = isAlterPassword;
 	}
-	public Endereco getAdress() {
+	public Endereco getAdress() 
+	{
 		return adress;
 	}
-	public void setAdress(Endereco adress) {
+	public void setAdress(Endereco adress) 
+	{
 		this.adress = adress;
 	}
-	public List<Assessment> getAssessments() {
+	public List<AssessmentDTO> getAssessments() 
+	{
 		return assessments;
 	}
-	public void setAssessments(List<Assessment> assessments) {
+	public void setAssessments(List<AssessmentDTO> assessments) 
+	{
 		this.assessments = assessments;
-	} 	
+	}
 }

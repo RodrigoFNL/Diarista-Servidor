@@ -12,15 +12,14 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import br.com.diarista.adress.entity.Endereco;
+import br.com.diarista.folks.dto.AssessmentDTO;
 import br.com.diarista.folks.dto.InfoUserDTO;
 import br.com.diarista.folks.dto.UsuarioDTO;
-import br.com.diarista.utils.DateUtils;
 
 
 @Entity
@@ -80,9 +79,6 @@ public class Usuario implements Serializable
 	@Column(name = "alter_password", columnDefinition = "BOOL DEFAULT FALSE", nullable = false)
 	private Boolean isAlterPassword = false;
 	
-	@OneToMany	
-	private List<Assessment> assessments;
-		
 	@Column(name = "front_document")
 	private byte [] frontDocument; 
 	
@@ -101,7 +97,7 @@ public class Usuario implements Serializable
 	
 	@Column(name = "ammount_register", columnDefinition = "INT8 DEFAULT 3")
 	private Long ammountRegister; 	
-				
+		
 	public Boolean getTermosCondicoes() 
 	{
 		return termosCondicoes;
@@ -261,7 +257,7 @@ public class Usuario implements Serializable
 		InfoUserDTO dto = new InfoUserDTO();	
 		dto.setNickName(this.nickname);
 		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
-		else dto.setImage("");
+		else dto.setImage("");		
 		return dto;
 	}
 	public InfoUserDTO getInfoUserDTO() 
@@ -274,12 +270,6 @@ public class Usuario implements Serializable
 		dto.setIsAlterPassword(this.isAlterPassword);
 		dto.setAdress(this.andress);
 		
-		dto.setAssessments(new ArrayList<Assessment>());	
-		for(Assessment ass : assessments )
-		{
-			if(ass.getDate().after(DateUtils.getRemoveDaysInDate(new Date(), 60))) dto.getAssessments().add(ass);
-		}		
-				
 		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
 		else dto.setImage("");
 		return dto;
@@ -299,7 +289,22 @@ public class Usuario implements Serializable
 
 	public void setAmmountRegister(Long ammountRegister) {
 		this.ammountRegister = ammountRegister;
-	}	
+	}
+	public InfoUserDTO getSimpleDTO(List<Assessment> assessment)
+	{	
+		InfoUserDTO dto = new InfoUserDTO();	
+		dto.setNickName(this.nickname);			
+		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
+		else dto.setImage("");
+		
+		dto.setAssessments(new ArrayList<AssessmentDTO>());
+		if(assessment != null && !assessment.isEmpty())
+		for (Assessment assess : assessment)
+		{			
+			dto.getAssessments().add(assess.getDTO());
+		}				
+		return dto;
+	}
 }
 
 

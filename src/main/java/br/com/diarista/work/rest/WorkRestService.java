@@ -40,7 +40,7 @@ public class WorkRestService extends BasicRestServe<Work>
 	}	
 	
 	@PostMapping("/get_all_opportunities")
-	public Map<String, Object> participate(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
+	public Map<String, Object> getAllOpportunities(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
 	{
 		try
 		{				

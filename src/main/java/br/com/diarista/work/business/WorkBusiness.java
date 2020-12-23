@@ -12,7 +12,10 @@ import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
 import br.com.diarista.adress.entity.Endereco;
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.dao.AssessmentDAO;
+import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.Usuario;
+import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
 import br.com.diarista.work.dao.WorkDAO;
 import br.com.diarista.work.dto.WorkDTO;
@@ -30,6 +33,9 @@ public class WorkBusiness extends BasicBusiness<Work>
 	
 	@Autowired
 	private LocalidadeDAO localRepository;	
+	
+	@Autowired
+	private AssessmentDAO assessmentRepository;	
 	
 	@Override
 	public List<?> getAllActive() 
@@ -96,8 +102,9 @@ public class WorkBusiness extends BasicBusiness<Work>
 		List<WorkDTO> dtos = new ArrayList<WorkDTO>();
 		
 		for (Work work : works) 
-		{
-			dtos.add(new WorkDTO(work));
+		{			
+			List<Assessment> assessment = assessmentRepository.findAllByEvaluatorAndStatusAndDateAfter(work.getUsuario(), true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));			
+			dtos.add(new WorkDTO(work, assessment));
 		}
 		
 		return dtos;

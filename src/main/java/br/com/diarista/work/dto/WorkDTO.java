@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.diarista.adress.entity.Endereco;
 import br.com.diarista.folks.dto.InfoUserDTO;
 import br.com.diarista.folks.dto.UsuarioDTO;
+import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.work.entity.TaskAmmount;
 import br.com.diarista.work.entity.Work;
 
@@ -21,14 +22,15 @@ public class WorkDTO
     
 	public WorkDTO(){}
 	
-	public WorkDTO(Work work) 
+	public WorkDTO(Work work, List<Assessment> assessment) 
 	{
 		this.id 	= work.getId();
 		this.date	= work.getDate();
 		this.adress = work.getAdress();
 		this.tasks 	= work.getTasks();		
-		this.contractor	= work.getUsuario().getSimpleDTO();
-		this.establishment_type = work.getEstablishment_type();
+		this.contractor	= work.getUsuario().getSimpleDTO(assessment);
+		this.establishment_type = work.getEstablishment_type();		
+		
 	}
 	
 	public Long getId() 

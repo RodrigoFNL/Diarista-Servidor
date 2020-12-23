@@ -17,11 +17,13 @@ import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
 import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
+import br.com.diarista.folks.dao.AssessmentDAO;
 import br.com.diarista.folks.dao.RGDAO;
 import br.com.diarista.folks.dao.UsuarioDAO;
 import br.com.diarista.folks.dto.InfoUserDTO;
 import br.com.diarista.folks.dto.UserDTO;
 import br.com.diarista.folks.dto.UsuarioDTO;
+import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.RG;
 import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
@@ -47,6 +49,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 
 	@Autowired
 	private EnderecoDAO enderecoRepository;
+	
+	@Autowired
+	private AssessmentDAO assessRepository;
 
 	@Autowired
 	PDFUtils utils;
@@ -317,6 +322,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		newPassword = StringUtils.encrypt(newPassword);		
 		user.setPassword(newPassword.getBytes());
 		user.setIsAlterPassword(true);
+		
+		
+		
 		usuarioRepository.save(user);
 		
 		new Thread() 
@@ -358,6 +366,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -384,6 +393,38 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		
 		user.setPassword(StringUtils.encrypt(password).getBytes());
 		
+		
+		Assessment ass = new Assessment();
+		
+		ass.setDate(new Date());
+		ass.setDescription("Gerado Automaticamente para fins de teste");
+		ass.setEvaluator(user);
+		ass.setRated(user);
+		ass.setStatus(true);
+		ass.setNote(4);
+		
+		Assessment ass1 = new Assessment();
+		ass1.setDate(new Date());
+		ass1.setDescription("Gerado Automaticamente para fins de teste");
+		ass1.setEvaluator(user);
+		ass1.setRated(user);
+		ass1.setStatus(true);
+		ass1.setNote(3);
+		
+		Assessment ass2 = new Assessment();
+		ass2.setDate(new Date());
+		ass2.setDescription("Gerado Automaticamente para fins de teste");
+		ass2.setEvaluator(user);
+		ass2.setRated(user);
+		ass2.setNote(1);
+		ass2.setStatus(true);
+		
+		assessRepository.save(ass);
+		assessRepository.save(ass1);	
+		assessRepository.save(ass2);
+		
+	
+	
 		usuarioRepository.save(user);		
 		return null;
 	}

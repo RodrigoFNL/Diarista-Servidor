@@ -29,7 +29,7 @@ public class DateUtils
 	{
 	    GregorianCalendar gc = new GregorianCalendar();
         gc.setTime(date);
-        gc.set(Calendar.DATE, gc.get(Calendar.DATE) - days);
+        gc.set(Calendar.DATE, gc.get(Calendar.DATE) - days);          
         return gc.getTime();	
 	}
 }
