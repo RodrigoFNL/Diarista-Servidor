@@ -88,6 +88,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		
 		work.setDate(DiaristaUtils.addHour(work.getDate(), 3));
 		
+		work.setStage(Work.STAGE_OPEN);
 		work.setStatus(true);
 		work = workRepository.save(work);		
 		return "id:" + work.getId().toString() ;
@@ -154,6 +155,24 @@ public class WorkBusiness extends BasicBusiness<Work>
 		totals.add(workRepository.countAllWorkCityNative(new Date(), user.getCpf()));	
 		totals.add(workRepository.countAllWorkUFNative(new Date(), user.getCpf()));		
 		return totals;
+	}
+
+	public Long countMyOportunity(String cpf) 
+	{		
+		return workRepository.countMyOportunity(cpf);
+	}
+
+	public List<WorkDTO> getAllOpportunitiesCleaningLady(Usuario user, Integer page, Integer limit )
+	{
+	//	List<Work> list = workRepository.getAllOpportunitiesCleaningLady(user.getCpf(), limit, page);		
+		List<Work> list = workRepository.getAllOpportunitiesCleaningLady(limit, page);		
+		List<WorkDTO> dtos = new ArrayList<WorkDTO>();
+		 
+		for (Work work : list) 
+		{	
+			dtos.add(new WorkDTO(work, assessmentRepository.findAllByEvaluatorAndStatusAndDateAfter(user, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY))));
+		}		
+		return dtos;
 	}
 }
 

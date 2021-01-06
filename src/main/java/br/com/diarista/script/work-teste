@@ -1,0 +1,2 @@
+SELECT W.* FROM work W
+INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = '82052875972'

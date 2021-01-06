@@ -15,22 +15,25 @@ public class WorkDTO
 	private Long id;
     private UsuarioDTO usuario;
     private InfoUserDTO contractor;
-    private short establishment_type;
+    private Short establishment_type;
     private Date date;
     private Endereco adress;
     private List<TaskAmmount> tasks;
+    private Short stage;
+    private Boolean toEvaluate;
     
 	public WorkDTO(){}
 	
 	public WorkDTO(Work work, List<Assessment> assessment) 
-	{
+	{				
 		this.id 	= work.getId();
 		this.date	= work.getDate();
 		this.adress = work.getAdress();
-		this.tasks 	= work.getTasks();		
+		this.tasks 	= work.getTasks();	
+		this.stage  = work.getStage();
 		this.contractor	= work.getUsuario().getSimpleDTO(assessment);
-		this.establishment_type = work.getEstablishment_type();		
-		
+		this.establishment_type = work.getEstablishment_type();	
+		this.toEvaluate = work.getStage() > Work.STAGE_PAY_OUT && work.getStage() != Work.STAGE_CANCELED;		
 	}
 	
 	public Long getId() 
@@ -41,11 +44,11 @@ public class WorkDTO
 	{
 		this.id = id;
 	}
-	public short getEstablishment_type()
+	public Short getEstablishment_type()
 	{
 		return establishment_type;
 	}
-	public void setEstablishment_type(short establishment_type) 
+	public void setEstablishment_type(Short establishment_type) 
 	{
 		this.establishment_type = establishment_type;
 	}
@@ -88,5 +91,25 @@ public class WorkDTO
 	public void setContractor(InfoUserDTO contractor) 
 	{
 		this.contractor = contractor;
+	}
+
+	public Short getStage() 
+	{
+		return stage;
+	}
+
+	public void setStage(Short stage)
+	{
+		this.stage = stage;
+	}
+
+	public Boolean getToEvaluate() 
+	{
+		return toEvaluate;
+	}
+
+	public void setToEvaluate(Boolean toEvaluate)
+	{
+		this.toEvaluate = toEvaluate;
 	}
 }

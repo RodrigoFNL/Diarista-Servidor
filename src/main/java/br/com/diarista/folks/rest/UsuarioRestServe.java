@@ -3,14 +3,8 @@ package br.com.diarista.folks.rest;
 import java.util.Base64;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.util.FileCopyUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.diarista.adress.entity.Endereco;
-import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.business.BasicBusiness;
 import br.com.diarista.folks.business.UsuarioBusiness;
@@ -33,7 +26,6 @@ import br.com.diarista.folks.entity.RG;
 import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.StringUtils;
-import io.jsonwebtoken.Jwts;
 
 @RestController
 @RequestMapping("/rest/usuario")
@@ -41,9 +33,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 {
 	@Autowired
 	private UsuarioBusiness usuarioBusiness;
-	
-	@Autowired
-	private CustomUserDetailService userDetailService;
 	
 	@Override
 	protected BasicBusiness<Usuario> business() 
@@ -157,40 +146,6 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 		}	
 
 	}	
-
-	@GetMapping("/download_contrato/{cpf}/{coupon}/{token}")
-	public void download(@PathVariable("cpf") String cpf, @PathVariable("token") String token, @PathVariable("coupon") String coupon,  HttpServletResponse response)
-	{		
-		try
-		{	
-			 String userName = Jwts.parser().setSigningKey(ConstantsSecurity.SECRET).parseClaimsJws(token.replace(ConstantsSecurity.TOKE_PREFIX_INVITE, "")).getBody().getSubject();			
-			 UserDetails userToken = userDetailService.loadUserByUsername(userName);						
-			
-			if(userToken.getUsername().equals(coupon))
-			{			
-				cpf = StringUtils.removeCharacters(cpf);
-				Usuario user = usuarioBusiness.findByCPF(cpf);	
-				
-				if(user == null) return;			
-				
-				byte [] pdf = usuarioBusiness.getContrato(user);		
-				if(pdf == null) return;
-				
-				String fileName = "";
-				FileCopyUtils.copy(pdf, response.getOutputStream());		
-				fileName = "Contrato";
-	
-				response.setContentType("application/pdf");
-				response.flushBuffer();
-				response.addHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf" );
-				response.getOutputStream().flush();
-			}
-		} 
-		catch (Exception ex)
-		{
-			ex.printStackTrace();
-		}
-	}
 	
 	@PostMapping("/send_mail_contrato")
 	public  ResponseEntity<Object> sendMailContrato(@RequestBody Map<String, Object> postObject)

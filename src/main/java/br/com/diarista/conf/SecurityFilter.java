@@ -31,7 +31,6 @@ public class SecurityFilter extends WebSecurityConfigurerAdapter
 		.antMatchers("/rest/usuario/invitation").permitAll()
 		.antMatchers("/rest/usuario/resend_coupon").permitAll()
 		.antMatchers("/rest/usuario/reset_password").permitAll()
-		.antMatchers("/rest/usuario/download_contrato/**").permitAll()
 		.anyRequest().authenticated()
 		.and()	
 		.addFilter(new JWTAutentificationFilter(authenticationManager()))

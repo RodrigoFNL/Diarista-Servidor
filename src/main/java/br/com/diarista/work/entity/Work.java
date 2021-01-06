@@ -27,6 +27,12 @@ public class Work  implements Serializable
 	public final static short RESIDENCIAL = 1;
 	public final static short COMERCIAL = 2;
 	
+	public final static short STAGE_OPEN = 1;
+	public final static short STAGE_EVALUATION = 2;
+	public final static short STAGE_PAY_OUT = 3;
+	public final static short STAGE_CANCELED = 4;
+	public final static short STAGE_CLOSE = 5;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
@@ -52,7 +58,9 @@ public class Work  implements Serializable
 	private List<Usuario> cleaningLadies;
 	
     @Column(columnDefinition = "BOOL DEFAULT TRUE")
-    private Boolean status;
+    private Boolean status;    
+
+    private Short stage;
 	
 	public Long getId() 
 	{
@@ -108,5 +116,11 @@ public class Work  implements Serializable
 	}
 	public void setCleaningLadies(List<Usuario> cleaningLadies) {
 		this.cleaningLadies = cleaningLadies;
+	}
+	public Short getStage() {
+		return stage;
+	}
+	public void setStage(Short stage) {
+		this.stage = stage;
 	}
 }

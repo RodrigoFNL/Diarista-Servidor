@@ -89,6 +89,17 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND W.date > :date AND W.status = true  ",			
 			nativeQuery = true )
 	public Long countAllWorkUFNative(Date date, String cpf);
+	
+	@Query(	value = "SELECT COUNT(W.id) FROM work W ",	
+		//	+ "INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf",		
+			nativeQuery = true )
+	public Long countMyOportunity(String cpf);
 
+	@Query(	value = "SELECT W.* FROM work W " +
+			//+ "INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf",		`
+			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
+			nativeQuery = true )
+	//public List<Work> getAllOpportunitiesCleaningLady(String cpf,  Integer limit, Integer offset);
+	public List<Work> getAllOpportunitiesCleaningLady(Integer limit, Integer offset);
 
 }

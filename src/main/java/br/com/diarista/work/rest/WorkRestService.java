@@ -39,6 +39,46 @@ public class WorkRestService extends BasicRestServe<Work>
 		return business;
 	}	
 	
+	@PostMapping("/count_my_oportunity")
+	public Long countMyOportunity(@RequestBody Map<String, Object> postObject)
+	{
+		try
+		{				
+			String cpf =  postObject.containsKey("cpf") ? (String) postObject.get("cpf"): null;				
+			return business.countMyOportunity(cpf);		
+		}
+		catch (Exception e)
+		{	
+			return 0l;
+		}
+	}	
+	
+	@PostMapping("/get_all_opportunities_cleaning_lady")
+	public Map<String, Object> getAllOpportunitiesCleaningLady(@RequestBody Map<String, Object> postObject)
+	{
+		try
+		{				
+			String cpf =  postObject.containsKey("cpf") ? (String) postObject.get("cpf"): null;					
+			Map<String, Object> map = new HashMap<String, Object>();	
+			
+			Integer limit  =  postObject.containsKey("pagSize") 	? (Integer) postObject.get("pagSize"): 0;	
+			Integer page   =  postObject.containsKey("pageIndex")	? (Integer) postObject.get("pageIndex"): 5;				
+			
+			Usuario user = userBusiness.findByCPF(cpf);			
+			if(user == null) return null;
+			
+			map.put("list",		business.getAllOpportunitiesCleaningLady(user, page * limit, limit));
+			map.put("length",	business.countMyOportunity(cpf));
+			
+			return 	map;		
+		}
+		catch (Exception e)
+		{	
+			return null;
+		}
+	}	
+	
+	
 	@PostMapping("/get_all_opportunities")
 	public Map<String, Object> getAllOpportunities(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
 	{
