@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
 import br.com.diarista.adress.entity.Endereco;
+import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.business.BasicBusiness;
 import br.com.diarista.folks.dao.AssessmentDAO;
 import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.utils.DateUtils;
-import br.com.diarista.utils.DiaristaUtils;
 import br.com.diarista.work.dao.WorkDAO;
 import br.com.diarista.work.dto.WorkDTO;
 import br.com.diarista.work.entity.TaskAmmount;
@@ -86,7 +86,8 @@ public class WorkBusiness extends BasicBusiness<Work>
 		}
 		else work.setAdress(end.get());	
 		
-		work.setDate(DiaristaUtils.addHour(work.getDate(), 3));
+	//	work.setDate(DiaristaUtils.addHour(work.getDate(), 3));
+		work.setDate(work.getDate());
 		
 		work.setStage(Work.STAGE_OPEN);
 		work.setStatus(true);
@@ -104,7 +105,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		
 		for (Work work : works) 
 		{			
-			List<Assessment> assessment = assessmentRepository.findAllByEvaluatorAndStatusAndDateAfter(work.getUsuario(), true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));			
+			List<Assessment> assessment = assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(work.getUsuario(), true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));			
 			dtos.add(new WorkDTO(work, assessment));
 		}
 		
@@ -143,7 +144,9 @@ public class WorkBusiness extends BasicBusiness<Work>
 		
 		if(isExist) return "O usuário já está cadastrado neste solicitação, acompanhei na tela de Minhas Oportunidades";
 		
-		work.getCleaningLadies().add(workRequest.getUsuario());
+		work.getCleaningLadies().add(workRequest.getUsuario());		
+		if(work.getStage() == Work.STAGE_OPEN) work.setStage(Work.STAGE_EVALUATION);
+		
 		workRepository.save(work);
 		return null;	
 	}
@@ -159,20 +162,84 @@ public class WorkBusiness extends BasicBusiness<Work>
 
 	public Long countMyOportunity(String cpf) 
 	{		
-		return workRepository.countMyOportunity(cpf);
+		return workRepository.countMyOportunity(cpf, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));
 	}
 
 	public List<WorkDTO> getAllOpportunitiesCleaningLady(Usuario user, Integer page, Integer limit )
 	{
-	//	List<Work> list = workRepository.getAllOpportunitiesCleaningLady(user.getCpf(), limit, page);		
-		List<Work> list = workRepository.getAllOpportunitiesCleaningLady(limit, page);		
+		List<Work> list = workRepository.getAllOpportunitiesCleaningLady(DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY), user.getCpf(), limit, page);	
 		List<WorkDTO> dtos = new ArrayList<WorkDTO>();
 		 
 		for (Work work : list) 
 		{	
-			dtos.add(new WorkDTO(work, assessmentRepository.findAllByEvaluatorAndStatusAndDateAfter(user, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY))));
+			dtos.add(new WorkDTO(work, assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(user, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY))));
 		}		
 		return dtos;
+	}
+
+	public String cancellCleaningLady(Usuario user, Long idWork) 
+	{
+		try
+		{
+			if(user.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) 	return "Situação do Usuário irregular, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";				
+			Optional<Work> opWork =  workRepository.findById(idWork);
+			
+			if(!(opWork != null && !opWork.isEmpty())) return "Oportunidade não encontrada";			
+			Work work = opWork.get();
+			
+			if(!work.getStatus()) return "Esta oportunidade foi excluída";			
+			if(work.getStage() == 5) return "Esta oportunidade já foi encerrada, não pode ser mais cancelado";					
+			if(!work.getUsuario().getRegistrationSituation().equals(Usuario.CADASTRO_APROVADO))	return "Este Cliente não está mais com o cadastro aprovado, tente outra solicitação de serviços";
+			
+			
+			boolean isContains = false;
+			
+			for(Usuario cleaningLady : work.getCleaningLadies())
+			{
+				if(cleaningLady.getCpf().equals(user.getCpf()))  
+				{
+					isContains = true;
+					work.getCleaningLadies().remove(cleaningLady);					
+					if(work.getCleaningLadies().isEmpty()) work.setStage(Work.STAGE_OPEN);					
+					workRepository.save(work);
+					break;
+				}
+			}		
+			
+			work.setStage(Work.STAGE_PAY_OUT);
+			if(isContains && work.getStage().equals(Work.STAGE_PAY_OUT))
+			{
+				try 
+				{
+					new Thread()
+					{
+						@Override
+						public void run() 
+						{
+							Assessment assessment = new Assessment();
+							assessment.setDate(new Date());
+							assessment.setDescription("Cancelou uma faxina que já estava paga e confirmada");
+							assessment.setNote(3);
+							assessment.setStatus(true);
+							assessment.setRated(user);
+							assessment.setEvaluator(user);							
+							assessmentRepository.save(assessment);
+						}
+					}.start();
+				} 
+				catch (Exception e) 
+				{
+					e.printStackTrace();
+				}
+
+			}	
+			
+			return isContains ? null : "Usuário não está contido na lista de Faxineira desta oportunidade";
+		}
+		catch (Exception e)
+		{
+			return 	"Ocorreu um erro de internto, se o erro persistir, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";
+		}
 	}
 }
 

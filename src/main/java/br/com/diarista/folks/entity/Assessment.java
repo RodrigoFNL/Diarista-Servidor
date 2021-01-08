@@ -19,7 +19,7 @@ import br.com.diarista.folks.dto.AssessmentDTO;
 public class Assessment implements Serializable
 {	
 	private static final long serialVersionUID = 1L;
-	public static final int BEFOR_DAY = 60;
+	public static final int BEFOR_DAY = 90;
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)

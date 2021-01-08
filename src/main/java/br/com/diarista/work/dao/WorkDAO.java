@@ -16,7 +16,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 	@Query(	value = "SELECT COUNT(W) FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +
 			"INNER JOIN work_cleaning_lady WCL ON WCL.work_id = W.id AND WCL.user_id = :cpf " +				 
-			"WHERE  W.date > :date AND W.status = true  ",		
+			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  ",		
 			nativeQuery = true )
 	public Long countAllWorksByCleaningLadies(Date date, String cpf );
 
@@ -27,7 +27,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.bairro IN (SELECT LS.bairro FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep " +					 
 			"INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true  " +		 				 
+			"AND W.date > :date AND W.status = true AND W.stage < 3  " +		 				 
 			"ORDER BY W.date ASC LIMIT :limit OFFSET :offset",			
 			nativeQuery = true )
 	public List<Work> findAllWorkBairroNative(Date date, String cpf, Integer limit, Integer offset);
@@ -39,7 +39,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.localidade IN (SELECT LS.localidade FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"AND L.bairro NOT IN (SELECT LS.bairro FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +				 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true  " +		 				 
+			"AND W.date > :date AND W.status = true  AND W.stage < 3 " +		 				 
 			"ORDER BY L.bairro ASC, W.date ASC LIMIT :limit OFFSET :offset",			
 			nativeQuery = true )
 	public List<Work> findAllWorkCityNative(Date date, String cpf, Integer limit, Integer offset);
@@ -51,7 +51,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.uf_id IN (SELECT LS.uf_id FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"AND L.localidade NOT IN (SELECT LS.localidade FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +				 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true  " +		 				 
+			"AND W.date > :date AND W.status = true  AND W.stage < 3 " +		 				 
 			"ORDER BY L.bairro ASC, W.date ASC LIMIT :limit OFFSET :offset",			
 			nativeQuery = true )
 	public List<Work> findAllWorkUFNative(Date date, String cpf, Integer limit, Integer offset);
@@ -64,7 +64,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.bairro IN (SELECT LS.bairro FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep " +					 
 			"INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true ",	
+			"AND W.date > :date AND W.status = true  AND W.stage < 3 ",	
 			nativeQuery = true )
 	public Long countAllWorkBairroNative(Date date, String cpf);
 
@@ -75,7 +75,7 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.localidade IN (SELECT LS.localidade FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"AND L.bairro NOT IN (SELECT LS.bairro FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +				 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true  ",			
+			"AND W.date > :date AND W.status = true  AND W.stage < 3 ",			
 			nativeQuery = true )
 	public Long countAllWorkCityNative(Date date, String cpf);
 
@@ -86,20 +86,21 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			"AND L.uf_id IN (SELECT LS.uf_id FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +					 
 			"AND L.localidade NOT IN (SELECT LS.localidade FROM locality LS INNER JOIN andress AF ON AF.locality_id = LS.cep  INNER JOIN usuario U ON AF.id = U.andress_id AND U.cpf = :cpf ) " +				 
 			"WHERE :cpf NOT IN (SELECT UL.cpf FROM usuario UL INNER JOIN work_cleaning_lady WCL ON WCL.work_id = w.id) " +	 				 
-			"AND W.date > :date AND W.status = true  ",			
+			"AND W.date > :date AND W.status = true  AND W.stage < 3 ",			
 			nativeQuery = true )
 	public Long countAllWorkUFNative(Date date, String cpf);
 	
-	@Query(	value = "SELECT COUNT(W.id) FROM work W ",	
-		//	+ "INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf",		
+	@Query(	value = "SELECT COUNT(W.id) FROM work W " +	
+			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf " +
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true  AND W.stage <> 4 ",		
 			nativeQuery = true )
-	public Long countMyOportunity(String cpf);
+	public Long countMyOportunity(String cpf, Date date);
 
 	@Query(	value = "SELECT W.* FROM work W " +
-			//+ "INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf",		`
+			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf " +
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage <> 4 " +	
 			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
 			nativeQuery = true )
-	//public List<Work> getAllOpportunitiesCleaningLady(String cpf,  Integer limit, Integer offset);
-	public List<Work> getAllOpportunitiesCleaningLady(Integer limit, Integer offset);
+	public List<Work> getAllOpportunitiesCleaningLady(Date date, String cpf,  Integer limit, Integer offset);
 
 }

@@ -10,5 +10,5 @@ import br.com.diarista.folks.entity.Usuario;
 
 public interface AssessmentDAO extends JpaRepository<Assessment, Long>
 {
-	List<Assessment> findAllByEvaluatorAndStatusAndDateAfter(Usuario usuario, boolean status, Date date);
+	List<Assessment> findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(Usuario usuario, boolean status, Date date);
 }
