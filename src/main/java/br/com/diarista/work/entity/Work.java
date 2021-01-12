@@ -33,6 +33,9 @@ public class Work  implements Serializable
 	public final static short STAGE_CANCELED = 4;
 	public final static short STAGE_CLOSE = 5;
 	
+	public static final Integer VIEW_CONTRATAR = 1;
+	public static final Integer VIEW_PRESTAR_SERVICO = 2;
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;

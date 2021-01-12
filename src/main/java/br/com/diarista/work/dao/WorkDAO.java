@@ -11,14 +11,22 @@ import br.com.diarista.work.entity.Work;
 
 public interface WorkDAO extends JpaRepository<Work, Long>
 {
-	public Long countByDateAfterAndStatusAndUsuario(Date date, boolean status, Usuario usuario);		
+	public Long countByDateAfterAndStatusAndUsuarioAndStageNot(Date date, boolean status, Usuario usuario, Short stage);	
+	
+	
+	@Query(	value = "SELECT COUNT(W) FROM work W " +
+			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +		 
+			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  AND W.user_cpf = :cpf ",		
+			nativeQuery = true )
+	public Long countMyPublicacoes(Date date, String cpf);
+
 	
 	@Query(	value = "SELECT COUNT(W) FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +
 			"INNER JOIN work_cleaning_lady WCL ON WCL.work_id = W.id AND WCL.user_id = :cpf " +				 
 			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  ",		
 			nativeQuery = true )
-	public Long countAllWorksByCleaningLadies(Date date, String cpf );
+	public Long countAllWorksByCleaningLadies(Date date, String cpf);
 
 	@Query(	value = "SELECT W.* FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +
@@ -97,10 +105,19 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 	public Long countMyOportunity(String cpf, Date date);
 
 	@Query(	value = "SELECT W.* FROM work W " +
-			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf " +
+			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf  " +			
+			"INNER JOIN usuario UW ON UW.cpf = WC.user_id AND UW.registration_situation = 4 " +			
 			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage <> 4 " +	
 			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
 			nativeQuery = true )
 	public List<Work> getAllOpportunitiesCleaningLady(Date date, String cpf,  Integer limit, Integer offset);
+	
+	@Query(	value = "SELECT W.* FROM work W " +					
+			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.cpf = :cpf  AND UW.registration_situation = 4 " +			
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage <> 4 " +	
+			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
+			nativeQuery = true )
+	public List<Work> getAllMyPuclications(Date date, String cpf, Integer limit, Integer offset);
+	
 
 }

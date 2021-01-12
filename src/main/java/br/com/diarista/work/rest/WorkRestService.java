@@ -45,21 +45,32 @@ public class WorkRestService extends BasicRestServe<Work>
 		try
 		{				
 			String cpf =  postObject.containsKey("cpf") ? (String) postObject.get("cpf"): null;				
-			return business.countMyOportunity(cpf);		
+			Integer view =  postObject.containsKey("view") ? (Integer) postObject.get("view"): null;	
+			
+			if(cpf == null) return 0l;
+			if(view == null) return 0l;
+			
+			return business.countMyOportunity(cpf, view);		
 		}
 		catch (Exception e)
 		{	
 			return 0l;
 		}
 	}	
-	
-	@PostMapping("/get_all_opportunities_cleaning_lady")
-	public Map<String, Object> getAllOpportunitiesCleaningLady(@RequestBody Map<String, Object> postObject)
+		
+	@PostMapping("/get_all_publications")
+	public Map<String, Object> getAllPublications(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
 	{
 		try
 		{				
+			String token = request.getHeader(ConstantsSecurity.HEADER);					
+			Usuario userToken = userBusiness.findUserByToken(token);
+			if(userToken == null) return null;
+			
 			String cpf =  postObject.containsKey("cpf") ? (String) postObject.get("cpf"): null;					
 			Map<String, Object> map = new HashMap<String, Object>();	
+			
+			if(!userToken.getCpf().equals(cpf)) return null;	
 			
 			Integer limit  =  postObject.containsKey("pagSize") 	? (Integer) postObject.get("pagSize"): 0;	
 			Integer page   =  postObject.containsKey("pageIndex")	? (Integer) postObject.get("pageIndex"): 5;				
@@ -67,8 +78,42 @@ public class WorkRestService extends BasicRestServe<Work>
 			Usuario user = userBusiness.findByCPF(cpf);			
 			if(user == null) return null;
 			
+			map.put("list",		business.getAllMyPuclications(user, page * limit, limit));
+			map.put("length",	business.countMyOportunity(cpf, Work.VIEW_CONTRATAR));
+			
+			return 	map;		
+		}
+		catch (Exception e)
+		{	
+			e.printStackTrace();
+			return null;
+		}
+	}		
+	
+	
+	@PostMapping("/get_all_opportunities_cleaning_lady")
+	public Map<String, Object> getAllOpportunitiesCleaningLady(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
+	{
+		try
+		{				
+			String token = request.getHeader(ConstantsSecurity.HEADER);					
+			Usuario userToken = userBusiness.findUserByToken(token);
+			if(userToken == null) return null;
+			
+			String cpf =  postObject.containsKey("cpf") ? (String) postObject.get("cpf"): null;					
+			Map<String, Object> map = new HashMap<String, Object>();	
+			
+			if(!userToken.getCpf().equals(cpf)) return null;			
+			
+			Integer limit  =  postObject.containsKey("pagSize") 	? (Integer) postObject.get("pagSize"): 0;	
+			Integer page   =  postObject.containsKey("pageIndex")	? (Integer) postObject.get("pageIndex"): 5;				
+			
+			Usuario user = userBusiness.findByCPF(cpf);			
+			if(user == null) return null;
+			
+			
 			map.put("list",		business.getAllOpportunitiesCleaningLady(user, page * limit, limit));
-			map.put("length",	business.countMyOportunity(cpf));
+			map.put("length",	business.countMyOportunity(cpf, Work.VIEW_PRESTAR_SERVICO));
 			
 			return 	map;		
 		}

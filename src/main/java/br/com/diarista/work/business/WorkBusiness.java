@@ -69,7 +69,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		if(work.getAdress().getLocality().getUf() == null )				return "Não foi informado a UF do Endereço";			
 		if(work.getAdress().getNumber() == null ) 						return "Não foi informado o número do endereço";	
 			
-		Long count = workRepository.countByDateAfterAndStatusAndUsuario(new Date(), true, user);		
+		Long count = workRepository. countByDateAfterAndStatusAndUsuarioAndStageNot(new Date(), true, user, (short) 4);		
 		if(count >= user.getAmmountRegister()) return "Você excedeu o limite máximo de publicações ativas!";			
 		
 		Optional<Endereco> end = endRepository.findByLocalityAndNumber(work.getAdress().getLocality(), work.getAdress().getNumber());
@@ -160,9 +160,12 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return totals;
 	}
 
-	public Long countMyOportunity(String cpf) 
-	{		
-		return workRepository.countMyOportunity(cpf, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));
+	public Long countMyOportunity(String cpf, Integer view)	
+	{	
+		if(view == Work.VIEW_PRESTAR_SERVICO) 	return workRepository.countMyOportunity(cpf, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));
+		else if(view == Work.VIEW_CONTRATAR) 	return workRepository.countMyPublicacoes(DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY), cpf);
+		
+		else return 0L;
 	}
 
 	public List<WorkDTO> getAllOpportunitiesCleaningLady(Usuario user, Integer page, Integer limit )
@@ -240,6 +243,19 @@ public class WorkBusiness extends BasicBusiness<Work>
 		{
 			return 	"Ocorreu um erro de internto, se o erro persistir, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";
 		}
+	}
+
+	public List<WorkDTO> getAllMyPuclications(Usuario user, Integer page, Integer limit) 
+	{
+	
+		List<Work> list = workRepository.getAllMyPuclications(DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY), user.getCpf(), limit, page);	
+		List<WorkDTO> dtos = new ArrayList<WorkDTO>();
+		 
+		for (Work work : list) 
+		{	
+			dtos.add(new WorkDTO(work, assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(user, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY))));
+		}		
+		return dtos;
 	}
 }
 
