@@ -61,7 +61,10 @@ public class Work  implements Serializable
 	private List<Usuario> cleaningLadies;
 	
     @Column(columnDefinition = "BOOL DEFAULT TRUE")
-    private Boolean status;    
+    private Boolean status;  
+    
+    @Column(name = "is_confirmed", columnDefinition = "BOOL DEFAULT FALSE")
+    private Boolean isConfirmed = false;
 
     private Short stage;
 	
@@ -125,5 +128,11 @@ public class Work  implements Serializable
 	}
 	public void setStage(Short stage) {
 		this.stage = stage;
+	}
+	public Boolean getIsConfirmed() {
+		return isConfirmed;
+	}
+	public void setIsConfirmed(Boolean isConfirmed) {
+		this.isConfirmed = isConfirmed;
 	}
 }

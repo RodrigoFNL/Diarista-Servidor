@@ -84,11 +84,8 @@ public class WorkBusiness extends BasicBusiness<Work>
 			work.getAdress().setId(null);
 			endRepository.save(work.getAdress());
 		}
-		else work.setAdress(end.get());	
-		
-	//	work.setDate(DiaristaUtils.addHour(work.getDate(), 3));
-		work.setDate(work.getDate());
-		
+		else work.setAdress(end.get());			
+		work.setDate(work.getDate());		
 		work.setStage(Work.STAGE_OPEN);
 		work.setStatus(true);
 		work = workRepository.save(work);		
@@ -253,15 +250,57 @@ public class WorkBusiness extends BasicBusiness<Work>
 		 
 		for (Work work : list) 
 		{	
-			dtos.add(new WorkDTO(work, assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(user, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY))));
+			if(work.getStage() == Work.STAGE_EVALUATION) dtos.add(0, new WorkDTO(work, null));
+			else dtos.add(new WorkDTO(work));
 		}		
 		return dtos;
 	}
+
+	public String cancellWork(Usuario user, Long idWork) 
+	{		
+		try 
+		{
+			if(user.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) 	return "Situação do Usuário irregular, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";				
+			Optional<Work> opWork =  workRepository.findById(idWork);
+			
+			if(!(opWork != null && !opWork.isEmpty())) return "Oportunidade não encontrada";			
+			Work work = opWork.get();
+			
+			if(!work.getStatus()) return "Esta oportunidade foi excluída";			
+			if(work.getStage() == 5) return "Esta oportunidade já foi encerrada, não pode ser mais cancelado";								
+			
+			work.setStage(Work.STAGE_PAY_OUT);
+			if(work.getCleaningLadies().size() > 0 && work.getDate().after(new Date()) && work.getIsConfirmed())
+			{
+				new Thread()
+				{
+					@Override
+					public void run() 
+					{
+						Assessment assessment = new Assessment();
+						assessment.setDate(new Date());
+						assessment.setDescription("Cancelou com uma faxina que já estava confirmada o serviço");
+						assessment.setNote(3);
+						assessment.setStatus(true);
+						assessment.setRated(user);
+						assessment.setEvaluator(user);							
+						assessmentRepository.save(assessment);
+					}
+				}.start();
+			} 
+			
+			work.setStage(Work.STAGE_CANCELED);
+			work.setStatus(false);	
+			workRepository.save(work);
+			return null;
+		}					
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			return 	"Ocorreu um erro de internto, se o erro persistir, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";	
+		}
+	}
 }
-
-
-
-
 
 
 

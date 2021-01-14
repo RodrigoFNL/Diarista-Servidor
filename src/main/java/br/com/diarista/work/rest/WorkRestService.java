@@ -133,7 +133,7 @@ public class WorkRestService extends BasicRestServe<Work>
 			String token = request.getHeader(ConstantsSecurity.HEADER);					
 			Usuario user = userBusiness.findUserByToken(token);
 			
-			if(user == null) 													return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);			
+			if(user == null) return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);			
 								
 			Integer work = postObject.get("work") != null? (Integer) postObject.get("work") : null;
 			String  cpf = postObject.get("cpf") != null?  (String) postObject.get("cpf") :    null;
@@ -147,6 +147,39 @@ public class WorkRestService extends BasicRestServe<Work>
 			if(!userCPF.getCpf().equals(user.getCpf())) return error("O usuário informado é diferente do que realizou o login, refaça o login!", BasicRestServe.BAD_REQUEST);	
 			
 			String cancell = business.cancellCleaningLady(user, Long.valueOf(work));
+						
+			if(cancell == null) return ok("OK");	
+			else 				return error(cancell, BasicRestServe.INTERNAL_ERROR);
+			
+		}
+		catch (Exception e)
+		{	
+			return error("Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]", BasicRestServe.BAD_REQUEST);
+		}
+	}	
+	
+	@PostMapping("/cancel_publication")
+	public ResponseEntity<Object> cancelPublication(@RequestBody Map<String, Object> postObject, HttpServletRequest request)
+	{
+		try
+		{				
+			String token = request.getHeader(ConstantsSecurity.HEADER);					
+			Usuario user = userBusiness.findUserByToken(token);
+			
+			if(user == null) return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);			
+								
+			Integer work = postObject.get("work") != null? (Integer) postObject.get("work") : null;
+			String  cpf = postObject.get("cpf") != null?  (String) postObject.get("cpf") :    null;
+	
+			if(work == null) return error("Não foi passado nenhuma oportunidade", BasicRestServe.BAD_REQUEST);
+			if(cpf == null)  return error("Não foi passado o usuário", BasicRestServe.BAD_REQUEST);
+						
+			Usuario userCPF = userBusiness.findByCPF(cpf);
+			if(userCPF == null) return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);
+		
+			if(!userCPF.getCpf().equals(user.getCpf())) return error("O usuário informado é diferente do que realizou o login, refaça o login!", BasicRestServe.BAD_REQUEST);	
+			
+			String cancell = business.cancellWork(user, Long.valueOf(work));
 						
 			if(cancell == null) return ok("OK");	
 			else 				return error(cancell, BasicRestServe.INTERNAL_ERROR);

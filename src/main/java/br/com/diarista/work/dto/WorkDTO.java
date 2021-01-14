@@ -35,6 +35,18 @@ public class WorkDTO
 		this.establishment_type = work.getEstablishment_type();	
 		this.toEvaluate = work.getStage() > Work.STAGE_PAY_OUT && work.getStage() != Work.STAGE_CANCELED;		
 	}
+
+	public WorkDTO(Work work) 
+	{				
+		this.id 	= work.getId();
+		this.date	= work.getDate();
+		this.adress = work.getAdress();
+		this.tasks 	= work.getTasks();	
+		this.stage  = work.getStage();
+
+		this.establishment_type = work.getEstablishment_type();	
+		this.toEvaluate = work.getStage() > Work.STAGE_PAY_OUT && work.getStage() != Work.STAGE_CANCELED;		
+	}	
 	
 	public Long getId() 
 	{
