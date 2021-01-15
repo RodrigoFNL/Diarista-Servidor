@@ -67,6 +67,10 @@ public class Work  implements Serializable
     private Boolean isConfirmed = false;
 
     private Short stage;
+    
+    @ManyToOne
+	@JoinColumn(name = "cleaning_lady_cpf", referencedColumnName = "cpf")
+    private Usuario cleaningLady;  
 	
 	public Long getId() 
 	{
@@ -134,5 +138,11 @@ public class Work  implements Serializable
 	}
 	public void setIsConfirmed(Boolean isConfirmed) {
 		this.isConfirmed = isConfirmed;
+	}
+	public Usuario getCleaningLady() {
+		return cleaningLady;
+	}
+	public void setCleaningLady(Usuario cleaningLady) {
+		this.cleaningLady = cleaningLady;
 	}
 }

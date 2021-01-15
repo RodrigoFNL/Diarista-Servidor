@@ -2,7 +2,9 @@ package br.com.diarista.work.business;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -231,9 +233,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 				{
 					e.printStackTrace();
 				}
-
-			}	
-			
+			}				
 			return isContains ? null : "Usuário não está contido na lista de Faxineira desta oportunidade";
 		}
 		catch (Exception e)
@@ -250,8 +250,21 @@ public class WorkBusiness extends BasicBusiness<Work>
 		 
 		for (Work work : list) 
 		{	
-			if(work.getStage() == Work.STAGE_EVALUATION) dtos.add(0, new WorkDTO(work, null));
-			else dtos.add(new WorkDTO(work));
+			Map<String, Object> workMap = new HashMap<String, Object>();
+			
+			workMap.put("work", work);	
+			
+			Map<String, List<Assessment>> evaluation = new HashMap<String, List<Assessment>>();				
+			
+			for(Usuario cleaningLady :  work.getCleaningLadies())
+			{
+				List<Assessment> assessments = assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(cleaningLady, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));				
+				evaluation.put(cleaningLady.getCpf(), assessments);				
+			}
+									
+			workMap.put("assessment", evaluation);			
+			if(work.getStage() == Work.STAGE_EVALUATION) dtos.add(0, new WorkDTO(workMap));
+			else dtos.add(new WorkDTO(workMap));
 		}		
 		return dtos;
 	}
