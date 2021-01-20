@@ -61,6 +61,8 @@ public class Usuario implements Serializable
 	@Transient
 	private String confirm_password;
 	
+	@JoinColumn(name="date_register")
+	private Date dateRegister;
 	private Date birth_date;	
 	private String cell_phone;
 	
@@ -275,25 +277,30 @@ public class Usuario implements Serializable
 		return dto;
 	}
 
-	public byte[] getImagePortifile() {
+	public byte[] getImagePortifile()
+	{
 		return imagePortifile;
 	}
-
-	public void setImagePortifile(byte[] imagePortifile) {
+	public void setImagePortifile(byte[] imagePortifile) 
+	{
 		this.imagePortifile = imagePortifile;
 	}
-
-	public Long getAmmountRegister() {
+	public Long getAmmountRegister()
+	{
 		return ammountRegister;
 	}
-
-	public void setAmmountRegister(Long ammountRegister) {
+	public void setAmmountRegister(Long ammountRegister) 
+	{
 		this.ammountRegister = ammountRegister;
 	}
 	public InfoUserDTO getSimpleDTO(List<Assessment> assessment)
 	{	
 		InfoUserDTO dto = new InfoUserDTO();	
-		dto.setNickName(this.nickname);			
+		
+		dto.setNickName(this.nickname);
+		dto.setAdress(new Endereco(this.andress));
+		dto.setDateRegister(this.dateRegister);
+		
 		if(this.imagePortifile != null)	dto.setImage(Base64.getEncoder().encodeToString(this.imagePortifile));
 		else dto.setImage("");
 		
@@ -304,6 +311,14 @@ public class Usuario implements Serializable
 			dto.getAssessments().add(assess.getDTO());
 		}				
 		return dto;
+	}
+	public Date getDateRegister() 
+	{
+		return dateRegister;
+	}
+	public void setDateRegister(Date dateRegister) 
+	{
+		this.dateRegister = dateRegister;
 	}
 }
 

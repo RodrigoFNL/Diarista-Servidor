@@ -131,7 +131,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			userRecovery.setPassword(StringUtils.encrypt(entity.getConfirm_password()).getBytes());	
 			userRecovery.setNationality(entity.getNationality());						
 			userRecovery.setMarital_status(entity.getMarital_status());		
-			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);			
+			userRecovery.setRegistrationSituation(Usuario.CADASTRO_EM_ANALISE);		
+			userRecovery.setDateRegister(new Date());
+			
 			localidadeRepository.save(entity.getAndress().getLocality());
 
 			if(userRecovery.getAndress() != null) 	enderecoRepository.save(userRecovery.getAndress());

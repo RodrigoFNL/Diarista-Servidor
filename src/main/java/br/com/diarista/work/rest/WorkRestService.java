@@ -110,8 +110,7 @@ public class WorkRestService extends BasicRestServe<Work>
 			
 			Usuario user = userBusiness.findByCPF(cpf);			
 			if(user == null) return null;
-			
-			
+						
 			map.put("list",		business.getAllOpportunitiesCleaningLady(user, page * limit, limit));
 			map.put("length",	business.countMyOportunity(cpf, Work.VIEW_PRESTAR_SERVICO));
 			

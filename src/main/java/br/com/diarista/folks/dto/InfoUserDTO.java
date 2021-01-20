@@ -1,5 +1,6 @@
 package br.com.diarista.folks.dto;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.diarista.adress.entity.Endereco;
@@ -14,6 +15,7 @@ public class InfoUserDTO
 	private Boolean isAlterPassword;
 	private Endereco adress;
     private List<AssessmentDTO> assessments;	
+    private Date dateRegister;
 
 	public String getCpf() 
 	{
@@ -78,5 +80,13 @@ public class InfoUserDTO
 	public void setAssessments(List<AssessmentDTO> assessments) 
 	{
 		this.assessments = assessments;
+	}
+	public Date getDateRegister()
+	{
+		return dateRegister;
+	}
+	public void setDateRegister(Date dateRegister) 
+	{
+		this.dateRegister = dateRegister;
 	}
 }

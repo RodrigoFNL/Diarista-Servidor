@@ -250,18 +250,14 @@ public class WorkBusiness extends BasicBusiness<Work>
 		 
 		for (Work work : list) 
 		{	
-			Map<String, Object> workMap = new HashMap<String, Object>();
-			
-			workMap.put("work", work);	
-			
-			Map<String, List<Assessment>> evaluation = new HashMap<String, List<Assessment>>();				
-			
+			Map<String, Object> workMap = new HashMap<String, Object>();			
+			workMap.put("work", work);				
+			Map<String, List<Assessment>> evaluation = new HashMap<String, List<Assessment>>();		
 			for(Usuario cleaningLady :  work.getCleaningLadies())
 			{
 				List<Assessment> assessments = assessmentRepository.findAllByEvaluatorAndStatusAndDateAfterOrderByDateDesc(cleaningLady, true, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));				
 				evaluation.put(cleaningLady.getCpf(), assessments);				
-			}
-									
+			}									
 			workMap.put("assessment", evaluation);			
 			if(work.getStage() == Work.STAGE_EVALUATION) dtos.add(0, new WorkDTO(workMap));
 			else dtos.add(new WorkDTO(workMap));

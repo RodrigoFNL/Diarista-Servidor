@@ -36,6 +36,14 @@ public class Endereco implements Serializable
 		if(StringUtils.isNotNull(number)) 	this.number = number;
 		if(StringUtils.isNotNull(complement))this.complement = complement;		
 		if(StringUtils.isNotNull(cep)) locality = new Localidade(cep, localidade, logradouro, bairro, uf);
+	}	
+	public Endereco(Endereco andress) 
+	{
+		Localidade local = new Localidade();
+		local.setBairro(andress.getLocality().getBairro());
+		local.setLocalidade(andress.getLocality().getLocalidade());
+		local.setUf(andress.getLocality().getUf());
+		this.locality = local;
 	}
 	public Long getId() {
 		return id;

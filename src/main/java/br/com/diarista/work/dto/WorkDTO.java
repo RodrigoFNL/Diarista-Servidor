@@ -56,7 +56,7 @@ public class WorkDTO
 		this.date	= work.getDate();
 		this.adress = work.getAdress();
 		this.tasks 	= work.getTasks();	
-		this.stage  = work.getStage();
+		this.stage  = work.getStage();		
 
 		this.establishment_type = work.getEstablishment_type();	
 		this.toEvaluate = work.getStage() > Work.STAGE_PAY_OUT && work.getStage() != Work.STAGE_CANCELED;		
