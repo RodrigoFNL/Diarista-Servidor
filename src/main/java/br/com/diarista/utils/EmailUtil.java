@@ -90,11 +90,6 @@ public class EmailUtil
 		((JavaMailSenderImpl)this.sendMail).setPassword(accessToken);	  
 	}
 
-	public void sendCoupon(String email, String coupon)
-	{		
-		sendEmail(email, "Número do Coupon", coupon);
-	}
-
 	public void sendEmail(String emailAdress, String emailTitle, String emailText)
 	{			
 		try

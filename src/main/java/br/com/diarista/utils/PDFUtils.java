@@ -27,7 +27,6 @@ public class PDFUtils
 	public  byte[] getPDF(String jasper, Usuario usuario) throws JRException, ClassNotFoundException, SQLException, IOException
 	{		
 		File signature = File.createTempFile("Contrato", "png");
-
 		FileOutputStream str = new FileOutputStream(signature);		
 		str.write(usuario.getSignature());
 		str.flush();

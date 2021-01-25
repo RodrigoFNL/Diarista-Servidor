@@ -295,8 +295,9 @@ public class Usuario implements Serializable
 	}
 	public InfoUserDTO getSimpleDTO(List<Assessment> assessment)
 	{	
-		InfoUserDTO dto = new InfoUserDTO();	
-		
+		InfoUserDTO dto = new InfoUserDTO();
+	
+		dto.setCpf(this.cpf);
 		dto.setNickName(this.nickname);
 		dto.setAdress(new Endereco(this.andress));
 		dto.setDateRegister(this.dateRegister);

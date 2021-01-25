@@ -20,6 +20,7 @@ import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.folks.rest.BasicRestServe;
 import br.com.diarista.geral.business.ContratoBusiness;
 import br.com.diarista.geral.entity.Contrato;
+import br.com.diarista.utils.PDFUtils;
 import br.com.diarista.utils.StringUtils;
 
 @RestController
@@ -31,6 +32,9 @@ public class ContratoRestServe extends BasicRestServe<Contrato>
 	
 	@Autowired
 	private UsuarioBusiness userBusiness;
+	
+	@Autowired
+	PDFUtils utils;
 
 	@Override
 	protected BasicBusiness<Contrato> business()
@@ -56,7 +60,7 @@ public class ContratoRestServe extends BasicRestServe<Contrato>
 			cpf = StringUtils.removeCharacters(cpf);			
 			if(!user.getCpf().equals(cpf)) return;			
 			
-			byte [] pdf = userBusiness.getContrato(user);		
+			byte [] pdf = utils.getPDF("Contrato.jasper", user);		
 			if(pdf == null) return;
 			
 			String fileName = "";

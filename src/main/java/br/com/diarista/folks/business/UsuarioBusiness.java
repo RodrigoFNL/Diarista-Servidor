@@ -1,7 +1,5 @@
 package br.com.diarista.folks.business;
 
-import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -26,14 +24,13 @@ import br.com.diarista.folks.dto.UsuarioDTO;
 import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.RG;
 import br.com.diarista.folks.entity.Usuario;
+import br.com.diarista.routine.dao.SendEmailDAO;
+import br.com.diarista.routine.entity.SendEmail;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.utils.DiaristaUtils;
-import br.com.diarista.utils.EmailUtil;
-import br.com.diarista.utils.PDFUtils;
 import br.com.diarista.utils.StringUtils;
 import br.com.diarista.utils.StringUtils.IntString;
 import io.jsonwebtoken.Jwts;
-import net.sf.jasperreports.engine.JRException;
 
 @Service
 public class UsuarioBusiness  extends BasicBusiness<Usuario>
@@ -52,9 +49,12 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	
 	@Autowired
 	private AssessmentDAO assessRepository;
-
+	
 	@Autowired
-	PDFUtils utils;
+	private SendEmailDAO emailRepository;
+
+//	@Autowired
+//	PDFUtils utils;
 
 	@Transactional
 	public String register(Usuario entity, String password) 
@@ -179,16 +179,23 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			user.setEmail(email);
 			user.setTermosCondicoes(accept);	
 			usuarioRepository.save(user);		
-
-			new Thread() 
-			{				
-				@Override
-				public void run() 
-				{	
-					EmailUtil email = new EmailUtil();
-					email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon());
-				};
-			}.start();				
+			
+			SendEmail sendEmail = new SendEmail();
+			sendEmail.setBody("Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon());
+			sendEmail.setDateRegister(new Date());
+			sendEmail.setRecipient(user.getEmail());
+			sendEmail.setSubject("Número do Cupon");			
+			emailRepository.save(sendEmail);
+			
+//			new Thread() 
+//			{				
+//				@Override
+//				public void run() 
+//				{	
+//					EmailUtil email = new EmailUtil();
+//					email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon());
+//				};
+//			}.start();				
 
 			return "id:";
 
@@ -196,7 +203,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		catch (Exception e) 
 		{
 			e.printStackTrace();
-			return "Ocorreu um erro, ao tentar salvar as informações no banco";
+			return "Ocorreu um erro, ao tentar salvar as informações no banco se o erro persistir envie o email para " + EmailInfo.EMAIL_ADMINISTRADOR;
 		}
 	}
 
@@ -204,9 +211,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	public UsuarioDTO getInfoUserByCodigo(String invitation) 
 	{	
 		Optional<Usuario> userOptional = usuarioRepository.findByCoupon(invitation);	
-
 		Usuario user = userOptional.isPresent() ? userOptional.get() : null;	
-
 		if(user != null && user.getRegistrationSituation() == null) user.setRegistrationSituation(Usuario.CADASTRO_INCOMPLETO); 				
 		UsuarioDTO dto = user != null &&  user.getRegistrationSituation() < 3 ? user.getDTO() : null;	
 		
@@ -233,114 +238,154 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		{
 			Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
 			Usuario user = optional.isPresent() ? optional.get() : null;
-			if(user == null) return false;
-			EmailUtil email = new EmailUtil();
-			email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , getContrato(user));	
+			if(user == null) return false;			
+			
+//			EmailUtil email = new EmailUtil();
+//			email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , getContrato(user));	
+			
+			SendEmail sendEmail = new SendEmail();
+			sendEmail.setBody(textContrato(user.getNickname()));
+			sendEmail.setDateRegister(new Date());
+			sendEmail.setRecipient(user.getEmail());
+			sendEmail.setSubject("Contrato Faxinex");	
+			sendEmail.setSendContract(true);
+			emailRepository.save(sendEmail);			
 			return true;
 		}
 		catch (Exception e) 
 		{
+			e.printStackTrace();
 			return false;
 		}
 	}
 
 	private String textContrato(String nickname) 
-	{
+	{	
 		StringBuilder text = new StringBuilder();
 		text.append("Olá ").append(nickname).append("\n");
-		text.append("Segue em anexo, o contrato que você solicitou ");		
-
+		text.append("Segue em anexo, o contrato que você solicitou ");	
 		return text.toString();
 	}
 
-	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException, IOException 
-	{	
-		byte [] pdf = utils.getPDF("Contrato.jasper", user);						
-		return pdf;
-	}
+//	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException, IOException 
+//	{	
+//		byte [] pdf = utils.getPDF("Contrato.jasper", user);						
+//		return pdf;
+//	}
 
 	public Map<Boolean, String> resendCoupon(String cpf, String email) 
 	{		
-		Map<Boolean, String> response = new HashMap<Boolean, String>();
-				
-		Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
-		if(!(userOption != null && !userOption.isEmpty())) 
+			
+		try
 		{
-			response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+			Map<Boolean, String> response = new HashMap<Boolean, String>();
+			Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
+			if(!(userOption != null && !userOption.isEmpty())) 
+			{
+				response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+				return response;
+			}
+					
+			Usuario user = userOption.get();
+			
+			if(!user.getEmail().equals(email))
+			{
+				response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
+				return response;			
+			}
+			
+			SendEmail sendEmail = new SendEmail();
+			sendEmail.setBody("Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
+			sendEmail.setDateRegister(new Date());
+			sendEmail.setRecipient(user.getEmail());
+			sendEmail.setSubject("Número do Cupon");		
+			emailRepository.save(sendEmail);
+			
+	//		new Thread() 
+	//		{				
+	//			@Override
+	//			public void run() 
+	//			{	
+	//				EmailUtil email = new EmailUtil();
+	//				email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
+	//			};
+	//		}.start();	
+	//		
+	
+			response.put(true, "CUPOM ENVIADO COM SUCESSO!");
 			return response;
 		}
-				
-		Usuario user = userOption.get();
-		
-		if(!user.getEmail().equals(email))
+		catch (Exception e)
 		{
-			response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
-			return response;			
+			e.printStackTrace();
+			Map<Boolean, String> response = new HashMap<Boolean, String>();
+			response.put(false, "Error ao tentar enviar o Email, se o erro persistir envie um email para " + EmailInfo.EMAIL_ADMINISTRADOR);
+			return response;
 		}
-		
-		new Thread() 
-		{				
-			@Override
-			public void run() 
-			{	
-				EmailUtil email = new EmailUtil();
-				email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
-			};
-		}.start();	
-		
-
-		response.put(true, "CUPOM ENVIADO COM SUCESSO!");
-		return response;
 	}
 
+	@Transactional
 	public Map<Boolean, String> resetPassword(String cpf, String email, String coupon) 
 	{
-		
-		
-		Map<Boolean, String> response = new HashMap<Boolean, String>();
-		
-		Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
-		if(!(userOption != null && !userOption.isEmpty())) 
+		try
 		{
-			response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+			Map<Boolean, String> response = new HashMap<Boolean, String>();
+			
+			Optional<Usuario> userOption = usuarioRepository.findByCpf(cpf);		
+			if(!(userOption != null && !userOption.isEmpty())) 
+			{
+				response.put(false, "USUÁRIO NÃO ENCONTRADO!");
+				return response;
+			}
+					
+			Usuario user = userOption.get();		
+			if(!user.getEmail().equals(email))
+			{
+				response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
+				return response;			
+			}
+			if(!user.getCoupon().equals(coupon))
+			{
+				response.put(false, "O NUMERO DO CUPOM É DIFERENTE AO CADASTRADO! PEÇA O REENVIOU DO CUPOM SE NECESSÁRIO!");
+				return response;			
+			}
+			
+			String newPassword = getNewPassword();
+			String emailPassword = String.valueOf(newPassword);
+			
+			newPassword = StringUtils.encrypt(newPassword);		
+			user.setPassword(newPassword.getBytes());
+			user.setIsAlterPassword(true);
+			
+			usuarioRepository.save(user);
+			
+			SendEmail sendEmail = new SendEmail();
+			sendEmail.setBody("Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
+			sendEmail.setDateRegister(new Date());
+			sendEmail.setRecipient(user.getEmail());
+			sendEmail.setSubject("REDIFINIÇÃO DA SENHA");			
+			emailRepository.save(sendEmail);
+			
+//			new Thread() 
+//			{				
+//				@Override
+//				public void run() 
+//				{	
+//					EmailUtil email = new EmailUtil();
+//					email.sendEmail(user.getEmail(), "REDIFINIÇÃO DA SENHA", "Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
+//				};
+//			}.start();			
+	
+			response.put(true, "SENHA REDIFINIDA E ENVIADA POR EMAIL!");
+			return response;		
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+			Map<Boolean, String> response = new HashMap<Boolean, String>();
+			response.put(false, "Error ao tentar enviar o Email, se o erro persistir envie um email para " + EmailInfo.EMAIL_ADMINISTRADOR);
 			return response;
 		}
-				
-		Usuario user = userOption.get();		
-		if(!user.getEmail().equals(email))
-		{
-			response.put(false, "O EMAIL É DIFERENTE AO CADASTRADO! ENTRE EM CONTATO ATRAVÉS DO " + EmailInfo.EMAIL_ADMINISTRADOR);
-			return response;			
-		}
-		if(!user.getCoupon().equals(coupon))
-		{
-			response.put(false, "O NUMERO DO CUPOM É DIFERENTE AO CADASTRADO! PEÇA O REENVIOU DO CUPOM SE NECESSÁRIO!");
-			return response;			
-		}
-		
-		String newPassword = getNewPassword();
-		String emailPassword = String.valueOf(newPassword);
-		
-		newPassword = StringUtils.encrypt(newPassword);		
-		user.setPassword(newPassword.getBytes());
-		user.setIsAlterPassword(true);
-		
-		
-		
-		usuarioRepository.save(user);
-		
-		new Thread() 
-		{				
-			@Override
-			public void run() 
-			{	
-				EmailUtil email = new EmailUtil();
-				email.sendEmail(user.getEmail(), "REDIFINIÇÃO DA SENHA", "Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
-			};
-		}.start();			
-
-		response.put(true, "SENHA REDIFINIDA E ENVIADA POR EMAIL!");
-		return response;		
 	}
 
 	private String getNewPassword()

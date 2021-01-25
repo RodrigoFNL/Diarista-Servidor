@@ -8,7 +8,6 @@ public class DiaristaApplication
 {
 	public static void main(String[] args) 
 	{
-		SpringApplication.run(DiaristaApplication.class, args);
+		SpringApplication.run(DiaristaApplication.class, args);	
 	}
-
 }
