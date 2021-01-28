@@ -259,10 +259,12 @@ public class WorkRestService extends BasicRestServe<Work>
 			
 			Long idWork 			= postObject.get("work") != null ? Long.valueOf((Integer) postObject.get("work")) : null;			
 			String cpfCleaningLady 	= postObject.get("cleaningLady") != null ? (String) postObject.get("cleaningLady") : null;
-								
+							
+		
 			
-			System.out.println(idWork);
-			System.out.println(cpfCleaningLady);
+			
+		
+			
 			
 //			Integer work = postObject.get("work") != null? (Integer) postObject.get("work") : null;
 //			String  cpf = postObject.get("cpf") != null?  (String) postObject.get("cpf") :    null;

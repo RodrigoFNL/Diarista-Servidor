@@ -18,6 +18,8 @@ import br.com.diarista.folks.business.BasicBusiness;
 import br.com.diarista.folks.dao.AssessmentDAO;
 import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.Usuario;
+import br.com.diarista.routine.business.SendEmailBusiness;
+import br.com.diarista.routine.entity.SendEmail;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.work.dao.WorkDAO;
 import br.com.diarista.work.dto.WorkDTO;
@@ -38,6 +40,9 @@ public class WorkBusiness extends BasicBusiness<Work>
 	
 	@Autowired
 	private AssessmentDAO assessmentRepository;	
+	
+	@Autowired
+	private SendEmailBusiness emailBusiness;	
 	
 	@Override
 	public List<?> getAllActive() 
@@ -146,7 +151,15 @@ public class WorkBusiness extends BasicBusiness<Work>
 		work.getCleaningLadies().add(workRequest.getUsuario());		
 		if(work.getStage() == Work.STAGE_OPEN) work.setStage(Work.STAGE_EVALUATION);
 		
-		workRepository.save(work);
+		workRepository.save(work);	
+		SendEmail email = new SendEmail();		
+		email.setBody(("Olá " + work.getUsuario().getName() +  "\n Você obteve um(a) candidato(a) a sua publicação de número " + work.getId()).getBytes());
+		email.setDateRegister(new Date());
+		email.setRecipient(work.getUsuario().getEmail());
+		email.setSubject("Candidatura em sua Publicação");		
+		email.setUser(user);
+		emailBusiness.save(email);		
+		
 		return null;	
 	}
 
@@ -204,6 +217,16 @@ public class WorkBusiness extends BasicBusiness<Work>
 					work.getCleaningLadies().remove(cleaningLady);					
 					if(work.getCleaningLadies().isEmpty()) work.setStage(Work.STAGE_OPEN);					
 					workRepository.save(work);
+					
+					workRepository.save(work);	
+					SendEmail email = new SendEmail();		
+					email.setBody(("Olá " + work.getUsuario().getName() +  "\n O(A) Candidato(a) " + cleaningLady.getNickname() + " Cancelou sua Candidatura da sua publicação " + work.getId()).getBytes());
+					email.setDateRegister(new Date());
+					email.setRecipient(work.getUsuario().getEmail());
+					email.setSubject("Candidatura Cancelada em Publicação");		
+					emailBusiness.save(email);	
+					email.setUser(user);
+					
 					break;
 				}
 			}		

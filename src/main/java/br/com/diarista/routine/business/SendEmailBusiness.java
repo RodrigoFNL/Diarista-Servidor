@@ -36,23 +36,22 @@ public class SendEmailBusiness
 		}
 	}
 
-	public void sendEmail(SendEmail email) 
-	{
+	public boolean sendEmail(SendEmail email) 
+	{		
 		try
 		{	
-			if(email.isSendContract() && email.getUser() != null)
-			{	
-				emailUtil.sendEmail(email.getRecipient(), email.getSubject(), email.getBody(), utils.getPDF("Contrato.jasper", email.getUser()));
-				return;
-			}
-			emailUtil.sendEmail(email.getRecipient(), email.getSubject(), email.getBody());
-			
+			if(email.isSendContract() && email.getUser() != null)	return emailUtil.sendEmail(email.getRecipient(), email.getSubject(), new String(email.getBody()), utils.getPDF("Contrato.jasper", email.getUser()));				
+			else return emailUtil.sendEmail(email.getRecipient(), email.getSubject(), new String(email.getBody()));			
 		}
 		catch (Exception e) 
-		{
+		{			
 			e.printStackTrace();
+			return false;
 		}
-			
-		
+	}
+
+	public void save(SendEmail email)
+	{
+		emailRepository.save(email);		
 	}
 }

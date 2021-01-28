@@ -15,13 +15,11 @@ import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
 import br.com.diarista.conf.ConstantsSecurity;
 import br.com.diarista.conf.EmailInfo;
-import br.com.diarista.folks.dao.AssessmentDAO;
 import br.com.diarista.folks.dao.RGDAO;
 import br.com.diarista.folks.dao.UsuarioDAO;
 import br.com.diarista.folks.dto.InfoUserDTO;
 import br.com.diarista.folks.dto.UserDTO;
 import br.com.diarista.folks.dto.UsuarioDTO;
-import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.RG;
 import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.routine.dao.SendEmailDAO;
@@ -47,14 +45,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 	@Autowired
 	private EnderecoDAO enderecoRepository;
 	
-	@Autowired
-	private AssessmentDAO assessRepository;
 	
 	@Autowired
 	private SendEmailDAO emailRepository;
-
-//	@Autowired
-//	PDFUtils utils;
 
 	@Transactional
 	public String register(Usuario entity, String password) 
@@ -181,7 +174,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			usuarioRepository.save(user);		
 			
 			SendEmail sendEmail = new SendEmail();
-			sendEmail.setBody("Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon());
+			sendEmail.setBody(("Olá " + user.getName() +  "\nSeja bem vindo(a) a nossa comunidade! \nNúmero do Cupom: " + user.getCoupon()).getBytes());
 			sendEmail.setDateRegister(new Date());
 			sendEmail.setRecipient(user.getEmail());
 			sendEmail.setSubject("Número do Cupon");			
@@ -244,11 +237,12 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 //			email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , getContrato(user));	
 			
 			SendEmail sendEmail = new SendEmail();
-			sendEmail.setBody(textContrato(user.getNickname()));
+			sendEmail.setBody((textContrato(user.getNickname())).getBytes());
 			sendEmail.setDateRegister(new Date());
 			sendEmail.setRecipient(user.getEmail());
 			sendEmail.setSubject("Contrato Faxinex");	
 			sendEmail.setSendContract(true);
+			sendEmail.setUser(user);
 			emailRepository.save(sendEmail);			
 			return true;
 		}
@@ -266,12 +260,6 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		text.append("Segue em anexo, o contrato que você solicitou ");	
 		return text.toString();
 	}
-
-//	public byte[] getContrato(Usuario user) throws ClassNotFoundException, JRException, SQLException, IOException 
-//	{	
-//		byte [] pdf = utils.getPDF("Contrato.jasper", user);						
-//		return pdf;
-//	}
 
 	public Map<Boolean, String> resendCoupon(String cpf, String email) 
 	{		
@@ -295,22 +283,12 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			}
 			
 			SendEmail sendEmail = new SendEmail();
-			sendEmail.setBody("Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
+			sendEmail.setBody(("Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon()).getBytes());
 			sendEmail.setDateRegister(new Date());
 			sendEmail.setRecipient(user.getEmail());
-			sendEmail.setSubject("Número do Cupon");		
+			sendEmail.setSubject("Número do Cupon");	
+			sendEmail.setUser(user);
 			emailRepository.save(sendEmail);
-			
-	//		new Thread() 
-	//		{				
-	//			@Override
-	//			public void run() 
-	//			{	
-	//				EmailUtil email = new EmailUtil();
-	//				email.sendCoupon(user.getEmail(), "Olá " + user.getName() +  "\nVocê solicitou o reenviou do cupom! \nNúmero do Cupom: " + user.getCoupon());
-	//			};
-	//		}.start();	
-	//		
 	
 			response.put(true, "CUPOM ENVIADO COM SUCESSO!");
 			return response;
@@ -360,22 +338,13 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 			usuarioRepository.save(user);
 			
 			SendEmail sendEmail = new SendEmail();
-			sendEmail.setBody("Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
+			sendEmail.setBody(("Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!").getBytes());
 			sendEmail.setDateRegister(new Date());
 			sendEmail.setRecipient(user.getEmail());
-			sendEmail.setSubject("REDIFINIÇÃO DA SENHA");			
-			emailRepository.save(sendEmail);
+			sendEmail.setSubject("REDIFINIÇÃO DA SENHA");	
+			sendEmail.setUser(user);
+			emailRepository.save(sendEmail);	
 			
-//			new Thread() 
-//			{				
-//				@Override
-//				public void run() 
-//				{	
-//					EmailUtil email = new EmailUtil();
-//					email.sendEmail(user.getEmail(), "REDIFINIÇÃO DA SENHA", "Olá " + user.getName() +  "\nFoi solicitado a Redifinição de sua Senha. \nSua senha foi Redifinida! \nPassword: " + emailPassword + "\n Altere sua senha assim que acessar o sistema!");
-//				};
-//			}.start();			
-	
 			response.put(true, "SENHA REDIFINIDA E ENVIADA POR EMAIL!");
 			return response;		
 		}
@@ -438,40 +407,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		if( user.getRegistrationSituation() == Usuario.USUARIO_BLOQUEADO) return "Este usuário está bloqueado temporariamente, Dúvidas, nos contacte! " + EmailInfo.EMAIL_ADMINISTRADOR;
 		if( user.getRegistrationSituation() < Usuario.CADASTRO_APROVADO) return "Cadastro do usuário não está aprovado ainda! Dúvidas, nos conatecte!"  + EmailInfo.EMAIL_ADMINISTRADOR;
 		
-		user.setPassword(StringUtils.encrypt(password).getBytes());
-		
-		
-		Assessment ass = new Assessment();
-		
-		ass.setDate(new Date());
-		ass.setDescription("Gerado Automaticamente para fins de teste");
-		ass.setEvaluator(user);
-		ass.setRated(user);
-		ass.setStatus(true);
-		ass.setNote(4);
-		
-		Assessment ass1 = new Assessment();
-		ass1.setDate(new Date());
-		ass1.setDescription("Gerado Automaticamente para fins de teste");
-		ass1.setEvaluator(user);
-		ass1.setRated(user);
-		ass1.setStatus(true);
-		ass1.setNote(3);
-		
-		Assessment ass2 = new Assessment();
-		ass2.setDate(new Date());
-		ass2.setDescription("Gerado Automaticamente para fins de teste");
-		ass2.setEvaluator(user);
-		ass2.setRated(user);
-		ass2.setNote(1);
-		ass2.setStatus(true);
-		
-		assessRepository.save(ass);
-		assessRepository.save(ass1);	
-		assessRepository.save(ass2);
-		
-	
-	
+		user.setPassword(StringUtils.encrypt(password).getBytes());	
 		usuarioRepository.save(user);		
 		return null;
 	}

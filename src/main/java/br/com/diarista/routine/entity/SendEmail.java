@@ -25,17 +25,16 @@ public class SendEmail implements Serializable
 	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id; 		
+	private Long id; 	
 	private String recipient;
-	private String subject;
+	private String subject;	
 	
-	@Column(columnDefinition = "TEXT")
-	private String body;
+	private byte[] body;
 	
 	@Column(columnDefinition = "INT2 DEFAULT 0")
 	private short status;
 	
-	@Column(name = "attempt", columnDefinition = "INT2 DEFAULT 0")
+	@Column(name = "attempt_send", columnDefinition = "INT2 DEFAULT 0")
 	private short attempt;
 	
 	@Column(name = "date_register")
@@ -118,19 +117,20 @@ public class SendEmail implements Serializable
 		this.attempt = attempt;
 	}
 
-	public String getBody() {
-		return body;
-	}
-
-	public void setBody(String body) {
-		this.body = body;
-	}
-
 	public Usuario getUser() {
 		return user;
 	}
 
 	public void setUser(Usuario user) {
 		this.user = user;
-	}	
+	}
+	
+	public byte[] getBody() {
+		return body;
+	}
+	
+	public void setBody(byte[] body) {
+		this.body = body;
+	}
+
 }
