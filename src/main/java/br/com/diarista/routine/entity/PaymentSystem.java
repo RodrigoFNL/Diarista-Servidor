@@ -47,6 +47,11 @@ public class PaymentSystem
 	
 	@NotNull
 	@ManyToOne
+	@JoinColumn(name = "clean_lady_cpf")
+	private Usuario cleanLady;
+	
+	@NotNull
+	@ManyToOne
 	@JoinColumn(name = "work_id")
 	private Work work;
 	
@@ -107,5 +112,21 @@ public class PaymentSystem
 
 	public void setStatus(short status) {
 		this.status = status;
+	}
+
+	public Work getWork() {
+		return work;
+	}
+
+	public void setWork(Work work) {
+		this.work = work;
+	}
+
+	public Usuario getCleanLady() {
+		return cleanLady;
+	}
+
+	public void setCleanLady(Usuario cleanLady) {
+		this.cleanLady = cleanLady;
 	}
 }

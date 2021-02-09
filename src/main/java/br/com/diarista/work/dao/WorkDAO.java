@@ -16,17 +16,47 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 	
 	@Query(	value = "SELECT COUNT(W) FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +		 
-			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  AND W.user_cpf = :cpf ",		
-			nativeQuery = true )
+			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  AND W.user_cpf = :cpf ", nativeQuery = true )
 	public Long countMyPublicacoes(Date date, String cpf);
-
 	
-	@Query(	value = "SELECT COUNT(W) FROM work W " +
+	@Query(	value =  "SELECT COUNT(id) FROM ( " +
+			"SELECT W.id FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +
 			"INNER JOIN work_cleaning_lady WCL ON WCL.work_id = W.id AND WCL.user_id = :cpf " +				 
-			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  ",		
+			"WHERE  W.date > :date AND W.status = true AND W.stage <> 4  " +			
+			"UNION " +
+			"SELECT W.id FROM work W " +
+			"INNER JOIN usuario U ON  W.cleaning_lady_cpf = U.cpf  AND U.cpf = :cpf AND U.registration_situation = 4 	" +
+			"WHERE W.status = true AND W.stage = 3 AND W.status = true " +
+			 " ) AS total",		
 			nativeQuery = true )
 	public Long countAllWorksByCleaningLadies(Date date, String cpf);
+	
+	@Query(	value =" SELECT COUNT(id) FROM (" +
+			"SELECT W.id FROM work W " +	
+			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf " +
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true  AND W.stage <> 4 " +
+			"UNION " +
+			"SELECT W.id FROM work W "	+
+			"INNER JOIN usuario U ON  W.cleaning_lady_cpf = U.cpf  AND U.cpf = :cpf AND U.registration_situation = 4 " +
+			"WHERE (W.date > '2021-01-09' AND W.stage < 4 OR W.stage > 3) AND W.status = true  AND W.stage <> 4 " +
+			") AS total ",		
+			nativeQuery = true )
+	public Long countMyOportunity(String cpf, Date date);
+	
+	@Query(	value = "SELECT * FROM ( " +
+			"SELECT W.* FROM work W " +		
+			"INNER JOIN usuario U ON U.cpf = W.cleaning_lady_cpf AND  U.cpf = :cpf AND U.registration_situation = 4 " + 			
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage = 3 " +
+			"UNION " +
+			"SELECT W.* FROM work W " +
+			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf  " +			
+			"INNER JOIN usuario UW ON UW.cpf = WC.user_id AND UW.registration_situation = 4 " +			
+			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage <> 4 " +				
+			") AS W " +
+			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
+			nativeQuery = true )
+	public List<Work> getAllOpportunitiesCleaningLady(Date date, String cpf,  Integer limit, Integer offset);
 
 	@Query(	value = "SELECT W.* FROM work W " +
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.registration_situation = 4 " +
@@ -98,19 +128,6 @@ public interface WorkDAO extends JpaRepository<Work, Long>
 			nativeQuery = true )
 	public Long countAllWorkUFNative(Date date, String cpf);
 	
-	@Query(	value = "SELECT COUNT(W.id) FROM work W " +	
-			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf " +
-			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true  AND W.stage <> 4 ",		
-			nativeQuery = true )
-	public Long countMyOportunity(String cpf, Date date);
-
-	@Query(	value = "SELECT W.* FROM work W " +
-			"INNER JOIN work_cleaning_lady WC ON WC.work_id = W.id AND WC.user_id = :cpf  " +			
-			"INNER JOIN usuario UW ON UW.cpf = WC.user_id AND UW.registration_situation = 4 " +			
-			"WHERE (W.date > :date AND W.stage < 4 OR W.stage > 3) AND W.status = true AND W.stage <> 4 " +	
-			"ORDER BY W.stage,  W.date DESC LIMIT :limit OFFSET :offset",
-			nativeQuery = true )
-	public List<Work> getAllOpportunitiesCleaningLady(Date date, String cpf,  Integer limit, Integer offset);
 	
 	@Query(	value = "SELECT W.* FROM work W " +					
 			"INNER JOIN usuario UW ON UW.cpf = W.user_cpf AND UW.cpf = :cpf  AND UW.registration_situation = 4 " +			

@@ -253,37 +253,33 @@ public class WorkRestService extends BasicRestServe<Work>
 		try
 		{				
 			String token = request.getHeader(ConstantsSecurity.HEADER);					
-			Usuario user = userBusiness.findUserByToken(token);
-			
+			Usuario user = userBusiness.findUserByToken(token);			
 			if(user == null) return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);		
 			
-			Long idWork 			= postObject.get("work") != null ? Long.valueOf((Integer) postObject.get("work")) : null;			
-			String cpfCleaningLady 	= postObject.get("cleaningLady") != null ? (String) postObject.get("cleaningLady") : null;
-							
-		
+			String cpf	= postObject.get("user")!= null ? (String) postObject.get("user") : null;	
+			if(!(cpf != null && user.getCpf().equals(cpf))) return error("Erro de identidade, refaça o login", BasicRestServe.UNAUTHORIZED);	
+					
+			String idWork 			= postObject.get("work") 		!= null?  String.valueOf((Integer) postObject.get("work")) : null;					
+			String cpfCleaningLady 	= postObject.get("cleaningLady")!= null? (String) postObject.get("cleaningLady") : null;	
+			String codSeg 		 =  postObject.get("codSegCard") 	!= null? (String) postObject.get("codSegCard")	: null;
+			String formPayment 	 = postObject.get("formPayment") 	!= null? (String) postObject.get("formPayment")	: null;
+			String nameCad 		 = postObject.get("nameCard") 		!= null? (String) postObject.get("nameCard")	: null;
+			String numCard 		 = postObject.get("numCard") 		!= null? (String) postObject.get("numCard")		: null;
+			String shelfLifeCard = postObject.get("shelfLifeCad")	!= null? (String) postObject.get("shelfLifeCad"): null;
+					
+			Map<String, String> map = new HashMap<String, String>();
 			
+			map.put("idWork", idWork);
+			map.put("cpfCleaningLady", cpfCleaningLady);
+			map.put("codSeg", codSeg);
+			map.put("formPayment", formPayment);
+			map.put("nameCad", nameCad);
+			map.put("numCard", numCard);
+			map.put("shelfLifeCard", shelfLifeCard);		
+			String result = business.schedule(user, map);
 			
-		
-			
-			
-//			Integer work = postObject.get("work") != null? (Integer) postObject.get("work") : null;
-//			String  cpf = postObject.get("cpf") != null?  (String) postObject.get("cpf") :    null;
-//	
-//			if(work == null) return error("Não foi passado nenhuma oportunidade", BasicRestServe.BAD_REQUEST);
-//			if(cpf == null)  return error("Não foi passado o usuário", BasicRestServe.BAD_REQUEST);
-//						
-//			Usuario userCPF = userBusiness.findByCPF(cpf);
-//			if(userCPF == null) return error("Usuário não encontrado na base de dados!", BasicRestServe.BAD_REQUEST);
-//		
-//			if(!userCPF.getCpf().equals(user.getCpf())) return error("O usuário informado é diferente do que realizou o login, refaça o login!", BasicRestServe.BAD_REQUEST);	
-//			
-//			String cancell = business.cancellCleaningLady(user, Long.valueOf(work));
-//						
-//			if(cancell == null) return ok("OK");	
-//			else 				return error(cancell, BasicRestServe.INTERNAL_ERROR);
-			
-			return ok("OK");	
-			
+			if(result == null)	return ok("OK");	
+			else 				return error(result, BasicRestServe.BAD_REQUEST);			
 		}
 		catch (Exception e)
 		{	

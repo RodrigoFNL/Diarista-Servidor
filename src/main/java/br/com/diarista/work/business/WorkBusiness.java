@@ -9,16 +9,24 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.gson.Gson;
 
 import br.com.diarista.adress.dao.EnderecoDAO;
 import br.com.diarista.adress.dao.LocalidadeDAO;
 import br.com.diarista.adress.entity.Endereco;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.business.BasicBusiness;
+import br.com.diarista.folks.business.UsuarioBusiness;
 import br.com.diarista.folks.dao.AssessmentDAO;
 import br.com.diarista.folks.entity.Assessment;
 import br.com.diarista.folks.entity.Usuario;
+import br.com.diarista.routine.business.LogSystemBusiness;
+import br.com.diarista.routine.business.PaymentSystemBusiness;
 import br.com.diarista.routine.business.SendEmailBusiness;
+import br.com.diarista.routine.entity.LogSystem;
+import br.com.diarista.routine.entity.PaymentSystem;
 import br.com.diarista.routine.entity.SendEmail;
 import br.com.diarista.utils.DateUtils;
 import br.com.diarista.work.dao.WorkDAO;
@@ -33,6 +41,18 @@ public class WorkBusiness extends BasicBusiness<Work>
 	private WorkDAO workRepository;	
 	
 	@Autowired
+	private SendEmailBusiness emailBusiness;	
+	
+	@Autowired
+	private LogSystemBusiness logBusiness;	
+	
+	@Autowired
+	private UsuarioBusiness userBusiness;	
+	
+	@Autowired
+	private PaymentSystemBusiness paymentBusiness;	
+	
+	@Autowired
 	private EnderecoDAO endRepository;	
 	
 	@Autowired
@@ -41,15 +61,13 @@ public class WorkBusiness extends BasicBusiness<Work>
 	@Autowired
 	private AssessmentDAO assessmentRepository;	
 	
-	@Autowired
-	private SendEmailBusiness emailBusiness;	
-	
 	@Override
 	public List<?> getAllActive() 
 	{		
 		return null;
 	}
 	
+	//cadastrada uma publicação
 	@Override
 	public String register(Work work, Usuario user) 
 	{	
@@ -99,6 +117,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return "id:" + work.getId().toString() ;
 	}
 
+	//busca todas as oportunidades próximo ao endereço de um profissional
 	public List<WorkDTO> getAllActive(Usuario user, int page, int limit) 
 	{			
 		List<Work> works = workRepository.findAllWorkBairroNative(new Date(), user.getCpf(), limit, page * limit);	
@@ -116,6 +135,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return dtos;
 	}
 
+	//Profisional insere usa candidatura em uma publicação de um cliente
 	public String insertCleaningLayd(Work workRequest, Usuario user)
 	{		
 		if(workRequest.getUsuario() == null) 							return "Não foi informado o usuário que está realizando a publicação";		
@@ -153,7 +173,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		
 		workRepository.save(work);	
 		SendEmail email = new SendEmail();		
-		email.setBody(("Olá " + work.getUsuario().getName() +  "\n Você obteve um(a) candidato(a) a sua publicação de número " + work.getId()).getBytes());
+		email.setBody(("Olá " + work.getUsuario().getNickname() +  "\n Você obteve um(a) candidato(a) a sua publicação de número " + work.getId()).getBytes());
 		email.setDateRegister(new Date());
 		email.setRecipient(work.getUsuario().getEmail());
 		email.setSubject("Candidatura em sua Publicação");		
@@ -163,6 +183,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return null;	
 	}
 
+	//conta todas as oportunidades disponveis próximo ao endereço do profissional
 	public List<Long> countAllActive(Usuario user)
 	{			
 		List<Long> totals = new ArrayList<Long>();		
@@ -172,6 +193,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return totals;
 	}
 
+	//conta contas oportunidades o cliente/profissional possue 
 	public Long countMyOportunity(String cpf, Integer view)	
 	{	
 		if(view == Work.VIEW_PRESTAR_SERVICO) 	return workRepository.countMyOportunity(cpf, DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY));
@@ -180,6 +202,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		else return 0L;
 	}
 
+	//busca todas as oportunidades próximo a sua localidade
 	public List<WorkDTO> getAllOpportunitiesCleaningLady(Usuario user, Integer page, Integer limit )
 	{
 		List<Work> list = workRepository.getAllOpportunitiesCleaningLady(DateUtils.getRemoveDaysInDate(new Date(), Assessment.BEFOR_DAY), user.getCpf(), limit, page);	
@@ -192,6 +215,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return dtos;
 	}
 
+	//Proffisional cancela sua candidatura a uma publicação
 	public String cancellCleaningLady(Usuario user, Long idWork) 
 	{
 		try
@@ -220,7 +244,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 					
 					workRepository.save(work);	
 					SendEmail email = new SendEmail();		
-					email.setBody(("Olá " + work.getUsuario().getName() +  "\n O(A) Candidato(a) " + cleaningLady.getNickname() + " Cancelou sua Candidatura da sua publicação " + work.getId()).getBytes());
+					email.setBody(("Olá " + work.getUsuario().getNickname() +  "\n O(A) Candidato(a) " + cleaningLady.getNickname() + " Cancelou sua Candidatura da sua publicação " + work.getId()).getBytes());
 					email.setDateRegister(new Date());
 					email.setRecipient(work.getUsuario().getEmail());
 					email.setSubject("Candidatura Cancelada em Publicação");		
@@ -264,7 +288,8 @@ public class WorkBusiness extends BasicBusiness<Work>
 			return 	"Ocorreu um erro de internto, se o erro persistir, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";
 		}
 	}
-
+	
+	//busca todas as publicações de um usuário
 	public List<WorkDTO> getAllMyPuclications(Usuario user, Integer page, Integer limit) 
 	{
 	
@@ -288,6 +313,7 @@ public class WorkBusiness extends BasicBusiness<Work>
 		return dtos;
 	}
 
+	//Cancela uma publicação de um cliente
 	public String cancellWork(Usuario user, Long idWork) 
 	{		
 		try 
@@ -332,6 +358,100 @@ public class WorkBusiness extends BasicBusiness<Work>
 			return 	"Ocorreu um erro de internto, se o erro persistir, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";	
 		}
 	}
+
+	//Salva as informações de pagamento no banco de dados para que  a rotina de pagamento realize a transação
+	@Transactional
+	public String schedule(Usuario user, Map<String, String> map) 
+	{		
+		try
+		{			
+			if(user.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) return "Usuário com situação irregular, entre em contato com [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";				
+			if (map.get("codSeg") == null) 			return "O Código de Segurança é obrigatório";
+			if (map.get("formPayment") == null) 	return "O Código de Segurança é obrigatório";
+			if (map.get("nameCad") == null) 		return "O Código de Segurança é obrigatório";
+			if (map.get("numCard") == null) 		return "O Código de Segurança é obrigatório";
+			if (map.get("shelfLifeCard") == null) 	return "O Código de Segurança é obrigatório";
+			
+			Long 	idWork 	= map.get("idWork") != null? 			Long.valueOf((String) map.get("idWork")) : null;
+			String  cpf 	= map.get("cpfCleaningLady") != null? 	(String) map.get("cpfCleaningLady"): null;		
+			
+			Optional<Work> workOptional	=  workRepository.findById(idWork);			
+			Work work = workOptional != null && !workOptional.isEmpty() ? workOptional.get() : null;
+			
+			if(work == null) 						return "Não foi encontrado a publicação informada"; 
+			if(work.getDate().before(new Date())) 	return "A Publicação está expirada!, o pagamento deverá ser feito com antecedência de no mínimo 24 horas"; 
+			
+			PaymentSystem hasPayment = paymentBusiness.getPaymentSystemByWork(work);
+			
+			if(hasPayment != null 		&& (hasPayment.getStatus() == PaymentSystem.STATUS_SUCESS || hasPayment.getStatus() == PaymentSystem.STATUS_APPROVED)) return "A Publicação já foi paga"; 
+			else if(hasPayment != null 	&& hasPayment.getStatus() != PaymentSystem.STATUS_FAIL)  return "A Publicação já está na lista para pagamento"; 
+				
+			Usuario cleaningLady =  userBusiness.findByCPF(cpf);			
+			if(cleaningLady == null) return "Não foi encontrado o(a) profissional escolhida!"; 
+			if(cleaningLady.getRegistrationSituation() != Usuario.CADASTRO_APROVADO) return "Profissional com situação irregular, escolha outro";		
+						
+			work.setCleaningLady(cleaningLady);
+			work.setCleaningLadies(null);
+			workRepository.save(work);
+			
+			PaymentSystem payment = new PaymentSystem();	
+			Gson gson = new Gson();
+		
+			payment.setDateRegister(new Date());
+			payment.setStatus(PaymentSystem.STATUS_OPEN);			
+			payment.setObject(gson.toJson(map).getBytes());			
+			payment.setUser(user);	
+			payment.setWork(work);	
+			payment.setCleanLady(cleaningLady);
+			paymentBusiness.save(payment);	
+			
+			SendEmail email = new SendEmail();	
+			
+			email.setDateRegister(new Date());
+			email.setRecipient(user.getEmail());
+			email.setStatus(SendEmail.STATUS_OPEN);
+			email.setSubject("Pagamento em Processo!");
+			email.setBody(("Olá " + user.getNickname() +  "\n Foi agendado o pagamento referente ao serviço de nº " + work.getId() + "\n Assim que for confirmado, será liberado o endereço ao profissional, para realização do serviço ").getBytes());	
+			emailBusiness.save(email);
+			
+			SendEmail emailCleaningLady = new SendEmail();	
+			
+			emailCleaningLady.setDateRegister(new Date());
+			emailCleaningLady.setRecipient(cleaningLady.getEmail());
+			emailCleaningLady.setStatus(SendEmail.STATUS_OPEN);
+			emailCleaningLady.setSubject("Informativo Oportunidade Nº " + work.getId());
+			emailCleaningLady.setBody(("Olá " + cleaningLady.getNickname() +  "\n Você foi escolhido(a) para realizar o serviço de nº " + work.getId() + "\n Assim que o cliente efetuar o pagamento, será liberado o endereço do serviço, acompanhei a situação no APP").getBytes());	
+			emailBusiness.save(emailCleaningLady);
+			
+			LogSystem log = new LogSystem();
+			log.setDate(new Date());
+			log.setDescription("Agendado para pagamento PaySistem id " + payment.getId() + "] CPF Pagante: " + user.getCpf() + " Work id: [" + work.getId() + "] Profissional cpf [" + cleaningLady.getCpf() + "]" );
+			log.setLineCode("WorkBusiness, linha 425");			
+			log.setTypeLog(LogSystem.TYPE_SUCESS);			
+			logBusiness.save(log);
+			
+			
+			return null;
+		}
+		catch (Exception e)
+		{
+			LogSystem log = new LogSystem();
+			log.setDate(new Date());
+			log.setDescription("Error ao tentar agendar pagamento [Id Work: " + map.get("idWork") + "] CPF USUÁRIO: " + user.getCpf());
+			log.setLineCode("WorkBusiness, linha 419 a 430");			
+			log.setTypeLog(LogSystem.TYPE_ERROR);			
+			logBusiness.save(log);
+			
+			e.printStackTrace();
+			return "Ocorreu um erro de comunicação, envie um email para [" + EmailInfo.EMAIL_ADMINISTRADOR + "]";
+		}	
+	}
+
+	public void save(Work work)
+	{
+		workRepository.save(work);		
+	}
+
 }
 
 

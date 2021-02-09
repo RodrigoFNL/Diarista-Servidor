@@ -225,16 +225,15 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return user;
 	}
 
+	
+	//salva no banco de dados uma solicitação para receber o contrato por email, para que a rotina de email, envie o email
 	public Boolean sendContratoViaEmail(String cpf) 
 	{
 		try
 		{
 			Optional<Usuario> optional = usuarioRepository.findByCpf(cpf);
 			Usuario user = optional.isPresent() ? optional.get() : null;
-			if(user == null) return false;			
-			
-//			EmailUtil email = new EmailUtil();
-//			email.sendEmail(user.getEmail(), "Contrato Faxinex", textContrato(user.getNickname()) , getContrato(user));	
+			if(user == null) return false;		
 			
 			SendEmail sendEmail = new SendEmail();
 			sendEmail.setBody((textContrato(user.getNickname())).getBytes());
@@ -253,6 +252,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 	}
 
+	//retorna o corpo de email para email de solicação de contrato
 	private String textContrato(String nickname) 
 	{	
 		StringBuilder text = new StringBuilder();
@@ -261,9 +261,9 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return text.toString();
 	}
 
+	//salva no banco, uma solicitação para receber o número do cupom para que a rotina de email, leia e enviei o email
 	public Map<Boolean, String> resendCoupon(String cpf, String email) 
 	{		
-			
 		try
 		{
 			Map<Boolean, String> response = new HashMap<Boolean, String>();
@@ -302,6 +302,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 	}
 
+	//reseta a senha, gera uma automática e registra no banco de dados uma solicitação para enviar por email para que a rotina de email, leia e envie para o solicitante
 	@Transactional
 	public Map<Boolean, String> resetPassword(String cpf, String email, String coupon) 
 	{
@@ -357,6 +358,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 	}
 
+	//gera uma senha aleatória 
 	private String getNewPassword()
 	{	
 		Random random = new Random();		
@@ -369,6 +371,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return password.toString();
 	}
 
+	//busca as informações de um usuário, após da validação do login e o front obter o token
 	public InfoUserDTO getInfoUser(String userName)
 	{		
 		try
@@ -387,6 +390,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		}
 	}
 
+	//Realiza a alteração do password apartir do usuário já logado no sistema
 	public String alterPassword(String cpf, String password, String confirmPassword, String oldPassword) 
 	{	
 		if(cpf == null) 				return "Usuário não foi Informado!";	
@@ -412,6 +416,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return null;
 	}
 
+	//atualiza a foto do perfil do usuário
 	public String updatePicture(String cpf, byte[] image)
 	{
 		if(cpf == null) 			return "Usuário não foi Informado!";	
@@ -435,6 +440,7 @@ public class UsuarioBusiness  extends BasicBusiness<Usuario>
 		return null;
 	}
 
+	//busca um usuário a apartir do token 
 	public Usuario findUserByToken(String token) 
 	{		
 		boolean isCpf = false;
