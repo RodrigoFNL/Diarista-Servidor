@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 
+import br.com.diarista.bank.business.ExtratoBusiness;
+import br.com.diarista.bank.entity.Extrato;
 import br.com.diarista.conf.EmailInfo;
 import br.com.diarista.folks.entity.Usuario;
 import br.com.diarista.routine.business.LogSystemBusiness;
@@ -42,6 +44,9 @@ public class PaymentRoutine
 	
 	@Autowired
 	private WorkBusiness workBusiness;
+	
+	@Autowired
+	private ExtratoBusiness extratoBusiness;
 	
 	//chamado pela rotina de tempo, e executa os métodos 
 	private void executePayment() 
@@ -107,13 +112,23 @@ public class PaymentRoutine
 						
 						Work work = pay.getWork();
 						work.setStage(Work.STAGE_PAY_OUT);						
-						workBusiness.save(work);						
+						workBusiness.save(work);	
+						
+						Extrato extrato = new Extrato();
+						extrato.setBlocked(true);
+						extrato.setDateRegister(new Date());
+						extrato.setDocument(pay.getId().toString());
+						extrato.setOrigin("PaymentSystem");
+						extrato.setType(Extrato.TYPE_DEPOSITO);
+						extrato.setUser(pay.getUser());
+						extrato.setValue(workBusiness.getValueWork(pay.getWork()));		
+						extratoBusiness.save(extrato);
 						
 						LogSystem log = new LogSystem();
 						log.setDate(new Date());
 						log.setTypeLog(LogSystem.TYPE_SUCESS);
 						log.setDescription("Pagamento Realizado com sucesso. Serviço: [" + pay.getId() + "] work id: ["  + pay.getWork().getId() + "] User id: ["  + pay.getUser().getCpf() + "]");
-						log.setLineCode("PaymentRoutine linha 115");
+						log.setLineCode("PaymentRoutine linha 131");
 						logBusiness.save(log);
 						
 						SendEmail email = new SendEmail();	
@@ -160,7 +175,7 @@ public class PaymentRoutine
 							log.setDate(new Date());
 							log.setTypeLog(LogSystem.TYPE_ERROR);
 							log.setDescription("Não foi possível processar o pagamento: [" + pay.getId() + "] work id: ["  + pay.getWork().getId() + "] User id: ["  + pay.getUser().getCpf() + "]");
-							log.setLineCode("PaymentRoutine linha 163");
+							log.setLineCode("PaymentRoutine linha 178");
 							logBusiness.save(log);
 							
 							SendEmail email = new SendEmail();	
@@ -184,8 +199,6 @@ public class PaymentRoutine
 			email.sendEmail(EmailInfo.EMAIL_ADMINISTRADOR, "Error no Sistema de pagamento", e.getMessage());
 		}
 	}
-
-
 
 	private boolean makePayment(Map<String, String> map, Usuario user, Work work, Usuario cleanLady)
 	{	

@@ -11,7 +11,7 @@ public class LogSystemBusiness
 {
 	@Autowired
 	private LogSystemDAO logRepository;
-	
+
 	public void save(LogSystem log)
 	{	
 		logRepository.save(log);
