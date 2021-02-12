@@ -82,6 +82,7 @@ public class PaymentRoutine
 					if(pay.getWork().getDate().before(new Date())) 
 					{
 						pay.setStatus(PaymentSystem.STATUS_FAIL);	
+						pay.setObject("INFORMAR NÚMERO DA TRANSAÇÃO".getBytes());
 						business.save(pay);
 						
 						LogSystem log = new LogSystem();
@@ -106,7 +107,8 @@ public class PaymentRoutine
 					boolean isPaidOut = makePayment(map, pay.getUser(), pay.getWork(), pay.getCleanLady());
 					if(isPaidOut)
 					{
-						pay.setStatus(PaymentSystem.STATUS_SUCESS);		
+						pay.setStatus(PaymentSystem.STATUS_SUCESS);	
+						pay.setObject("INFORMAR NÚMERO DA TRANSAÇÃO".getBytes());
 						pay.setDateSend(new Date());
 						business.save(pay);
 						
@@ -169,7 +171,8 @@ public class PaymentRoutine
 						if(pay.getAttempt() < 5) pay.setAttempt((short) (pay.getAttempt() + 1));
 						else
 						{
-							pay.setStatus(PaymentSystem.STATUS_FAIL);					
+							pay.setStatus(PaymentSystem.STATUS_FAIL);	
+							pay.setObject("INFORMAR NÚMERO DA TRANSAÇÃO".getBytes());
 							
 							LogSystem log = new LogSystem();
 							log.setDate(new Date());
@@ -203,6 +206,13 @@ public class PaymentRoutine
 	private boolean makePayment(Map<String, String> map, Usuario user, Work work, Usuario cleanLady)
 	{	
 		return true;
+		
+		
+		
+		
+		
+		
+		
 	}
 
 	//loop temporizado que irá verificar a existência de pagamento pendente
