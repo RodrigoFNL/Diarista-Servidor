@@ -1,0 +1,6 @@
+INSERT INTO public.task(id, "description", "detail", "status", "type", "value") VALUES (1, 'Limpar Quarto', 'Varrer o Chão; Passar um pano com produtos de limpeza; organizar roupas', 't', 1, '30');
+INSERT INTO public.task(id, "description", "detail", "status", "type", "value") VALUES (2, 'Limpar Cozinha', 'Lavar a Louça; Varrer o Chão; Passar pano com desengordurante nas paredes; Jogar o Lixo fora', 't', 1, '50');
+INSERT INTO public.task(id, "description", "detail", "status", "type", "value") VALUES (3, 'Limpar Banheiro', 'Varrer o Chão; Passar pano no chão e paredes; desentupir vaso', 't', 1, '50');
+INSERT INTO public.task(id, "description", "detail", "status", "type", "value") VALUES (4, 'Limpar Escritório', 'Varrer o chão; Passar pano no chão; Esvasiar as lixeiras', 't', 2, '20');
+INSERT INTO public.task(id, "description", "detail", "status", "type", "value") VALUES (5, 'Limpar Call Center', 'Varrer o chão; passar pano úmido nas mesas; Esvaziar as lixeiras', 't', 2, '70');
+
