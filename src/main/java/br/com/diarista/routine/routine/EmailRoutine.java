@@ -78,7 +78,14 @@ public class EmailRoutine
 			@Override 
 			public void run()
 			{ 
-				sendMail();
+				try
+				{
+					sendMail();
+				}
+				catch (Exception e)
+				{
+					System.out.println(e);
+				}
 			}		    
 		}, 20000, 120000);
 	}	

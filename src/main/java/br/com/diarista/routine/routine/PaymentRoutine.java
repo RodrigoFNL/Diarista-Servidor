@@ -206,13 +206,6 @@ public class PaymentRoutine
 	private boolean makePayment(Map<String, String> map, Usuario user, Work work, Usuario cleanLady)
 	{	
 		return true;
-		
-		
-		
-		
-		
-		
-		
 	}
 
 	//loop temporizado que irá verificar a existência de pagamento pendente
@@ -224,8 +217,15 @@ public class PaymentRoutine
 		{
 		    @Override 
 		    public void run()
-		    { 
-		    	executePayment();
+		    { 	
+				try
+				{
+					executePayment();
+				}
+				catch (Exception e)
+				{
+					System.out.println(e);
+				}
 		    }		    
 		}, 20000, 120000);
 	}	
