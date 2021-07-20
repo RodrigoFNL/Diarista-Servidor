@@ -229,7 +229,8 @@ public class UsuarioRestServe extends BasicRestServe<Usuario>
 	{		
 		try
 		{		
-			String userName = StringUtils.isNotNull((String) postObject.get("userName")) ? StringUtils.removeCharacters((String) postObject.get("userName")) : null;			
+			String userName = StringUtils.isNotNull((String) postObject.get("userName")) ? (String) postObject.get("userName") : null;				
+			if(!userName.contains("@"))userName = StringUtils.removeCharacters(userName);		
 			
 			if(userName == null)   return error("USERNAME INVÁLIDO", BasicRestServe.INTERNAL_ERROR);		
 			if(userName.isEmpty()) return error("USERNAME INVÁLIDO", BasicRestServe.INTERNAL_ERROR);	
